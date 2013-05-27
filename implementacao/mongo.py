@@ -106,13 +106,14 @@ def insereDependente(nome,rg,cpf,certidao,dt_nascimento,tp_vinculo,documentos,id
 	}
 	dbh.dependentes.insert(dependente,safe=True)
 	newDependente = dbh.dependentes.find_one(dependente)
-	empregado = dbh.empregados.find_one({"_id":idEmpregado})
+	idEmpregado = ObjectId(idEmpregado)
+	empregado = dbh.empregados.find_one({'_id': idEmpregado})
 	if empregado.get('Dependentes') == None:
 		dbh.empregados.update({"_id":idEmpregado},{"$set":{"Dependentes":[newDependente.get('_id')]}},safe=True)
 	else:
 		dbh.empregados.update({"_id":idEmpregado},
 			{"$push":{"Dependentes":newDependente.get('_id')}}, safe=True)
-	print "dependente inserido com sucesso %s" % dependente	
+	return "Dependente inserido com sucesso!"	
 	
 def insereDocEmpregado(matricula,tp_documento, no_doc,file):
 	dbh = conectaMongo()
@@ -135,8 +136,12 @@ def insereDocEmpregado(matricula,tp_documento, no_doc,file):
 					"no_documento" : no_doc,
 					"dh_updload" : datetime.datetime.now()
 				}
-		dbh.empregados.update({"nu_matricula":matricula},
+		if empregado.get('Documentos') == None:
+			dbh.empregados.update({"nu_matricula":matricula},{"$set":{"Documentos":[new_doc]}},safe=True)
+		else:
+			dbh.empregados.update({"nu_matricula":matricula},
 		{"$push":{"Documentos":new_doc}}, safe=True)
+		return 'Documento inserido com sucesso!'
 		
 def insereDocDependente(empreg_matricula, rg_dependente,cpf_dependente,certidao_dependente,tp_documento, no_doc,file):
 	dbh = conectaMongo()
@@ -181,8 +186,12 @@ def insereDocDependente(empreg_matricula, rg_dependente,cpf_dependente,certidao_
 					"no_documento" : no_doc,
 					"dh_updload" : datetime.datetime.now()
 				}
-		dbh.depententes.update({"_id":dependente.get('_id')},
+		if dependente.get('Documentos') == None:
+			dbh.dependentes.update({"_id":dependente.get('_id')},{"$set":{"Documentos":[new_doc]}},safe=True)
+		else:
+			dbh.depententes.update({"_id":dependente.get('_id')},
 		{"$push":{"Documentos":new_doc}}, safe=True)
+		return 'Documento inserido com sucesso!'
 	
 	
 def listaOrgao(nome='',endereco='',cidade='',uf=''):

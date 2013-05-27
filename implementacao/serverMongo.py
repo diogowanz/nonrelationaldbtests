@@ -22,6 +22,9 @@ server.registerFunction(listaOrgao)
 server.registerFunction(insereEmpregado)
 server.registerFunction(listaEmpregados)
 server.registerFunction(listaDependentes)
+server.registerFunction(insereDependente)
+server.registerFunction(insereDocEmpregado)
+server.registerFunction(insereDocDependente)
 
 
 

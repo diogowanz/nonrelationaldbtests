@@ -23,9 +23,22 @@ def main():
 #	for empregado in empregados:
 #		print empregado['nome']
 
-	dependentes = server.listaDependentes(nomeDependente='Diogo')
-	for dependente in dependentes:
-		print dependente['nome']
+#	dependentes = server.listaDependentes(nomeDependente='Diogo')
+#	for dependente in dependentes:
+#		print dependente['nome']
+
+#	empregados = server.listaEmpregados (nome='Debora')
+#	print server.insereDependente('Tassia','1234234','222.222.222-22',None,'29/09/1992','Filho',None,empregados[0]['id'])
+
+#	file=open('/home/wanzeller/python/teste.txt', 'rb')
+#	data=file.read()
+#	print server.insereDocEmpregado('M000005','Comprovante de Residencia','comprv_residencia.txt',data.encode('base64'))
+#	file.close()
+
+#	file=open('/home/wanzeller/python/teste.txt', 'rb')
+#	data=file.read()
+#	print server.insereDocDependente('M000005','1234234',None,None,'Certidao Nascimento','certidao_nascimento.txt',data.encode('base64'))
+#	file.close()
 
 
 
