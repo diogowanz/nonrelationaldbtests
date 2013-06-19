@@ -15,14 +15,15 @@ Model = db.Model()
 	
 server = SOAPServer(('localhost',8081))
 
-server.registerFunction(Model.insereOrgao)
-server.registerFunction(Model.listaOrgao)
-server.registerFunction(Model.insereEmpregado)
-server.registerFunction(Model.listaEmpregados)
-server.registerFunction(Model.listaDependentes)
-server.registerFunction(Model.insereDependente)
-server.registerFunction(Model.insereDocEmpregado)
-server.registerFunction(Model.insereDocDependente)
+server.registerObject(Model)
+#server.registerFunction(Model.insereOrgao)
+#server.registerFunction(Model.listaOrgao)
+#server.registerFunction(Model.insereEmpregado)
+#server.registerFunction(Model.listaEmpregados)
+#server.registerFunction(Model.listaDependentes)
+#server.registerFunction(Model.insereDependente)
+#server.registerFunction(Model.insereDocEmpregado)
+#server.registerFunction(Model.insereDocDependente)
 
 
 

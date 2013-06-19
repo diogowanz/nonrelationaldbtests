@@ -31,7 +31,7 @@ class Model:
 		dbh = self.conectaMongo()
 		
 		orgao = {
-			"cnpj" : cnpj
+			"cnpj" : cnpj,
 			"nome" : nome,
 			"endereco" : endereco,
 			"cidade" : cidade,
