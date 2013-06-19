@@ -1,30 +1,28 @@
 from SOAPpy import SOAPServer
 import psycopg2
 import psycopg2.extras
+import sys
 
 import os
 
 import commands
 
-from mongo import *
+db = __import__(sys.argv[1])
 
-def hello():
-	return 'hello world'
-	
-def tchau():
-	print 'Adeus'
+Model = db.Model()
+
+#from mongo import *
 	
 server = SOAPServer(('localhost',8081))
 
-server.registerFunction(hello)
-server.registerFunction(insereOrgao)
-server.registerFunction(listaOrgao)
-server.registerFunction(insereEmpregado)
-server.registerFunction(listaEmpregados)
-server.registerFunction(listaDependentes)
-server.registerFunction(insereDependente)
-server.registerFunction(insereDocEmpregado)
-server.registerFunction(insereDocDependente)
+server.registerFunction(Model.insereOrgao)
+server.registerFunction(Model.listaOrgao)
+server.registerFunction(Model.insereEmpregado)
+server.registerFunction(Model.listaEmpregados)
+server.registerFunction(Model.listaDependentes)
+server.registerFunction(Model.insereDependente)
+server.registerFunction(Model.insereDocEmpregado)
+server.registerFunction(Model.insereDocDependente)
 
 
 
