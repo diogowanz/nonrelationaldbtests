@@ -1,0 +1,791 @@
+(dp1
+S'output'
+p2
+S"<type 'exceptions.TypeError'> expected string or buffer"
+p3
+sS'layer'
+p4
+S'/home/wanzeller/www-dev/web2py/applications/webservices/controllers/sample.py'
+p5
+sS'code'
+p6
+S'# coding: utf8\n# tente algo como\ndef index(): return dict(message="hello from sample.py")\n\n#import mongo\n#model = local_import(\'mongo\')\nmodel = local_import(\'postgres_dict\')\n\n\nfrom gluon.tools import Service\nservice = Service(globals())\n\nModel = model.Model()\n\n@service.xmlrpc\n@service.soap(\'AddStrings\',returns={\'AddResult\':str},args={\'a\':str, \'b\':str})\n@service.soap(\'AddIntegers\',returns={\'AddResult\':int},args={\'a\':int, \'b\':int})\ndef add(a,b):\n    "Add two values"\n    return a+b\n\n@service.xmlrpc\n@service.soap(\'SubIntegers\',returns={\'SubResult\':int},args={\'a\':int, \'b\':int})\ndef sub(a,b):\n    "Substract two values"\n    return a-b\n    \n@service.xmlrpc\n@service.soap(\'insereOrgao\',returns={\'s\':str},args={\'cnpj\':str, \'nome\':str, \'endereco\':str, \'cidade\':str, \'uf\':str})\ndef insereOrgao(cnpj,nome,endereco,cidade,uf):\n    s = Model.insereOrgao(cnpj,nome,endereco,cidade,uf)\n    return s\n\n@service.xmlrpc\n@service.soap(\'listaOrgao\',returns={ \'orgaos\': [{\'id\':str},{\'cnpj\':str},{\'nome\':str},{\'endereco\':str},{\'cidade\':str},{\'uf\':str}]},\nargs={\'nome\':str, \'endereco\':str, \'cidade\':str, \'uf\':str})\ndef listaOrgao(nome,endereco,cidade,uf):\n\tprint "nome: "+nome\n\tprint "end: "+endereco\n\torgaos = Model.listaOrgaos(nome,endereco,cidade,uf)\n\treturn orgaos \n\n\ndef call():\n    return service()\n\nresponse._vars=response._caller(call)\n'
+p7
+sS'snapshot'
+p8
+(dp9
+S'exception'
+p10
+(dp11
+S'__hash__'
+p12
+S"<method-wrapper '__hash__' of exceptions.TypeError object>"
+p13
+sS'__setattr__'
+p14
+S"<method-wrapper '__setattr__' of exceptions.TypeError object>"
+p15
+sS'__reduce_ex__'
+p16
+S'<built-in method __reduce_ex__ of exceptions.TypeError object>'
+p17
+sS'__getslice__'
+p18
+S"<method-wrapper '__getslice__' of exceptions.TypeError object>"
+p19
+sS'__getitem__'
+p20
+S"<method-wrapper '__getitem__' of exceptions.TypeError object>"
+p21
+sS'__setstate__'
+p22
+S'<built-in method __setstate__ of exceptions.TypeError object>'
+p23
+sS'__reduce__'
+p24
+S'<built-in method __reduce__ of exceptions.TypeError object>'
+p25
+sS'__str__'
+p26
+S"<method-wrapper '__str__' of exceptions.TypeError object>"
+p27
+sS'__format__'
+p28
+S'<built-in method __format__ of exceptions.TypeError object>'
+p29
+sS'__getattribute__'
+p30
+S"<method-wrapper '__getattribute__' of exceptions.TypeError object>"
+p31
+sS'__class__'
+p32
+S"<type 'exceptions.TypeError'>"
+p33
+sS'__unicode__'
+p34
+S'<built-in method __unicode__ of exceptions.TypeError object>'
+p35
+sS'__delattr__'
+p36
+S"<method-wrapper '__delattr__' of exceptions.TypeError object>"
+p37
+sS'__subclasshook__'
+p38
+S'<built-in method __subclasshook__ of type object>'
+p39
+sS'__repr__'
+p40
+S"<method-wrapper '__repr__' of exceptions.TypeError object>"
+p41
+sS'args'
+p42
+S"('expected string or buffer',)"
+p43
+sS'__dict__'
+p44
+S'{}'
+p45
+sS'__sizeof__'
+p46
+S'<built-in method __sizeof__ of exceptions.TypeError object>'
+p47
+sS'__doc__'
+p48
+S"'Inappropriate argument type.'"
+p49
+sS'__init__'
+p50
+S"<method-wrapper '__init__' of exceptions.TypeError object>"
+p51
+sS'__new__'
+p52
+S'<built-in method __new__ of type object>'
+p53
+ssS'evalue'
+p54
+S'expected string or buffer'
+p55
+sS'request'
+p56
+cgluon.html
+XML_unpickle
+p57
+(S's\xa0E\x00\x00<div><table><tr><td style="font-weight:bold;vertical-align:top">ajax</td><td valign="top">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">application</td><td valign="top">:</td><td><div>webservices</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">args</td><td valign="top">:</td><td><div><table><tr><td><div>soap</div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">body</td><td valign="top">:</td><td><div>&lt;open file &#x27;&lt;fdopen&gt;&#x27;, mode &#x27;w+b&#x27; at 0xb00ad30&gt;</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">cid</td><td valign="top">:</td><td><div>None</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">client</td><td valign="top">:</td><td><div>127.0.0.1</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">controller</td><td valign="top">:</td><td><div>sample</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">cookies</td><td valign="top">:</td><td><div><table></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">env</td><td valign="top">:</td><td><div><table><tr><td style="font-weight:bold;vertical-align:top">app_folders</td><td valign="top">:</td><td><div>set([&#x27;/home/wanzeller/www-dev/web2py/applications/webservices/&#x27;, &#x27;/home/wanzeller/www-dev/web2py/applications/welcome/&#x27;])</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">applications_parent</td><td valign="top">:</td><td><div>/home/wanzeller/www-dev/web2py</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">cmd_args</td><td valign="top">:</td><td><div><table></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">cmd_options</td><td valign="top">:</td><td><div>&lt;Values at 0xa9e536c: {&#x27;verbose&#x27;: False, &#x27;ip&#x27;: &#x27;127.0.0.1&#x27;, &#x27;with_scheduler&#x27;: False, &#x27;ips&#x27;: [&#x27;127.0.1.1&#x27;], &#x27;shutdown_timeout&#x27;: 5, &#x27;taskbar&#x27;: False, &#x27;with_coverage&#x27;: False, &#x27;port&#x27;: 8000, &#x27;maxthreads&#x27;: None, &#x27;softcron&#x27;: False, &#x27;server_name&#x27;: &#x27;debian&#x27;, &#x27;bpython&#x27;: False, &#x27;nogui&#x27;: False, &#x27;pid_filename&#x27;: &#x27;httpserver.pid&#x27;, &#x27;extcron&#x27;: False, &#x27;runcron&#x27;: False, &#x27;run_system_tests&#x27;: False, &#x27;test&#x27;: None, &#x27;folder&#x27;: &#x27;/home/wanzeller/www-dev/web2py&#x27;, &#x27;config&#x27;: &#x27;&#x27;, &#x27;import_models&#x27;: False, &#x27;winservice&#x27;: &#x27;&#x27;, &#x27;shell&#x27;: None, &#x27;run&#x27;: &#x27;&#x27;, &#x27;log_filename&#x27;: &#x27;httpserver.log&#x27;, &#x27;debuglevel&#x27;: 30, &#x27;args&#x27;: [&#x27;&#x27;], &#x27;socket_timeout&#x27;: 5, &#x27;ssl_ca_certificate&#x27;: None, &#x27;scheduler&#x27;: None, &#x27;profiler_filename&#x27;: None, &#x27;ssl_private_key&#x27;: &#x27;&#x27;, &#x27;scheduler_groups&#x27;: None, &#x27;password&#x27;: &#x27;&lt;ask&gt;&#x27;, &#x27;request_queue_size&#x27;: 5, &#x27;ssl_certificate&#x27;: &#x27;&#x27;, &#x27;cronjob&#x27;: False, &#x27;numthreads&#x27;: None, &#x27;quiet&#x27;: False, &#x27;interfaces&#x27;: None, &#x27;minthreads&#x27;: None, &#x27;timeout&#x27;: 10, &#x27;plain&#x27;: False, &#x27;nobanner&#x27;: False}&gt;</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">content_length</td><td valign="top">:</td><td><div>430</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">content_type</td><td valign="top">:</td><td><div>text/xml; charset=&quot;UTF-8&quot;</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">db_sessions</td><td valign="top">:</td><td><div>set([])</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">debugging</td><td valign="top">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">gluon_parent</td><td valign="top">:</td><td><div>/home/wanzeller/www-dev/web2py</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">http_accept_encoding</td><td valign="top">:</td><td><div>identity</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">http_content_length</td><td valign="top">:</td><td><div>430</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">http_content_type</td><td valign="top">:</td><td><div>text/xml; charset=&quot;UTF-8&quot;</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">http_host</td><td valign="top">:</td><td><div>localhost:8000</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">http_soapaction</td><td valign="top">:</td><td><div>&quot;http://localhost:8000/webservices/sample/call/soaplistaOrgao&quot;</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">http_user_agent</td><td valign="top">:</td><td><div>Python-httplib2/$Rev$</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">is_jython</td><td valign="top">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">is_pypy</td><td valign="top">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">local_hosts</td><td valign="top">:</td><td><div><table><tr><td><div>::1</div></td></tr><tr><td><div>127.0.1.1</div></td></tr><tr><td><div>::ffff:127.0.0.1</div></td></tr><tr><td><div>127.0.0.1</div></td></tr><tr><td><div>debian</div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">path_info</td><td valign="top">:</td><td><div>/webservices/sample/call/soap</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">query_string</td><td valign="top">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">remote_addr</td><td valign="top">:</td><td><div>127.0.0.1</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">remote_port</td><td valign="top">:</td><td><div>45660</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">request_method</td><td valign="top">:</td><td><div>POST</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">request_uri</td><td valign="top">:</td><td><div>/webservices/sample/call/soap</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">script_name</td><td valign="top">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">server_name</td><td valign="top">:</td><td><div>debian</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">server_port</td><td valign="top">:</td><td><div>8000</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">server_protocol</td><td valign="top">:</td><td><div>HTTP/1.1</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">server_software</td><td valign="top">:</td><td><div>Rocket 1.2.6</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">web2py_path</td><td valign="top">:</td><td><div>/home/wanzeller/www-dev/web2py</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">web2py_version</td><td valign="top">:</td><td><div>2.5.1-stable+timestamp.2013.06.06.15.39.19</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">wsgi_errors</td><td valign="top">:</td><td><div>&lt;open file &#x27;&lt;stderr&gt;&#x27;, mode &#x27;w&#x27; at 0xb741e0d0&gt;</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">wsgi_file_wrapper</td><td valign="top">:</td><td><div>&lt;class wsgiref.util.FileWrapper at 0xa9829ec&gt;</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">wsgi_input</td><td valign="top">:</td><td><div>&lt;socket._fileobject object at 0xb0b402c&gt;</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">wsgi_multiprocess</td><td valign="top">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">wsgi_multithread</td><td valign="top">:</td><td><div>True</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">wsgi_run_once</td><td valign="top">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">wsgi_url_scheme</td><td valign="top">:</td><td><div>http</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">wsgi_version</td><td valign="top">:</td><td><div><table><tr><td><div>1</div></td></tr><tr><td><div>0</div></td></tr></table></div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">extension</td><td valign="top">:</td><td><div>html</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">folder</td><td valign="top">:</td><td><div>/home/wanzeller/www-dev/web2py/applications/webservices/</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">function</td><td valign="top">:</td><td><div>call</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">get_vars</td><td valign="top">:</td><td><div><table></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">global_settings</td><td valign="top">:</td><td><div><table><tr><td style="font-weight:bold;vertical-align:top">app_folders</td><td valign="top">:</td><td><div>set([&#x27;/home/wanzeller/www-dev/web2py/applications/webservices/&#x27;, &#x27;/home/wanzeller/www-dev/web2py/applications/welcome/&#x27;])</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">applications_parent</td><td valign="top">:</td><td><div>/home/wanzeller/www-dev/web2py</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">cmd_args</td><td valign="top">:</td><td><div><table></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">cmd_options</td><td valign="top">:</td><td><div>&lt;Values at 0xa9e536c: {&#x27;verbose&#x27;: False, &#x27;ip&#x27;: &#x27;127.0.0.1&#x27;, &#x27;with_scheduler&#x27;: False, &#x27;ips&#x27;: [&#x27;127.0.1.1&#x27;], &#x27;shutdown_timeout&#x27;: 5, &#x27;taskbar&#x27;: False, &#x27;with_coverage&#x27;: False, &#x27;port&#x27;: 8000, &#x27;maxthreads&#x27;: None, &#x27;softcron&#x27;: False, &#x27;server_name&#x27;: &#x27;debian&#x27;, &#x27;bpython&#x27;: False, &#x27;nogui&#x27;: False, &#x27;pid_filename&#x27;: &#x27;httpserver.pid&#x27;, &#x27;extcron&#x27;: False, &#x27;runcron&#x27;: False, &#x27;run_system_tests&#x27;: False, &#x27;test&#x27;: None, &#x27;folder&#x27;: &#x27;/home/wanzeller/www-dev/web2py&#x27;, &#x27;config&#x27;: &#x27;&#x27;, &#x27;import_models&#x27;: False, &#x27;winservice&#x27;: &#x27;&#x27;, &#x27;shell&#x27;: None, &#x27;run&#x27;: &#x27;&#x27;, &#x27;log_filename&#x27;: &#x27;httpserver.log&#x27;, &#x27;debuglevel&#x27;: 30, &#x27;args&#x27;: [&#x27;&#x27;], &#x27;socket_timeout&#x27;: 5, &#x27;ssl_ca_certificate&#x27;: None, &#x27;scheduler&#x27;: None, &#x27;profiler_filename&#x27;: None, &#x27;ssl_private_key&#x27;: &#x27;&#x27;, &#x27;scheduler_groups&#x27;: None, &#x27;password&#x27;: &#x27;&lt;ask&gt;&#x27;, &#x27;request_queue_size&#x27;: 5, &#x27;ssl_certificate&#x27;: &#x27;&#x27;, &#x27;cronjob&#x27;: False, &#x27;numthreads&#x27;: None, &#x27;quiet&#x27;: False, &#x27;interfaces&#x27;: None, &#x27;minthreads&#x27;: None, &#x27;timeout&#x27;: 10, &#x27;plain&#x27;: False, &#x27;nobanner&#x27;: False}&gt;</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">db_sessions</td><td valign="top">:</td><td><div>set([])</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">debugging</td><td valign="top">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">gluon_parent</td><td valign="top">:</td><td><div>/home/wanzeller/www-dev/web2py</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">is_jython</td><td valign="top">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">is_pypy</td><td valign="top">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">local_hosts</td><td valign="top">:</td><td><div><table><tr><td><div>::1</div></td></tr><tr><td><div>127.0.1.1</div></td></tr><tr><td><div>::ffff:127.0.0.1</div></td></tr><tr><td><div>127.0.0.1</div></td></tr><tr><td><div>debian</div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">web2py_version</td><td valign="top">:</td><td><div>2.5.1-stable+timestamp.2013.06.06.15.39.19</div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">is_https</td><td valign="top">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">is_local</td><td valign="top">:</td><td><div>True</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">is_restful</td><td valign="top">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">now</td><td valign="top">:</td><td><div>datetime.datetime(2013, 7, 14, 20, 16, 13, 611860)</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">post_vars</td><td valign="top">:</td><td><div><table></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">raw_args</td><td valign="top">:</td><td><div>soap</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">raw_extension</td><td valign="top">:</td><td><div>None</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">url</td><td valign="top">:</td><td><div>/webservices/sample/call/soap</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">utcnow</td><td valign="top">:</td><td><div>datetime.datetime(2013, 7, 14, 23, 16, 13, 611871)</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">uuid</td><td valign="top">:</td><td><div>webservices/127.0.0.1.2013-07-14.20-16-13.8354aa86-36c0-4994-85eb-248663f07514</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">vars</td><td valign="top">:</td><td><div><table></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">wsgi</td><td valign="top">:</td><td><div><table><tr><td style="font-weight:bold;vertical-align:top">environ</td><td valign="top">:</td><td><div><table><tr><td style="font-weight:bold;vertical-align:top">CONTENT_LENGTH</td><td valign="top">:</td><td><div>430</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">CONTENT_TYPE</td><td valign="top">:</td><td><div>text/xml; charset=&quot;UTF-8&quot;</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">HTTP_ACCEPT_ENCODING</td><td valign="top">:</td><td><div>identity</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">HTTP_CONTENT_LENGTH</td><td valign="top">:</td><td><div>430</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">HTTP_CONTENT_TYPE</td><td valign="top">:</td><td><div>text/xml; charset=&quot;UTF-8&quot;</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">HTTP_HOST</td><td valign="top">:</td><td><div>localhost:8000</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">HTTP_SOAPACTION</td><td valign="top">:</td><td><div>&quot;http://localhost:8000/webservices/sample/call/soaplistaOrgao&quot;</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">HTTP_USER_AGENT</td><td valign="top">:</td><td><div>Python-httplib2/$Rev$</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">PATH_INFO</td><td valign="top">:</td><td><div>/webservices/sample/call/soap</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">QUERY_STRING</td><td valign="top">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">REMOTE_ADDR</td><td valign="top">:</td><td><div>127.0.0.1</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">REMOTE_PORT</td><td valign="top">:</td><td><div>45660</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">REQUEST_METHOD</td><td valign="top">:</td><td><div>POST</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">REQUEST_URI</td><td valign="top">:</td><td><div>/webservices/sample/call/soap</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">SCRIPT_NAME</td><td valign="top">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">SERVER_NAME</td><td valign="top">:</td><td><div>debian</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">SERVER_PORT</td><td valign="top">:</td><td><div>8000</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">SERVER_PROTOCOL</td><td valign="top">:</td><td><div>HTTP/1.1</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">SERVER_SOFTWARE</td><td valign="top">:</td><td><div>Rocket 1.2.6</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">wsgi.errors</td><td valign="top">:</td><td><div>&lt;open file &#x27;&lt;stderr&gt;&#x27;, mode &#x27;w&#x27; at 0xb741e0d0&gt;</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">wsgi.file_wrapper</td><td valign="top">:</td><td><div>&lt;class wsgiref.util.FileWrapper at 0xa9829ec&gt;</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">wsgi.input</td><td valign="top">:</td><td><div>&lt;open file &#x27;&lt;fdopen&gt;&#x27;, mode &#x27;w+b&#x27; at 0xb00ad30&gt;</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">wsgi.multiprocess</td><td valign="top">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">wsgi.multithread</td><td valign="top">:</td><td><div>True</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">wsgi.run_once</td><td valign="top">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">wsgi.url_scheme</td><td valign="top">:</td><td><div>http</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">wsgi.version</td><td valign="top">:</td><td><div>1</div></td></tr></table></div></td></tr></table></div></td></tr></table></div>'
+tRp58
+sS'frames'
+p59
+(lp60
+(dp61
+S'file'
+p62
+S'/home/wanzeller/www-dev/web2py/gluon/restricted.py'
+p63
+sS'dump'
+p64
+(dp65
+S'environment'
+p66
+S"{'A': <class 'gluon.html.A'>, 'ANY_OF': <class 'gluon.validators.ANY_OF'>, 'Auth': <class 'gluon.tools.Auth'>, 'B': <class 'gluon.html.B'>, 'BEAUTIFY': <class 'gluon.html.BEAUTIFY'>, 'BODY': <class 'gluon.html.BODY'>, 'BR': <class 'gluon.html.BR'>, 'BUTTON': <class 'gluon.html.BUTTON'>, 'CAT': <class 'gluon.html.CAT'>, 'CENTER': <class 'gluon.html.CENTER'>, ...}"
+p67
+sS'ccode'
+p68
+S'<code object <module> at 0xb10b848, file "/home/...tions/webservices/controllers/sample.py", line 3>'
+p69
+ssS'lnum'
+p70
+I212
+sS'lines'
+p71
+(dp72
+I207
+S'    try:'
+p73
+sI208
+S'        if isinstance(code, types.CodeType):'
+p74
+sI209
+S'            ccode = code'
+p75
+sI210
+S'        else:'
+p76
+sI211
+S'            ccode = compile2(code, layer)'
+p77
+sI212
+S'        exec ccode in environment'
+p78
+sI213
+S'    except HTTP:'
+p79
+sI214
+S'        raise'
+p80
+sI215
+S'    except RestrictedError:'
+p81
+sI216
+S'        # do not encapsulate (obfuscate) the original RestrictedError'
+p82
+ssS'call'
+p83
+S"(code='# coding: utf8\\n# tente algo como\\ndef index(): re...service()\\n\\nresponse._vars=response._caller(call)\\n', environment={'A': <class 'gluon.html.A'>, 'ANY_OF': <class 'gluon.validators.ANY_OF'>, 'Auth': <class 'gluon.tools.Auth'>, 'B': <class 'gluon.html.B'>, 'BEAUTIFY': <class 'gluon.html.BEAUTIFY'>, 'BODY': <class 'gluon.html.BODY'>, 'BR': <class 'gluon.html.BR'>, 'BUTTON': <class 'gluon.html.BUTTON'>, 'CAT': <class 'gluon.html.CAT'>, 'CENTER': <class 'gluon.html.CENTER'>, ...}, layer='/home/wanzeller/www-dev/web2py/applications/webservices/controllers/sample.py')"
+p84
+sS'func'
+p85
+S'restricted'
+p86
+sa(dp87
+g62
+S'/home/wanzeller/www-dev/web2py/applications/webservices/controllers/sample.py'
+p88
+sg64
+(dp89
+sg70
+I47
+sg71
+(dp90
+I36
+S"args={'nome':str, 'endereco':str, 'cidade':str, 'uf':str})"
+p91
+sI37
+S'def listaOrgao(nome,endereco,cidade,uf):'
+p92
+sI38
+S'\tprint "nome: "+nome'
+p93
+sI39
+S'\tprint "end: "+endereco'
+p94
+sI40
+S'\torgaos = Model.listaOrgaos(nome,endereco,cidade,uf)'
+p95
+sI41
+S'\treturn orgaos'
+p96
+sI42
+S''
+sI43
+S''
+sI44
+S'def call():'
+p97
+sI45
+S'    return service()'
+p98
+ssg83
+S'()'
+p99
+sg85
+S'<module>'
+p100
+sa(dp101
+g62
+S'/home/wanzeller/www-dev/web2py/gluon/globals.py'
+p102
+sg64
+(dp103
+S'self'
+p104
+S'undefined'
+p105
+sS'f'
+S'<function call>'
+p106
+ssg70
+I194
+sg71
+(dp107
+I192
+S"        self.delimiters = ('{{', '}}')"
+p108
+sI193
+S'        self._vars = None'
+p109
+sI194
+S'        self._caller = lambda f: f()'
+p110
+sI195
+S'        self._view_environment = None'
+p111
+sI196
+S'        self._custom_commit = None'
+p112
+sI197
+S'        self._custom_rollback = None'
+p113
+sI198
+S''
+sI189
+S'        self.menu = []             # used by the default view layout'
+p114
+sI190
+S'        self.files = []            # used by web2py_ajax.html'
+p115
+sI191
+S'        self.generic_patterns = []  # patterns to allow generic views'
+p116
+ssg83
+S'(f=<function call>)'
+p117
+sg85
+S'<lambda>'
+p118
+sa(dp119
+g62
+S'/home/wanzeller/www-dev/web2py/applications/webservices/controllers/sample.py'
+p120
+sg64
+(dp121
+S'global service'
+p122
+S'<gluon.tools.Service object>'
+p123
+ssg70
+I45
+sg71
+(dp124
+I36
+S"args={'nome':str, 'endereco':str, 'cidade':str, 'uf':str})"
+p125
+sI37
+S'def listaOrgao(nome,endereco,cidade,uf):'
+p126
+sI38
+S'\tprint "nome: "+nome'
+p127
+sI39
+S'\tprint "end: "+endereco'
+p128
+sI40
+S'\torgaos = Model.listaOrgaos(nome,endereco,cidade,uf)'
+p129
+sI41
+S'\treturn orgaos'
+p130
+sI42
+S''
+sI43
+S''
+sI44
+S'def call():'
+p131
+sI45
+S'    return service()'
+p132
+ssg83
+S'()'
+p133
+sg85
+g83
+sa(dp134
+g62
+S'/home/wanzeller/www-dev/web2py/gluon/tools.py'
+p135
+sg64
+(dp136
+S'self'
+p137
+S'<gluon.tools.Service object>'
+p138
+sS'self.serve_soap'
+p139
+S'<bound method Service.serve_soap of <gluon.tools.Service object>>'
+p140
+ssg70
+I4711
+sg71
+(dp141
+I4706
+S"        elif arg0 == 'amfrpc':"
+p142
+sI4707
+S'            return self.serve_amfrpc()'
+p143
+sI4708
+S"        elif arg0 == 'amfrpc3':"
+p144
+sI4709
+S'            return self.serve_amfrpc(3)'
+p145
+sI4710
+S"        elif arg0 == 'soap':"
+p146
+sI4711
+S'            return self.serve_soap()'
+p147
+sI4712
+S'        else:'
+p148
+sI4713
+S'            self.error()'
+p149
+sI4714
+S''
+sI4715
+S'    def error(self):'
+p150
+ssg83
+S'(self=<gluon.tools.Service object>)'
+p151
+sg85
+S'__call__'
+p152
+sa(dp153
+g62
+S'/home/wanzeller/www-dev/web2py/gluon/tools.py'
+p154
+sg64
+(dp155
+S'request.body.read'
+p156
+S'<built-in method read of file object>'
+p157
+sS'request.body'
+p158
+S"<open file '<fdopen>', mode 'w+b'>"
+p159
+sS'request'
+p160
+S"<Storage {'function': 'call', 'body': <open file...ations/webservices/', 'post_vars': <Storage {}>}>"
+p161
+sS'dispatcher'
+p162
+S'<gluon.contrib.pysimplesoap.server.SoapDispatcher object>'
+p163
+sS'dispatcher.dispatch'
+p164
+S'<bound method SoapDispatcher.dispatch of <gluon.contrib.pysimplesoap.server.SoapDispatcher object>>'
+p165
+ssg70
+I4619
+sg71
+(dp166
+I4614
+S'        for method, (function, returns, args, doc) in procedures.iteritems():'
+p167
+sI4615
+S'            dispatcher.register_function(method, function, returns, args, doc)'
+p168
+sI4616
+S"        if request.env.request_method == 'POST':"
+p169
+sI4617
+S'            # Process normal Soap Operation'
+p170
+sI4618
+S"            response.headers['Content-Type'] = 'text/xml'"
+p171
+sI4619
+S'            return dispatcher.dispatch(request.body.read())'
+p172
+sI4620
+S"        elif 'WSDL' in request.vars:"
+p173
+sI4621
+S'            # Return Web Service Description'
+p174
+sI4622
+S"            response.headers['Content-Type'] = 'text/xml'"
+p175
+sI4623
+S'            return dispatcher.wsdl()'
+p176
+ssg83
+S"(self=<gluon.tools.Service object>, version='1.1')"
+p177
+sg85
+S'serve_soap'
+p178
+sa(dp179
+g62
+S'/home/wanzeller/www-dev/web2py/gluon/contrib/pysimplesoap/server.py'
+p180
+sg64
+(dp181
+S'res'
+p182
+S'<listaOrgaoResponse xmlns="http://localhost:8000.../sample/call/soap"><orgaos/></listaOrgaoResponse>'
+p183
+sS'ret'
+p184
+S"[{None: 'DF'}]"
+p185
+sS'returns_types'
+p186
+S"{'orgaos': [{'id': <type 'str'>}, {'cnpj': <type 'str'>}, {'nome': <type 'str'>}, {'endereco': <type 'str'>}, {'cidade': <type 'str'>}, {'uf': <type 'str'>}]}"
+p187
+sS'res.marshall'
+p188
+S'<bound method SimpleXMLElement.marshall of <list...sample/call/soap"><orgaos/></listaOrgaoResponse>>'
+p189
+sS'returns_types.keys'
+p190
+S'<built-in method keys of dict object>'
+p191
+ssg70
+I234
+sg71
+(dp192
+I229
+S"                res['xmlns'] = self.namespace # add target namespace"
+p193
+sI230
+S''
+sI231
+S'            # serialize returned values (response) if type definition available'
+p194
+sI232
+S'            if returns_types:'
+p195
+sI233
+S'                if not isinstance(ret, dict):'
+p196
+sI234
+S'                    res.marshall(returns_types.keys()[0], ret, )'
+p197
+sI235
+S'                else:'
+p198
+sI236
+S'                    for k,v in ret.items():'
+p199
+sI237
+S'                        res.marshall(k, v)'
+p200
+sI238
+S'            elif returns_types is None:'
+p201
+ssg83
+S'(self=<gluon.contrib.pysimplesoap.server.SoapDispatcher object>, xml=u\'<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"/>\', action=None)'
+p202
+sg85
+S'dispatch'
+p203
+sa(dp204
+g62
+S'/home/wanzeller/www-dev/web2py/gluon/contrib/pysimplesoap/simplexml.py'
+p205
+sg64
+(dp206
+S'name'
+p207
+S"'orgaos'"
+p208
+sS'builtinFalse'
+p209
+S'False'
+p210
+sS'child.marshall'
+p211
+S'<bound method SimpleXMLElement.marshall of <orgaos/>>'
+p212
+sS't'
+S"{None: 'DF'}"
+p213
+sS'child'
+p214
+S'<orgaos/>'
+p215
+sS'ns'
+p216
+g210
+sS'add_comments'
+p217
+g210
+ssg70
+I543
+sg71
+(dp218
+I544
+S'        elif isinstance(value, basestring): # do not convert strings or unicodes'
+p219
+sI545
+S'            self.add_child(name, value,ns=ns)'
+p220
+sI546
+S'        elif value is None: # sent a empty tag?'
+p221
+sI547
+S'            self.add_child(name, ns=ns)'
+p222
+sI538
+S'            if not add_children_ns:'
+p223
+sI539
+S'                ns = False'
+p224
+sI540
+S'            if add_comments:'
+p225
+sI541
+S'                child.add_comment("Repetitive array of:")'
+p226
+sI542
+S'            for t in value:'
+p227
+sI543
+S'                child.marshall(name, t, False, add_comments=add_comments, ns=ns)'
+p228
+ssg83
+S'(self=<listaOrgaoResponse xmlns="http://localhost:8000.../sample/call/soap"><orgaos/></listaOrgaoResponse>, name=\'orgaos\', value=[{None: \'DF\'}], add_child=True, add_comments=False, ns=False, add_children_ns=True)'
+p229
+sg85
+S'marshall'
+p230
+sa(dp231
+g62
+S'/home/wanzeller/www-dev/web2py/gluon/contrib/pysimplesoap/simplexml.py'
+p232
+sg64
+(dp233
+S'k'
+S'None'
+p234
+sS'child'
+p235
+S'<orgaos/>'
+p236
+sS'child.marshall'
+p237
+S'<bound method SimpleXMLElement.marshall of <orgaos/>>'
+p238
+sS'v'
+S"'DF'"
+p239
+sS'ns'
+p240
+g210
+sS'add_comments'
+p241
+g210
+ssg70
+I529
+sg71
+(dp242
+I524
+S'        if isinstance(value, dict):  # serialize dict (<key>value</key>)'
+p243
+sI525
+S'            child = add_child and self.add_child(name, ns=ns) or self'
+p244
+sI526
+S'            for k,v in value.items():'
+p245
+sI527
+S'                if not add_children_ns:'
+p246
+sI528
+S'                    ns = False'
+p247
+sI529
+S'                child.marshall(k, v, add_comments=add_comments, ns=ns)'
+p248
+sI530
+S'        elif isinstance(value, tuple):  # serialize tuple (<key>value</key>)'
+p249
+sI531
+S'            child = add_child and self.add_child(name, ns=ns) or self'
+p250
+sI532
+S'            if not add_children_ns:'
+p251
+sI533
+S'                ns = False'
+p252
+ssg83
+S"(self=<orgaos/>, name='orgaos', value={None: 'DF'}, add_child=False, add_comments=False, ns=False, add_children_ns=True)"
+p253
+sg85
+g230
+sa(dp254
+g62
+S'/home/wanzeller/www-dev/web2py/gluon/contrib/pysimplesoap/simplexml.py'
+p255
+sg64
+(dp256
+S'self'
+p257
+S'<orgaos/>'
+p258
+sS'name'
+p259
+S'None'
+p260
+sS'self._update_ns'
+p261
+S'<bound method SimpleXMLElement._update_ns of <orgaos/>>'
+p262
+ssg70
+I522
+sg71
+(dp263
+I517
+S''
+sI518
+S'    def marshall(self, name, value, add_child=True, add_comments=False,'
+p264
+sI519
+S'                 ns=False, add_children_ns=True):'
+p265
+sI520
+S'        "Analize python value and add the serialized XML element using tag name"'
+p266
+sI521
+S'        # Change node name to that used by a client'
+p267
+sI522
+S'        name = self._update_ns(name)'
+p268
+sI523
+S''
+sI524
+S'        if isinstance(value, dict):  # serialize dict (<key>value</key>)'
+p269
+sI525
+S'            child = add_child and self.add_child(name, ns=ns) or self'
+p270
+sI526
+S'            for k,v in value.items():'
+p271
+ssg83
+S"(self=<orgaos/>, name=None, value='DF', add_child=True, add_comments=False, ns=False, add_children_ns=True)"
+p272
+sg85
+g230
+sa(dp273
+g62
+S'/home/wanzeller/www-dev/web2py/gluon/contrib/pysimplesoap/simplexml.py'
+p274
+sg64
+(dp275
+S'self.__ns_rx'
+p276
+g105
+sS'self'
+p277
+S'<orgaos/>'
+p278
+sS'pref'
+p279
+g105
+sS'name'
+p280
+S'None'
+p281
+ssg70
+I508
+sg71
+(dp282
+I512
+S'                name = name.replace(pref, self.__namespaces_map[pref])'
+p283
+sI503
+S'        return d'
+p284
+sI504
+S''
+sI505
+S''
+sI506
+S'    def _update_ns(self, name):'
+p285
+sI507
+S'        """Replace the defined namespace alias with tohse used by the client."""'
+p286
+sI508
+S'        pref = self.__ns_rx.search(name)'
+p287
+sI509
+S'        if pref:'
+p288
+sI510
+S'            pref = pref.groups()[0]'
+p289
+sI511
+S'            try:'
+p290
+ssg83
+S'(self=<orgaos/>, name=None)'
+p291
+sg85
+S'_update_ns'
+p292
+sasS'pyver'
+p293
+S'Python 2.6.6: /usr/bin/python (prefix: /usr)'
+p294
+sS'session'
+p295
+g57
+(S's\x1a\x00\x00\x00<div><table></table></div>'
+tRp296
+sS'etype'
+p297
+S"<type 'exceptions.TypeError'>"
+p298
+sS'date'
+p299
+S'Sun Jul 14 20:16:13 2013'
+p300
+sS'response'
+p301
+g57
+(S's\xbd+\x00\x00<div><table><tr><td style="font-weight:bold;vertical-align:top">body</td><td valign="top">:</td><td><div>&lt;cStringIO.StringO object at 0xb002400&gt;</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">cookies</td><td valign="top">:</td><td><div><table><tr><td style="font-weight:bold;vertical-align:top">session_id_webservices</td><td valign="top">:</td><td><div>127.0.0.1-47282b8b-d027-4b10-86b9-7c195d7cd3cf<table><tr><td style="font-weight:bold;vertical-align:top">comment</td><td valign="top">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">domain</td><td valign="top">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">expires</td><td valign="top">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">httponly</td><td valign="top">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">max-age</td><td valign="top">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">path</td><td valign="top">:</td><td><div>/</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">secure</td><td valign="top">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">version</td><td valign="top">:</td><td><div></div></td></tr></table></div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">delimiters</td><td valign="top">:</td><td><div><table><tr><td><div>{{</div></td></tr><tr><td><div>}}</div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">files</td><td valign="top">:</td><td><div><table></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">flash</td><td valign="top">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">generic_patterns</td><td valign="top">:</td><td><div><table><tr><td><div>*</div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">google_analytics_id</td><td valign="top">:</td><td><div>None</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">headers</td><td valign="top">:</td><td><div><table><tr><td style="font-weight:bold;vertical-align:top">Content-Type</td><td valign="top">:</td><td><div>text/xml</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">X-Powered-By</td><td valign="top">:</td><td><div>web2py</div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">logo</td><td valign="top">:</td><td><div><a class="brand" href="http://www.web2py.com/"><b>web<span>2</span>py</b>&trade;&nbsp;</a></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">menu</td><td valign="top">:</td><td><div><table><tr><td><div><table><tr><td><div>Home</div></td></tr><tr><td><div>False</div></td></tr><tr><td><div>/webservices/default/index</div></td></tr><tr><td><div><table></table></div></td></tr></table></div></td></tr><tr><td><div><table><tr><td><div><span class="highlighted">web2py</span></div></td></tr><tr><td><div>False</div></td></tr><tr><td><div>http://web2py.com</div></td></tr><tr><td><div><table><tr><td><div><table><tr><td><div>My Sites</div></td></tr><tr><td><div>False</div></td></tr><tr><td><div>/admin/default/site</div></td></tr></table></div></td></tr><tr><td><div><table><tr><td><div>This App</div></td></tr><tr><td><div>False</div></td></tr><tr><td><div>/admin/default/design/webservices</div></td></tr><tr><td><div>[(&lt;lazyT &#x27;Controller&#x27;&gt;, False, &#x27;/admin/default/edit/webservices/controllers/sample.py&#x27;), (&lt;lazyT &#x27;View&#x27;&gt;, False, &#x27;/admin/default/edit/webservices/views/sample/call.html&#x27;), (&lt;lazyT &#x27;Layout&#x27;&gt;, False, &#x27;/admin/default/edit/webservices/views/layout.html&#x27;), (&lt;lazyT &#x27;Stylesheet&#x27;&gt;, False, &#x27;/admin/default/edit/webservices/static/css/web2py.css&#x27;), (&lt;lazyT &#x27;DB Model&#x27;&gt;, False, &#x27;/admin/default/edit/webservices/models/db.py&#x27;), (&lt;lazyT &#x27;Menu Model&#x27;&gt;, False, &#x27;/admin/default/edit/webservices/models/menu.py&#x27;), (&lt;lazyT &#x27;Database&#x27;&gt;, False, &#x27;/webservices/appadmin/index&#x27;), (&lt;lazyT &#x27;Errors&#x27;&gt;, False, &#x27;/admin/default/errors/webservices&#x27;), (&lt;lazyT &#x27;About&#x27;&gt;, False, &#x27;/admin/default/about/webservices&#x27;)]</div></td></tr></table></div></td></tr><tr><td><div><table><tr><td><div>web2py.com</div></td></tr><tr><td><div>False</div></td></tr><tr><td><div>http://www.web2py.com</div></td></tr><tr><td><div>[(&lt;lazyT &#x27;Download&#x27;&gt;, False, &#x27;http://www.web2py.com/examples/default/download&#x27;), (&lt;lazyT &#x27;Support&#x27;&gt;, False, &#x27;http://www.web2py.com/examples/default/support&#x27;), (&lt;lazyT &#x27;Demo&#x27;&gt;, False, &#x27;http://web2py.com/demo_admin&#x27;), (&lt;lazyT &#x27;Quick Examples&#x27;&gt;, False, &#x27;http://web2py.com/examples/default/examples&#x27;), (&lt;lazyT &#x27;FAQ&#x27;&gt;, False, &#x27;http://web2py.com/AlterEgo&#x27;), (&lt;lazyT &#x27;Videos&#x27;&gt;, False, &#x27;http://www.web2py.com/examples/default/videos/&#x27;), (&lt;lazyT &#x27;Free Applications&#x27;&gt;, False, &#x27;http://web2py.com/appliances&#x27;), (&lt;lazyT &#x27;Plugins&#x27;&gt;, False, &#x27;http://web2py.com/plugins&#x27;), (&lt;lazyT &#x27;Layouts&#x27;&gt;, False, &#x27;http://web2py.com/layouts&#x27;), (&lt;lazyT &#x27;Recipes&#x27;&gt;, False, &#x27;http://web2pyslices.com/&#x27;), (&lt;lazyT &#x27;Semantic&#x27;&gt;, False, &#x27;http://web2py.com/semantic&#x27;)]</div></td></tr></table></div></td></tr><tr><td><div><table><tr><td><div>Documentation</div></td></tr><tr><td><div>False</div></td></tr><tr><td><div>http://www.web2py.com/book</div></td></tr><tr><td><div>[(&lt;lazyT &#x27;Preface&#x27;&gt;, False, &#x27;http://www.web2py.com/book/default/chapter/00&#x27;), (&lt;lazyT &#x27;Introduction&#x27;&gt;, False, &#x27;http://www.web2py.com/book/default/chapter/01&#x27;), (&lt;lazyT &#x27;Python&#x27;&gt;, False, &#x27;http://www.web2py.com/book/default/chapter/02&#x27;), (&lt;lazyT &#x27;Overview&#x27;&gt;, False, &#x27;http://www.web2py.com/book/default/chapter/03&#x27;), (&lt;lazyT &#x27;The Core&#x27;&gt;, False, &#x27;http://www.web2py.com/book/default/chapter/04&#x27;), (&lt;lazyT &#x27;The Views&#x27;&gt;, False, &#x27;http://www.web2py.com/book/default/chapter/05&#x27;), (&lt;lazyT &#x27;Database&#x27;&gt;, False, &#x27;http://www.web2py.com/book/default/chapter/06&#x27;), (&lt;lazyT &#x27;Forms and Validators&#x27;&gt;, False, &#x27;http://www.web2py.com/book/default/chapter/07&#x27;), (&lt;lazyT &#x27;Email and SMS&#x27;&gt;, False, &#x27;http://www.web2py.com/book/default/chapter/08&#x27;), (&lt;lazyT &#x27;Access Control&#x27;&gt;, False, &#x27;http://www.web2py.com/book/default/chapter/09&#x27;), (&lt;lazyT &#x27;Services&#x27;&gt;, False, &#x27;http://www.web2py.com/book/default/chapter/10&#x27;), (&lt;lazyT &#x27;Ajax Recipes&#x27;&gt;, False, &#x27;http://www.web2py.com/book/default/chapter/11&#x27;), (&lt;lazyT &#x27;Components and Plugins&#x27;&gt;, False, &#x27;http://www.web2py.com/book/default/chapter/12&#x27;), (&lt;lazyT &#x27;Deployment Recipes&#x27;&gt;, False, &#x27;http://www.web2py.com/book/default/chapter/13&#x27;), (&lt;lazyT &#x27;Other Recipes&#x27;&gt;, False, &#x27;http://www.web2py.com/book/default/chapter/14&#x27;), (&lt;lazyT &#x27;Buy this book&#x27;&gt;, False, &#x27;http://stores.lulu.com/web2py&#x27;)]</div></td></tr></table></div></td></tr><tr><td><div><table><tr><td><div>Community</div></td></tr><tr><td><div>False</div></td></tr><tr><td><div>None</div></td></tr><tr><td><div>[(&lt;lazyT &#x27;Groups&#x27;&gt;, False, &#x27;http://www.web2py.com/examples/default/usergroups&#x27;), (&lt;lazyT &#x27;Twitter&#x27;&gt;, False, &#x27;http://twitter.com/web2py&#x27;), (&lt;lazyT &#x27;Live Chat&#x27;&gt;, False, &#x27;http://webchat.freenode.net/?channels=web2py&#x27;)]</div></td></tr></table></div></td></tr><tr><td><div><table><tr><td><div>Plugins</div></td></tr><tr><td><div>False</div></td></tr><tr><td><div>None</div></td></tr><tr><td><div>[(&#x27;plugin_wiki&#x27;, False, &#x27;http://web2py.com/examples/default/download&#x27;), (&lt;lazyT &#x27;Other Plugins&#x27;&gt;, False, &#x27;http://web2py.com/plugins&#x27;), (&lt;lazyT &#x27;Layout Plugins&#x27;&gt;, False, &#x27;http://web2py.com/layouts&#x27;)]</div></td></tr></table></div></td></tr></table></div></td></tr></table></div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">meta</td><td valign="top">:</td><td><div><table><tr><td style="font-weight:bold;vertical-align:top">author</td><td valign="top">:</td><td><div>Your Name &lt;you@example.com&gt;</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">description</td><td valign="top">:</td><td><div>a cool new app</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">generator</td><td valign="top">:</td><td><div>Web2py Web Framework</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">keywords</td><td valign="top">:</td><td><div>web2py, python, framework</div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">models_to_run</td><td valign="top">:</td><td><div><table><tr><td><div>^\\w+\\.py$</div></td></tr><tr><td><div>^sample/\\w+\\.py$</div></td></tr><tr><td><div>^sample/call/\\w+\\.py$</div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">postprocessing</td><td valign="top">:</td><td><div><table></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">session_cookie_expires</td><td valign="top">:</td><td><div>None</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">session_data_name</td><td valign="top">:</td><td><div>session_data_webservices</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">session_filename</td><td valign="top">:</td><td><div>/home/wanzeller/www-dev/web2py/applications/webservices/sessions/127.0.0.1-47282b8b-d027-4b10-86b9-7c195d7cd3cf</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">session_id</td><td valign="top">:</td><td><div>127.0.0.1-47282b8b-d027-4b10-86b9-7c195d7cd3cf</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">session_id_name</td><td valign="top">:</td><td><div>session_id_webservices</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">session_new</td><td valign="top">:</td><td><div>True</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">session_storage_type</td><td valign="top">:</td><td><div>file</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">status</td><td valign="top">:</td><td><div>200</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">subtitle</td><td valign="top">:</td><td><div>customize me!</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">title</td><td valign="top">:</td><td><div>Webservices</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">view</td><td valign="top">:</td><td><div>sample/call.html</div></td></tr></table></div>'
+tRp302
+sS'locals'
+p303
+(dp304
+S'self'
+p305
+S'<orgaos/>'
+p306
+sS'name'
+p307
+S'None'
+p308
+sssS'traceback'
+p309
+S'Traceback (most recent call last):\n  File "/home/wanzeller/www-dev/web2py/gluon/restricted.py", line 212, in restricted\n    exec ccode in environment\n  File "/home/wanzeller/www-dev/web2py/applications/webservices/controllers/sample.py", line 47, in <module>\n  File "/home/wanzeller/www-dev/web2py/gluon/globals.py", line 194, in <lambda>\n    self._caller = lambda f: f()\n  File "/home/wanzeller/www-dev/web2py/applications/webservices/controllers/sample.py", line 45, in call\n    return service()\n  File "/home/wanzeller/www-dev/web2py/gluon/tools.py", line 4711, in __call__\n    return self.serve_soap()\n  File "/home/wanzeller/www-dev/web2py/gluon/tools.py", line 4619, in serve_soap\n    return dispatcher.dispatch(request.body.read())\n  File "/home/wanzeller/www-dev/web2py/gluon/contrib/pysimplesoap/server.py", line 234, in dispatch\n    res.marshall(returns_types.keys()[0], ret, )\n  File "/home/wanzeller/www-dev/web2py/gluon/contrib/pysimplesoap/simplexml.py", line 543, in marshall\n    child.marshall(name, t, False, add_comments=add_comments, ns=ns)\n  File "/home/wanzeller/www-dev/web2py/gluon/contrib/pysimplesoap/simplexml.py", line 529, in marshall\n    child.marshall(k, v, add_comments=add_comments, ns=ns)\n  File "/home/wanzeller/www-dev/web2py/gluon/contrib/pysimplesoap/simplexml.py", line 522, in marshall\n    name = self._update_ns(name)\n  File "/home/wanzeller/www-dev/web2py/gluon/contrib/pysimplesoap/simplexml.py", line 508, in _update_ns\n    pref = self.__ns_rx.search(name)\nTypeError: expected string or buffer\n'
+p310
+s.

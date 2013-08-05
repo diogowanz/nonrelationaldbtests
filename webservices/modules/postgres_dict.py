@@ -26,22 +26,23 @@ class Model:
 
 	def insereEmpregado(self,nome,dt_contratacao,dt_desligamento,dt_nascimento,nu_matricula,rg,cpf,id_orgao,documentos,dependentes):
 		conn = self.abreConexao()
-		values = "('"+nome+"','"+dt_contratacao+"','"+dt_nascimento+"','"+nu_matricula+"',"+str(rg)+","+str(cpf)+","+str(id_orgao)
-		if dt_desligamento == None or dt_desligamento == '':
-			values = values +",NULL)"
-		else:
-			values = values +",'"+dt_desligamento+"')"
-		if documentos == None:
-			documentos = 'Null'
-		if dependentes == None:
-			dependentes = 'Null'
-		sql = "insert into tb004_empregado (no_empregado, dt_contratacao,dt_nascimento,nu_matricula,nu_rg,nu_cpf,id_orgao,dt_desligamento) values "+values
+		#values = "('"+nome+"','"+dt_contratacao+"','"+dt_nascimento+"','"+nu_matricula+"',"+str(rg)+","+str(cpf)+","+str(id_orgao)+",NULL)"
+		#if dt_desligamento == None or dt_desligamento == '':
+		#	values = values +",NULL)"
+		#	dt_desligamento = 'Null'
+		#if documentos == None:
+		#	documentos = 'Null'
+		#if dependentes == None:
+		#	dependentes = 'Null'
+		#sql = "insert into tb004_empregado (no_empregado, dt_contratacao,dt_nascimento,nu_matricula,nu_rg,nu_cpf,id_orgao,dt_desligamento) values "+values
+		sql = "insert into tb004_empregado (no_empregado, dt_contratacao,id_orgao) values ('Empregado WEB','18/07/2013',2)"
 		cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 		resultado = cursor.execute(sql)
 		conn.commit()
 		#cursor.close()
 		#return resultado
 		return "empregado inserido com sucesso!"
+		#return sql
 		
 	def insereDependente(self,nome,rg,cpf,certidao,dt_nascimento,tp_vinculo,documentos,idEmpregado):
 		conn = self.abreConexao()
@@ -107,7 +108,7 @@ class Model:
 					os.makedirs(config.get("path", "filePath")+str(resultEmpregado["id_orgao"])+'/'+str(resultEmpregado["nu_matricula"]))
 				no_doc = config.get("path", "filePath")+str(resultEmpregado["id_orgao"])+'/'+str(resultEmpregado["nu_matricula"])+'/'+no_doc
 				self.upload_file(file,no_doc)
-				sql = "insert into tb006_documento (no_documento,id_tipo_documento,id_empregado,dh_upload) values ('"+no_doc+"',"+"1"+","+str(resultEmpregado['id_empregado'])+",'"+str(datetime.datetime.now())+"')"
+				sql = "insert into tb006_documento (no_documento,id_tipo_documento,id_empregado,dh_upload) values ('"+no_doc+"',"+1+","+str(resultEmpregado['id_empregado'])+",'"+str(datetime.datetime.now())+"')"
 				cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 				cursor.execute(sql)
 				conn.commit()
@@ -118,8 +119,6 @@ class Model:
 			return "Matricula invalida!"
 				
 	def insereDocDependente(self,empreg_matricula, rg_dependente,cpf_dependente,certidao_dependente,tp_documento, no_doc,file):
-		#Ver caminho onde sera salvo o arquivo
-		#ver tipo de documento
 		conn = self.abreConexao()
 		sql = "select * from tb004_empregado where nu_matricula = '"+empreg_matricula+"'"
 		cursor1 = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
@@ -131,26 +130,25 @@ class Model:
 					return "Insira um dos campos a seguir: rg, cpf,certidao"
 			else:
 				filtro = ''
-				if rg_dependente == None or rg_dependente == '':
+				if rg_dependente == None:
 					pass
 				else:
-					filtro = filtro + " and nu_rg = "+str(rg_dependente) 
-				if cpf_dependente == None or cpf_dependente == '':
+					filtro = filtro + "and nu_rg = "+str(rg_dependente) 
+				if cpf_dependente == None:
 					pass
 				else:
-					filtro = filtro + " and nu_cpf = "+str(cpf_dependente) 
-				if certidao_dependente == None or certidao_dependente == '':
+					filtro = filtro + "and nu_cpf = "+str(cpf_dependente) 
+				if certidao_dependente == None:
 					pass
 				else:
-					filtro = filtro + " and nu_certidao = "+str(certidao_dependente) 
+					filtro = filtro + "and nu_certidao = "+str(certidao_dependente) 
 				sql = "select * from tb005_empregado_dependente where 1=1 "+filtro
-				print sql
 				cursor2 = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 				cursor2.execute(sql)
 				conn.commit()
 				resultDependente = cursor2
 				if resultDependente.arraysize != 0:
-					sql = "select id_tipo_documento from tb001_tipo_documento where id_tipo_documento = 1"
+					sql = "select id_tipo_documento from tb001_tipo_documento where id_tipo_documento = '"+tp_documento+"'"
 					cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 					cursor.execute(sql)
 					conn.commit()
@@ -161,19 +159,12 @@ class Model:
 						config = ConfigParser.ConfigParser()
 						config.read("config.conf")
 						if not os.path.exists(config.get("path", "filePath")+str(resultEmpregado["id_orgao"])):
-							os.makedirs(config.get("path", "filePath")+str(resultEmpregado["id_orgao"])+'/'+str(resultEmpregado["nu_matricula"])+'/'+str(rg_dependente))
+							os.makedirs(config.get("path", "filePath")+str(resultEmpregado["id_orgao"])+'/'+str(resultEmpregado["nu_matricula"]))
 						elif not os.path.exists(config.get("path", "filePath")+str(resultEmpregado["id_orgao"])+'/'+str(resultEmpregado["nu_matricula"])):
-							os.makedirs(config.get("path", "filePath")+str(resultEmpregado["id_orgao"])+'/'+str(resultEmpregado["nu_matricula"])+'/'+str(rg_dependente))
-						elif not os.path.exists(config.get("path", "filePath")+str(resultEmpregado["id_orgao"])+'/'+str(resultEmpregado["nu_matricula"])+'/'+str(rg_dependente)):
-							os.makedirs(config.get("path", "filePath")+str(resultEmpregado["id_orgao"])+'/'+str(resultEmpregado["nu_matricula"])+'/'+str(rg_dependente))
-						no_doc = config.get("path", "filePath")+str(resultEmpregado["id_orgao"])+'/'+str(resultEmpregado["nu_matricula"])+'/'+str(rg_dependente)+'/'+no_doc
+							os.makedirs(config.get("path", "filePath")+str(resultEmpregado["id_orgao"])+'/'+str(resultEmpregado["nu_matricula"]))
+						no_doc = config.get("path", "filePath")+str(resultEmpregado["id_orgao"])+'/'+str(resultEmpregado["nu_matricula"])+'/'+no_doc
 						self.upload_file(file,no_doc)
-						print str(1) 
-						print str(resultEmpregado["id_empregado"])
-						print str(resultDependente["id_empregado_dependente"]) 
-						print no_doc 
-						print str(datetime.datetime.now())
-						sql = "insert into tb006_documento (id_tipo_documento,id_empregado,id_empregado_dependente,no_documento,dh_upload) values("+str(1)+","+str(resultEmpregado["id_empregado"])+","+str(resultDependente["id_empregado_dependente"])+",'"+no_doc+"','"+str(datetime.datetime.now())+"')"
+						sql = "insert into tb006_documento (id_tipo_documento,id_empregado,id_empregado_dependente,no_documento,dh_upload) values("+str(tp_documento)+","+str(resultEmpregado["id_empregado"])+","+str(resultDependente["id_empregado_dependente"])+",'"+no_doc+"','"+str(datetime.datetime.now())+"')"
 						cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 						cursor.execute(sql)
 						conn.commit()
@@ -200,6 +191,7 @@ class Model:
 			if uf != '' and uf != None:
 				filtro = "and no_uf like '%"+uf+"%'"
 			sql = "select * from tb002_orgao where 1=1 "+filtro
+			print sql
 			cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 			resultado = cursor.execute(sql)
 			conn.commit()
@@ -254,14 +246,14 @@ class Model:
 			nomeEmpregado = "AND no_empregado = '"+nomeEmpregado+"'"
 			
 		if matricula != '':
-			matricula = "AND nu_matricula = '"+matricula+"'"
+			nome = "AND nu_matricula = '"+matricula+"'"
 			
 		if dt_nascimento != '':
 			dt_nascimento = "AND dt_nascimento = '"+dt_nascimento+"'"
 			
 		if tp_vinculo != '':
 			tp_vinculo = "AND tp_vinculo = '"+tp_vinculo+"'"
-		sql = "select tb005_empregado_dependente.* from tb005_empregado_dependente join tb004_empregado on tb004_empregado.id_empregado =  tb005_empregado_dependente.id_empregado where 1=1 "+nomeDependente+nomeEmpregado+matricula+dt_nascimento+tp_vinculo
+		sql = "select * from tb005_empregado_dependente join tb004_empregado on tb004_empregado.id_empregado =  tb005_empregado_dependente.id_empregado where 1=1 "+nomeDependente+nomeEmpregado+matricula+dt_nascimento+tp_vinculo
 		cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 		cursor.execute(sql)
 		conn.commit()
