@@ -104,8 +104,19 @@ CREATE TABLE tb006_documento
 );
 
 insert into tb001_tipo_documento (no_tipo_documento, ic_ativo) values ('RG',TRUE);
+insert into tb001_tipo_documento (no_tipo_documento, ic_ativo) values ('CPF',TRUE);
+insert into tb001_tipo_documento (no_tipo_documento, ic_ativo) values ('CERTIDAO DE CASAMENTO',TRUE);
+insert into tb001_tipo_documento (no_tipo_documento, ic_ativo) values ('CERTIDAO DE NASCIMENTO',TRUE);
+insert into tb001_tipo_documento (no_tipo_documento, ic_ativo) values ('COMPROVANTE DE RESIDENCIA',TRUE);
+insert into tb001_tipo_documento (no_tipo_documento, ic_ativo) values ('DIPLOMA',TRUE);
+insert into tb001_tipo_documento (no_tipo_documento, ic_ativo) values ('CERTIFICADO',TRUE);
 
-insert into tb003_tipo_vinculo (no_tipo_vinculo) values ('FILHO');
 insert into tb003_tipo_vinculo (no_tipo_vinculo) values ('CONJUGE');
+insert into tb003_tipo_vinculo (no_tipo_vinculo) values ('FILHO');
+insert into tb003_tipo_vinculo (no_tipo_vinculo) values ('PAI');
+insert into tb003_tipo_vinculo (no_tipo_vinculo) values ('MAE');
+insert into tb003_tipo_vinculo (no_tipo_vinculo) values ('SOGRO');
+insert into tb003_tipo_vinculo (no_tipo_vinculo) values ('SOGRA');
+insert into tb003_tipo_vinculo (no_tipo_vinculo) values ('ENTEADO');
 
 COMMIT;
