@@ -201,13 +201,13 @@ class Model:
 	def listaOrgaos(self,nome='',endereco='',cidade='',uf=''):
 		conn = self.abreConexao()
 		filtro = ''
-		if !(self.validaCampo(nome)):
+		if not(self.validaCampo(nome)):
 			filtro += " and no_orgao like '%"+nome.strip().upper()+"%'"
-		if !(self.validaCampo(endereco)):
+		if not(self.validaCampo(endereco)):
 			filtro += " and no_endereco like '%"+endereco.strip().upper()+"%'"
-		if !(self.validaCampo(cidade)):
+		if not(self.validaCampo(cidade)):
 			filtro += " and no_cidade like '%"+cidade.strip().upper()+"%'"
-		if !(self.validaCampo(uf)):
+		if not(self.validaCampo(uf)):
 			filtro += " and no_uf like '%"+uf.strip().upper()+"%'"
 		sql = "select * from tb002_orgao where 1=1 "+filtro
 		cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
@@ -228,19 +228,19 @@ class Model:
 	def listaEmpregados(self,nome='',dt_contratacao='',dt_desligamento='',dt_nascimento='',nu_matricula=''):
 		conn = self.abreConexao()
 		filtro = ''
-		if !(self.validaCampo(nome)):
+		if not(self.validaCampo(nome)):
 			filtro += " AND no_empregado like '%"+nome.strip().upper()+"%'"
 			
-		if !(self.validaCampo(dt_contratacao)):
+		if not(self.validaCampo(dt_contratacao)):
 			filtro += " AND dt_contratacao = '"+dt_contratacao.strip()+"'"
 			
-		if !(self.validaCampo(dt_desligamento)):
+		if not(self.validaCampo(dt_desligamento)):
 			filtro += " AND dt_desligamento = '"+dt_desligamento.strip()+"'"
 			
-		if !(self.validaCampo(dt_nascimento)):
+		if not(self.validaCampo(dt_nascimento)):
 			filtro += " AND dt_nascimento = '"+dt_nascimento.strip()+"'"
 			
-		if !(self.validaCampo(nu_matricula)):
+		if not(self.validaCampo(nu_matricula)):
 			filtro += " AND nu_matricula like '%"+nu_matricula.strip().upper()+"%'"
 			
 		sql = "select * from tb004_empregado where 1=1 "+filtro
@@ -258,19 +258,19 @@ class Model:
 	def listaDependentes(self,nomeEmpregado='',nomeDependente='',matricula='',dt_nascimento='',tp_vinculo=''):
 		conn = self.abreConexao()
 		filtro = ''
-		if !(self.validaCampo(nomeDependente)):
+		if not(self.validaCampo(nomeDependente)):
 			filtro += " AND no_empregado_dependente like '%"+nomeDependente.strip().upper()+"%'"
 			
-		if !(self.validaCampo(nomeEmpregado)):
+		if not(self.validaCampo(nomeEmpregado)):
 			filtro += " AND no_empregado like '%"+nomeEmpregado.strip().upper()+"%'"
 			
-		if !(self.validaCampo(matricula)):
+		if not(self.validaCampo(matricula)):
 			filtro += " AND nu_matricula like '%"+matricula.strip().upper()+"%'"
 			
-		if !(self.validaCampo(dt_nascimento)):
+		if not(self.validaCampo(dt_nascimento)):
 			filtro += " AND dt_nascimento = '"+dt_nascimento.strip()+"'"
 			
-		if !(self.validaCampo(tp_vinculo)):
+		if not(self.validaCampo(tp_vinculo)):
 			filtro += " AND tp_vinculo = "+tp_vinculo.strip()
 		sql = "select tb005_empregado_dependente.* from tb005_empregado_dependente join tb004_empregado on tb004_empregado.id_empregado =  tb005_empregado_dependente.id_empregado where 1=1 "+filtro
 		cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
@@ -284,10 +284,40 @@ class Model:
 			dependentesDict.append(l)
 		return dependentesDict
 		
-	def retornaDocEmpregado (matricula,id_empregado):
-		print 'Temporario'
+	def retornaDocEmpregado (self,nu_matricula,no_documento,tp_documento):
+		if self.validaCampo(nu_matricula):
+			return 'Favor informar a matricula do empregado.'
+		else:
+			sql = "select no_documento from tb004_empregado "
+			sql+=	"join tb006_documento on tb006_documento.id_empregado = tb004_empregado.id_empregado and id_empregado_dependente is null "
+			sql+=	"join tb001_tipo_documento on tb001_tipo_documento.id_tipo_documento = tb006_documento.id_tipo_documento "
+			sql+= "where 1=1 and nu_matricula = '"+nu_matricula+"'"
+			
+			filtro = ''
+			if not(self.validaCampo(no_documento)):
+				filtro += "and no_documento ='"+no_documento+"'"
+			if not(self.validaCampo(tp_documento)):
+				filtro += "and id_tipo_documento ="+tp_documento
+			
+			sql += filtro
+			conn = self.abreConexao()
+			cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+			cursor.execute(sql)
+			conn.commit()
+			docsEmpregadoDict=[]
+			for row in cursor:
+				l = dict()
+				file=open(row['no_documento'], 'rb')
+				data=file.read()
+				l['file'] = data.encode('base64')
+				for collumn in row:
+					l[collumn]=row[collumn]
+				docsEmpregadoDict.append(l)
+
+		return docsEmpregadoDict
+			
 		
-	def retornaDocDependente (id_dependente,rg,cpf,certidao):
+	def retornaDocDependente (nu_rg,nu_cpf,nu_certidao):
 		print 'Temporario'
 					
 	def upload_file(self,file, name):
