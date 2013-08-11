@@ -317,8 +317,44 @@ class Model:
 		return docsEmpregadoDict
 			
 		
-	def retornaDocDependente (nu_rg,nu_cpf,nu_certidao):
-		print 'Temporario'
+	def retornaDocDependente (self,nu_rg,nu_cpf,nu_certidao, no_documento, tp_documento):
+		if self.validaCampo(nu_rg) and self.validaCampo(nu_cpf) and self.validaCampo(nu_certidao):
+			return 'Favor informar um dos campos a seguir: RG, CPF, Certidao.'
+		else:
+			sql = "select no_documento from tb005_empregado_dependente "
+			sql+=	"join tb006_documento on tb006_documento.id_empregado_dependente = tb005_empregado_dependente.id_empregado_dependente /*and tb006_documento.id_empregado is null*/ "
+			sql+=	"join tb001_tipo_documento on tb001_tipo_documento.id_tipo_documento = tb006_documento.id_tipo_documento "
+			sql+= "where 1=1 "
+			
+			filtro = ''
+			if not(self.validaCampo(no_documento)):
+				filtro += "and no_documento ='"+no_documento+"'"
+			if not(self.validaCampo(tp_documento)):
+				filtro += "and id_tipo_documento ="+str(tp_documento)
+			if not(self.validaCampo(nu_rg)):
+				filtro += "and nu_rg ="+str(nu_rg)
+			if not(self.validaCampo(nu_cpf)):
+				filtro += "and nu_cpf ="+str(nu_cpf)
+			if not(self.validaCampo(nu_certidao)):
+				filtro += "and nu_certidao ="+str(nu_certidao)
+			
+			sql += filtro
+			print sql
+			conn = self.abreConexao()
+			cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+			cursor.execute(sql)
+			conn.commit()
+			docsDependenteDict=[]
+			for row in cursor:
+				l = dict()
+				file=open(row['no_documento'], 'rb')
+				data=file.read()
+				l['file'] = data.encode('base64')
+				for collumn in row:
+					l[collumn]=row[collumn]
+				docsDependenteDict.append(l)
+
+		return docsDependenteDict
 					
 	def upload_file(self,file, name):
 		out = open(name, 'wb')
