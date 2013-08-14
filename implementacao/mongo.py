@@ -5,7 +5,8 @@ import re
 import datetime
 
 from pymongo import Connection
-from pymongo.bson import ObjectId 
+#from pymongo.bson import ObjectId
+from bson import ObjectId 
 from pymongo.errors import ConnectionFailure
 
 class Model:
@@ -14,7 +15,6 @@ class Model:
 		try:
 			
 			c = Connection(host="localhost",port=27017)
-			print "Conectado!"
 			
 		except ConnectionFailure, e:
 			sys.stderr.write("Nao foi possivel conectar: %s" % e)
@@ -188,8 +188,8 @@ class Model:
 				return "Documento inserido!"
 		
 		
-	def listaOrgao(self,nome='',endereco='',cidade='',uf=''):
-		dbh = self,conectaMongo()
+	def listaOrgaos(self,nome='',endereco='',cidade='',uf=''):
+		dbh = self.conectaMongo()
 		query = dict()
 		if not(self.validaCampo(nome)):
 			query['no_orgao'] = {"$regex" : '(^|\w)'+nome.strip().upper()+'*'}
@@ -208,7 +208,7 @@ class Model:
 			for row in orgaos:
 				l = dict()
 				for column in row:
-					l[str(column.replace("_",''))] = str(row[column])
+					l[str(column.replace("_id",'id_orgao'))] = str(row[column])
 				orgaosDict.append(l)
 			return orgaosDict
 			

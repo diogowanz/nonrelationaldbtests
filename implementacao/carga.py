@@ -6,10 +6,12 @@ import datetime
 from array import array
 
 #db = __import__(sys.argv[1])
-import postgres_dict
+#import postgres_dict
+import mongo
 
 #Model = db.Model()
-Model = postgres_dict.Model()
+#Model = postgres_dict.Model()
+Model = mongo.Model()
 
 path_docs = '/home/wanzeller/documentos_carga'
 orgaos = 10
