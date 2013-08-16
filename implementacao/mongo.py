@@ -73,7 +73,7 @@ class Model:
 			dbh.empregados.insert(empregado,safe=True)
 			return "empregado inserido com sucesso!"
 		
-	def insereDependente(self,nome,rg,cpf,certidao,dt_nascimento,tp_vinculo,documentos,idEmpregado):
+	def insereDependente(self,nome,rg,cpf,certidao,dt_nascimento,tp_vinculo,documentos,nu_matricula_responsavel):
 		if self.validaCampo(str(nome))  or self.validaCampo(str(dt_nascimento)) or self.validaCampo(str(tp_vinculo)) or self.validaCampo(str(nu_matricula_responsavel)):
 			return "Favor informar os seguintes campos: Nome, Tipo de Vinculo, Matricula do Responsavel."
 		elif self.validaCampo(str(rg)) and self.validaCampo(str(cpf)) and self.validaCampo(str(certidao)):
@@ -82,8 +82,8 @@ class Model:
 			dbh = self.conectaMongo()
 			tp_vinculo = ObjectId(tp_vinculo)
 			vinculo = dbh.vinculos.find_one({"_id":tp_vinculo})
-			if vinculo.count() == 0:
-				return "Vinculo informado não existe."
+			if len(vinculo) == 0:
+				return "Vinculo informado nao existe."
 			else:
 				dependente = {
 					"no_empregado_dependente" : nome.strip().upper(),
@@ -96,12 +96,11 @@ class Model:
 				}
 				dbh.dependentes.insert(dependente,safe=True)
 				newDependente = dbh.dependentes.find_one(dependente)
-				idEmpregado = ObjectId(idEmpregado)
-				empregado = dbh.empregados.find_one({'_id': idEmpregado})
-				if empregado.get('Dependentes') == None:
-					dbh.empregados.update({"_id":idEmpregado},{"$set":{"Dependentes":[newDependente.get('_id')]}},safe=True)
+				empregado = dbh.empregados.find_one({'nu_matricula': nu_matricula_responsavel})
+				if empregado.get('Dependentes') == None or empregado.get('Dependentes') == '':
+					dbh.empregados.update({"_id":empregado.get('_id')},{"$set":{"Dependentes":[newDependente.get('_id')]}},safe=True)
 				else:
-					dbh.empregados.update({"_id":idEmpregado},
+					dbh.empregados.update({"_id":empregado.get('_id')},
 						{"$push":{"Dependentes":newDependente.get('_id')}}, safe=True)
 				return "Dependente inserido com sucesso!"	
 		
@@ -120,21 +119,21 @@ class Model:
 			else:
 				tp_documento = ObjectId(tp_documento)
 				tipo_documento = dbh.tp_documentos.find_one({"_id":tp_documento})
-				if tipo_documento.count() == 0:
-					return "O tipo de documento informado não existe"
+				if len(tipo_documento) == 0:
+					return "O tipo de documento informado nao existe"
 				else:
 					if not os.path.exists("/var/mongoDocs/"+str(empregado.get("id_orgao"))):
 						os.makedirs('/var/mongoDocs/'+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id")))
 					elif not os.path.exists('/var/mongoDocs/'+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id"))):
 						os.makedirs('/var/mongoDocs/'+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id")))
 					no_doc = '/var/mongoDocs/'+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id"))+'/'+no_doc
-					upload_file(file,no_doc)
+					self.upload_file(file,no_doc)
 					new_doc = {
 								"tp_documento" : tp_documento,
 								"no_documento" : no_doc.strip().upper(),
 								"dh_updload" : datetime.datetime.now()
 							}
-					if empregado.get('Documentos') == None:
+					if empregado.get('Documentos') == None or empregado.get('Documentos') == '':
 						dbh.empregados.update({"nu_matricula":matricula},{"$set":{"Documentos":[new_doc]}},safe=True)
 					else:
 						dbh.empregados.update({"nu_matricula":matricula},
@@ -150,10 +149,10 @@ class Model:
 			dbh = self.conectaMongo()
 			tp_documento = ObjectId(tp_documento)
 			tipo_documento = dbh.tp_documentos.find_one({"_id":tp_documento})
-			if tipo_documento.count() == 0:
-				return "O tipo de documento informado não existe"
+			if len(tipo_documento) == 0:
+				return "O tipo de documento informado nao existe"
 			else:
-				if self.validaCampo(empreg_matricula):
+				if not self.validaCampo(empreg_matricula):
 					queryEmpregado = {
 						'nu_matricula' : empreg_matricula.strip().upper()
 					}
@@ -174,9 +173,7 @@ class Model:
 				else:
 					print 'Insira a matricula do empregado.'
 				empregado = dbh.empregados.find_one(queryEmpregado)
-				print empregado.get('no_empregado')
 				dependente = dbh.dependentes.find_one(query)
-				print dependente.get('no_empregado_dependente')
 				
 				if empregado == None:
 					print "O Empregado informado nao foi encontrado!"
@@ -188,7 +185,7 @@ class Model:
 					elif not os.path.exists('/var/mongoDocs/'+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id"))+'/'+str(dependente.get("_id"))):
 						os.makedirs('/var/mongoDocs/'+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id"))+'/'+str(dependente.get("_id")))
 					no_doc = '/var/mongoDocs/'+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id"))+'/'+str(dependente.get("_id"))+'/'+no_doc
-					upload_file(file,no_doc)
+					self.upload_file(file,no_doc)
 					new_doc = {
 								"tp_documento" : tp_documento,
 								"no_documento" : no_doc.strip().upper(),
@@ -250,7 +247,7 @@ class Model:
 			for row in empregados:
 				l = dict()
 				for column in row:
-					l[str(column.replace("_",''))] = str(row[column])
+					l[str(column.replace("_id",'id_empregado'))] = str(row[column])
 				empregadoDict.append(l)
 			return empregadoDict
 					
@@ -271,7 +268,7 @@ class Model:
 			for row in dependentes:
 				l = dict()
 				for column in row:
-					l[str(column.replace("_",''))] = str(row[column])
+					l[str(column.replace("_id",'id_empregado_dependente'))] = str(row[column])
 				dependenteDict.append(l)
 			return dependenteDict
 					
