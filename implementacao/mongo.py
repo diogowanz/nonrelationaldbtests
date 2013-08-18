@@ -329,7 +329,46 @@ class Model:
 				docsDependenteDict.append(l)
 
 		return docsDependenteDict
-					
+		
+	def listaVinculos (self,nu_tipo_vinculo,no_tipo_vinculo):
+		dbh = self.conectaMongo()
+		query = dict()
+		if not(self.validaCampo(nu_tipo_vinculo)):
+			nu_tipo_vinculo = ObjectId(nu_tipo_vinculo)
+			query['_id'] = {"_id" : +nu_tipo_vinculo.strip()}
+		if not(self.validaCampo(no_tipo_vinculo)):
+			query['no_tipo_vinculo'] = {"$regex" : '(^|\w)'+no_tipo_vinculo.strip().upper()+'*'}
+		
+		vinculos = dbh.vinculos.find(query)
+		docsVinculosDict=[]
+		for row in vinculos:
+			l = dict()
+			for column in row:
+				l[str(column.replace("_id",'id_tipo_vinculo'))] = str(row[column])
+			docsVinculosDict.append(l)
+
+		return docsVinculosDict
+		
+	def listaTipoDocumentos (self,nu_tipo_documento,no_tipo_documento):
+		dbh = self.conectaMongo()
+		query = dict()
+		if not(self.validaCampo(nu_tipo_documento)):
+			nu_tipo_documento = ObjectId(nu_tipo_documento)
+			query['_id'] = {"_id" : +nu_tipo_documento.strip()}
+		if not(self.validaCampo(no_tipo_documento)):
+			query['no_tipo_documento'] = {"$regex" : '(^|\w)'+no_tipo_documento.strip().upper()+'*'}
+		
+		TipoDocumentos = dbh.tp_documentos.find(query)
+		docsDocumentosDict=[]
+		for row in TipoDocumentos:
+			l = dict()
+			for column in row:
+				l[str(column.replace("_id",'id_tipo_documento'))] = str(row[column])
+			docsDocumentosDict.append(l)
+
+		return docsDocumentosDict
+				
+								
 	def upload_file(self,file, name):
 		out = open(name, 'wb')
 		out.write(str(file.decode('base64')))

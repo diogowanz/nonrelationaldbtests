@@ -355,6 +355,52 @@ class Model:
 				docsDependenteDict.append(l)
 
 		return docsDependenteDict
+		
+	def listaVinculos (self,nu_tipo_vinculo,no_tipo_vinculo):
+		conn = self.abreConexao()
+		filtro = ''
+		if not(self.validaCampo(nu_tipo_vinculo)):
+			filtro += " and nu_tipo_vinculo ="+nu_tipo_vinculo.strip()+"%'"
+		if not(self.validaCampo(no_tipo_vinculo)):
+			filtro += " and no_tipo_vinculo like '%"+no_tipo_vinculo.strip()+"%'"
+		sql = "select * from tb003_tipo_vinculo where 1=1 "+filtro
+		cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+		resultado = cursor.execute(sql)
+		conn.commit()
+
+		if cursor.arraysize == 0:
+			print "Nenhum dado econtrado. Verifique os parametros de busca."
+		else:
+			vinculosDict=[]
+			for row in cursor:
+				l = dict()
+				for collumn in row:
+					l[collumn]=row[collumn]
+				vinculosDict.append(l)
+			return vinculosDict
+			
+	def listaTipoDocumentos (self,nu_tipo_documento,no_tipo_documento):
+		conn = self.abreConexao()
+		filtro = ''
+		if not(self.validaCampo(nu_tipo_documento)):
+			filtro += " and nu_tipo_documento ="+nu_tipo_documento.strip()
+		if not(self.validaCampo(no_tipo_documento)):
+			filtro += " and no_tipo_documento like '%"+no_tipo_documento.strip().upper()+"%'"
+		sql = "select * from tb001_tipo_documento where 1=1 "+filtro
+		cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+		resultado = cursor.execute(sql)
+		conn.commit()
+
+		if cursor.arraysize == 0:
+			print "Nenhum dado econtrado. Verifique os parametros de busca."
+		else:
+			tipoDocumentosDict=[]
+			for row in cursor:
+				l = dict()
+				for collumn in row:
+					l[collumn]=row[collumn]
+				tipoDocumentosDict.append(l)
+			return tipoDocumentosDict
 					
 	def upload_file(self,file, name):
 		out = open(name, 'wb')
