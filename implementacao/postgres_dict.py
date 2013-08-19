@@ -62,7 +62,7 @@ class Model:
 			return "Informar pelo menos um dos seguintes campos: RG, CPF, CERTIDAO."
 		else:			
 			conn = self.abreConexao()
-			sql = "select id_empregado from tb004_empregado where nu_matricula ="+str(nu_matricula_responsavel).strip().upper()
+			sql = "select id_empregado from tb004_empregado where nu_matricula ='"+str(nu_matricula_responsavel).strip().upper()+"'"
 			cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 			conn.commit()
 			cursor.execute(sql)

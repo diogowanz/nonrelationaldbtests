@@ -11,19 +11,6 @@ from gluon.tools import Service
 service = Service(globals())
 
 Model = model.Model()
-
-@service.xmlrpc
-@service.soap('AddStrings',returns={'AddResult':str},args={'a':str, 'b':str})
-@service.soap('AddIntegers',returns={'AddResult':int},args={'a':int, 'b':int})
-def add(a,b):
-    "Add two values"
-    return a+b
-
-@service.xmlrpc
-@service.soap('SubIntegers',returns={'SubResult':int},args={'a':int, 'b':int})
-def sub(a,b):
-    "Substract two values"
-    return a-b
     
 @service.xmlrpc
 @service.soap('insereOrgao',returns={'s':str},args={'cnpj':str, 'nome':str, 'endereco':str, 'cidade':str, 'uf':str})
@@ -38,9 +25,9 @@ def insereEmpregado(nome,dt_contratacao,dt_desligamento,dt_nascimento,nu_matricu
     return s
     
 @service.xmlrpc
-@service.soap('insereDependente',returns={'s':str},args={'nome':str, 'rg':str, 'cpf':str, 'certidao':str, 'dt_nascimento':str, 'tp_vinculo':str, 'documentos':str, 'idEmpregado':str})
-def insereDependente(nome,rg,cpf,certidao,dt_nascimento,tp_vinculo,documentos,idEmpregado):
-    s = Model.insereDependente(nome,rg,cpf,certidao,dt_nascimento,tp_vinculo,documentos,idEmpregado)
+@service.soap('insereDependente',returns={'s':str},args={'nome':str, 'rg':str, 'cpf':str, 'certidao':str, 'dt_nascimento':str, 'tp_vinculo':str, 'documentos':str, 'nu_matricula_responsavel':str})
+def insereDependente(nome,rg,cpf,certidao,dt_nascimento,tp_vinculo,documentos,nu_matricula_responsavel):
+    s = Model.insereDependente(nome,rg,cpf,certidao,dt_nascimento,tp_vinculo,documentos,nu_matricula_responsavel)
     return s
     
 @service.xmlrpc
@@ -56,21 +43,21 @@ def insereDocDependente(empreg_matricula, rg_dependente,cpf_dependente,certidao_
     return s
 
 @service.xmlrpc
-@service.soap('listaOrgao',returns={ 'orgaos': [{'id':str},{'nu_cnpj':str},{'no_orgao':str},{'no_endereco':str},{'no_cidade':str},{'no_uf':str}]},
+@service.soap('listaOrgao',returns={ 'orgaos': [{'id_orgao':str},{'nu_cnpj':str},{'no_orgao':str},{'no_endereco':str},{'no_cidade':str},{'no_uf':str}]},
 args={'nome':str, 'endereco':str, 'cidade':str, 'uf':str})
-def listaOrgao(nome,endereco,cidade,uf):
+def listaOrgaos(nome,endereco,cidade,uf):
 	orgaos = Model.listaOrgaos(nome,endereco,cidade,uf)
 	return orgaos
 
 @service.xmlrpc
-@service.soap('listaEmpregados',returns={ 'empregados': [{'id':str},{'no_empregado':str},{'dt_contratacao':str},{'dt_desligamento':str},{'dt_nascimento':str},{'nu_matricula':str},{'nu_rg':str},{'nu_cpf':str},{'id_orgao':str},{'Documentos':str},{'Dependentes':str}]},
+@service.soap('listaEmpregados',returns={ 'empregados': [{'id_empregado':str},{'no_empregado':str},{'dt_contratacao':str},{'dt_desligamento':str},{'dt_nascimento':str},{'nu_matricula':str},{'nu_rg':str},{'nu_cpf':str},{'id_orgao':str},{'Documentos':str},{'Dependentes':str}]},
 args={'nome':str, 'dt_contratacao':str, 'dt_desligamento':str, 'dt_nascimento':str, 'nu_matricula':str})
 def listaEmpregados(nome,dt_contratacao,dt_desligamento,dt_nascimento,nu_matricula):
 	empregados = Model.listaEmpregados(nome,dt_contratacao,dt_desligamento,dt_nascimento,nu_matricula)
 	return empregados 
 
 @service.xmlrpc
-@service.soap('listaDependentes',returns={ 'empregados': [{'id':str},{'no_empregado_dependente':str},{'nu_rg':str},{'nu_cpf':str},{'nu_certidao':str},{'dt_nascimento':str},{'tp_vinculo':str},{'Documentos':str}]},
+@service.soap('listaDependentes',returns={ 'empregados': [{'id_empregado_dependente':str},{'no_empregado_dependente':str},{'nu_rg':str},{'nu_cpf':str},{'nu_certidao':str},{'dt_nascimento':str},{'tp_vinculo':str},{'Documentos':str}]},
 args={'nomeEmpregado':str, 'nomeDependente':str, 'matricula':str, 'dt_nascimento':str, 'tp_vinculo':str})
 def listaDependentes(nomeEmpregado,nomeDependente,matricula,dt_nascimento,tp_vinculo):
 	dependentes = Model.listaDependentes(nomeEmpregado,nomeDependente,matricula,dt_nascimento,tp_vinculo)

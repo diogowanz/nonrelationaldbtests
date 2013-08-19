@@ -3,6 +3,7 @@ import sys
 import os
 import re
 import datetime
+import ConfigParser
 
 from pymongo import Connection
 #from pymongo.bson import ObjectId
@@ -122,11 +123,13 @@ class Model:
 				if len(tipo_documento) == 0:
 					return "O tipo de documento informado nao existe"
 				else:
-					if not os.path.exists("/var/mongoDocs/"+str(empregado.get("id_orgao"))):
-						os.makedirs('/var/mongoDocs/'+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id")))
-					elif not os.path.exists('/var/mongoDocs/'+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id"))):
-						os.makedirs('/var/mongoDocs/'+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id")))
-					no_doc = '/var/mongoDocs/'+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id"))+'/'+no_doc
+					config = ConfigParser.ConfigParser()
+					config.read("config.conf")
+					if not os.path.exists(config.get("path", "filePath")+str(empregado.get("id_orgao"))):
+						os.makedirs(config.get("path", "filePath")+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id")))
+					elif not os.path.exists(config.get("path", "filePath")+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id"))):
+						os.makedirs(config.get("path", "filePath")+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id")))
+					no_doc = config.get("path", "filePath")+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id"))+'/'+no_doc
 					self.upload_file(file,no_doc)
 					new_doc = {
 								"tp_documento" : tp_documento,
@@ -178,13 +181,15 @@ class Model:
 				if empregado == None:
 					print "O Empregado informado nao foi encontrado!"
 				else:
+					config = ConfigParser.ConfigParser()
+					config.read("config.conf")
 					if not os.path.exists("/var/mongoDocs/"+str(empregado.get("id_orgao"))):
-						os.makedirs('/var/mongoDocs/'+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id"))+'/'+str(dependente.get("_id")))
-					elif not os.path.exists('/var/mongoDocs/'+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id"))):
-						os.makedirs('/var/mongoDocs/'+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id"))+'/'+str(dependente.get("_id")))
-					elif not os.path.exists('/var/mongoDocs/'+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id"))+'/'+str(dependente.get("_id"))):
-						os.makedirs('/var/mongoDocs/'+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id"))+'/'+str(dependente.get("_id")))
-					no_doc = '/var/mongoDocs/'+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id"))+'/'+str(dependente.get("_id"))+'/'+no_doc
+						os.makedirs(config.get("path", "filePath")+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id"))+'/'+str(dependente.get("_id")))
+					elif not os.path.exists(config.get("path", "filePath")+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id"))):
+						os.makedirs(config.get("path", "filePath")+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id"))+'/'+str(dependente.get("_id")))
+					elif not os.path.exists(config.get("path", "filePath")+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id"))+'/'+str(dependente.get("_id"))):
+						os.makedirs(config.get("path", "filePath")+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id"))+'/'+str(dependente.get("_id")))
+					no_doc = config.get("path", "filePath")+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id"))+'/'+str(dependente.get("_id"))+'/'+no_doc
 					self.upload_file(file,no_doc)
 					new_doc = {
 								"tp_documento" : tp_documento,
