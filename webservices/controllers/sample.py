@@ -3,8 +3,8 @@
 def index(): return dict(message="hello from sample.py")
 
 #import mongo
-#model = local_import('mongo')
-model = local_import('postgres_dict')
+model = local_import('mongo')
+#model = local_import('postgres_dict')
 
 
 from gluon.tools import Service
@@ -43,25 +43,95 @@ def insereDocDependente(empreg_matricula, rg_dependente,cpf_dependente,certidao_
     return s
 
 @service.xmlrpc
-@service.soap('listaOrgao',returns={ 'orgaos': [{'id_orgao':str},{'nu_cnpj':str},{'no_orgao':str},{'no_endereco':str},{'no_cidade':str},{'no_uf':str}]},
+@service.soap('listaOrgao',returns={ 'orgaos': [{'orgao': {'id_orgao':str,'nu_cnpj':str,'no_orgao':str,'no_endereco': str,'no_cidade':str,'no_uf':str}}]},
 args={'nome':str, 'endereco':str, 'cidade':str, 'uf':str})
 def listaOrgaos(nome,endereco,cidade,uf):
 	orgaos = Model.listaOrgaos(nome,endereco,cidade,uf)
+	y = []
+	for orgao in orgaos:
+		x = dict()
+		x['orgao'] = orgao
+		y.append(x)
+	orgaos = y
 	return orgaos
 
 @service.xmlrpc
-@service.soap('listaEmpregados',returns={ 'empregados': [{'id_empregado':str},{'no_empregado':str},{'dt_contratacao':str},{'dt_desligamento':str},{'dt_nascimento':str},{'nu_matricula':str},{'nu_rg':str},{'nu_cpf':str},{'id_orgao':str},{'Documentos':str},{'Dependentes':str}]},
+@service.soap('listaEmpregados',returns={ 'empregados': [{'empregado': {'id_empregado':str,'no_empregado':str,'dt_contratacao':str,'dt_desligamento':str,'dt_nascimento':str,'nu_matricula':str,'nu_rg':str,'nu_cpf':str,'id_orgao':str,'Documentos':str,'Dependentes':str}}]},
 args={'nome':str, 'dt_contratacao':str, 'dt_desligamento':str, 'dt_nascimento':str, 'nu_matricula':str})
 def listaEmpregados(nome,dt_contratacao,dt_desligamento,dt_nascimento,nu_matricula):
 	empregados = Model.listaEmpregados(nome,dt_contratacao,dt_desligamento,dt_nascimento,nu_matricula)
-	return empregados 
+	y = []
+	for empregado in empregados:
+		x = dict()
+		x['empregado'] = empregado
+		y.append(x)
+	empregados = y
+	return empregados
 
 @service.xmlrpc
-@service.soap('listaDependentes',returns={ 'empregados': [{'id_empregado_dependente':str},{'no_empregado_dependente':str},{'nu_rg':str},{'nu_cpf':str},{'nu_certidao':str},{'dt_nascimento':str},{'tp_vinculo':str},{'Documentos':str}]},
+@service.soap('listaDependentes',returns={ 'dependentes': [{'dependente': {'id_empregado_dependente':str,'no_empregado_dependente':str,'nu_rg':str,'nu_cpf':str,'nu_certidao':str,'dt_nascimento':str,'tp_vinculo':str,'Documentos':str}}]},
 args={'nomeEmpregado':str, 'nomeDependente':str, 'matricula':str, 'dt_nascimento':str, 'tp_vinculo':str})
 def listaDependentes(nomeEmpregado,nomeDependente,matricula,dt_nascimento,tp_vinculo):
 	dependentes = Model.listaDependentes(nomeEmpregado,nomeDependente,matricula,dt_nascimento,tp_vinculo)
-	return dependentes 
+	y = []
+	for dependente in dependentes:
+		x = dict()
+		x['dependente'] = dependente
+		y.append(x)
+	dependentes = y
+	return dependentes
+	
+@service.xmlrpc
+@service.soap('retornaDocEmpregado',returns={ 'documentos': [{'documento': {'no_documento':str,'file':str}}]},
+args={'nu_matricula':str, 'no_documento':str, 'tp_documento':str})
+def retornaDocEmpregado (nu_matricula,no_documento,tp_documento):
+	documentos = Model.retornaDocEmpregado(nu_matricula,no_documento,tp_documento)
+	y = []
+	for documento in documentos:
+		x = dict()
+		x['documento'] = documento
+		y.append(x)
+	documentos = y
+	return documentos
+	
+@service.xmlrpc
+@service.soap('retornaDocDependente',returns={ 'documentos': [{'documento': {'no_documento':str,'file':str}}]},
+args={'nu_rg':str, 'nu_cpf':str, 'nu_certidao':str, 'no_documento':str, 'tp_documento':str})
+def retornaDocDependente (nu_rg,nu_cpf,nu_certidao, no_documento, tp_documento):
+	documentos = Model.retornaDocDependente(nu_rg,nu_cpf,nu_certidao, no_documento, tp_documento)
+	y = []
+	for documento in documentos:
+		x = dict()
+		x['documento'] = documento
+		y.append(x)
+	documentos = y
+	return documentos	
+
+@service.xmlrpc
+@service.soap('listaVinculos',returns={ 'vinculos': [{'vinculo': {'id_tipo_vinculo':str,'no_tipo_vinculo':str}}]},
+args={'nu_tipo_vinculo':str, 'no_tipo_vinculo':str})
+def listaVinculos (nu_tipo_vinculo,no_tipo_vinculo):
+	vinculos = Model.listaVinculos(nu_tipo_vinculo,no_tipo_vinculo)
+	y = []
+	for vinculo in vinculos:
+		x = dict()
+		x['vinculo'] = vinculo
+		y.append(x)
+	vinculos = y
+	return vinculos
+	
+@service.xmlrpc
+@service.soap('listaTipoDocumentos',returns={ 'tipos': [{'tipo': {'id_tipo_documento':str,'no_tipo_documento':str}}]},
+args={'nu_tipo_documento':str, 'no_tipo_documento':str})
+def listaTipoDocumentos (nu_tipo_documento,no_tipo_documento):
+	tipos = Model.listaTipoDocumentos(nu_tipo_documento,no_tipo_documento)
+	y = []
+	for tipo in tipos:
+		x = dict()
+		x['tipo'] = tipo
+		y.append(x)
+	tipos = y
+	return tipos
 
 def call():
     return service()

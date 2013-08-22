@@ -133,7 +133,7 @@ class Model:
 					self.upload_file(file,no_doc)
 					new_doc = {
 								"tp_documento" : tp_documento,
-								"no_documento" : no_doc.strip().upper(),
+								"no_documento" : no_doc.strip(),
 								"dh_updload" : datetime.datetime.now()
 							}
 					if empregado.get('Documentos') == None or empregado.get('Documentos') == '':
@@ -193,7 +193,7 @@ class Model:
 					self.upload_file(file,no_doc)
 					new_doc = {
 								"tp_documento" : tp_documento,
-								"no_documento" : no_doc.strip().upper(),
+								"no_documento" : no_doc.strip(),
 								"dh_updload" : datetime.datetime.now()
 							}
 					if dependente.get('Documentos') == None:
@@ -281,26 +281,24 @@ class Model:
 		if self.validaCampo(nu_matricula):
 			return 'Favor informar a matricula do empregado.'
 		else:
-			dbh = self.conectaMongo()		
-			query = dict()
-			query['Documentos.nu_matricula'] = {"$regex" : '(^|\w)'+nu_matricula.strip().upper()+'*'}
+			dbh = self.conectaMongo()
+			x = []
+			x.append({'nu_matricula' : nu_matricula.strip().upper()})
 			if not(self.validaCampo(no_documento)):
-				query['Documentos.no_documento'] = {"$regex" : '(^|\w)'+no_documento.strip().upper()+'*'}
+				x.append({'Documentos.no_documento' : {"$regex" : '(^|\w)'+no_documento.strip().upper()+'*'}})
 			if not(self.validaCampo(tp_documento)):
-				query['Documentos.tp_documento'] = {"$regex" : '(^|\w)'+tp_documento+'*'}
-			
-			documentos_empregado = dbh.empregados.find(query)
-
+				x.append({'Documentos.tp_documento': {"$regex" : '(^|\w)'+tp_documento+'*'}})
+			documentos_empregado = dbh.empregados.find_one({'$and' : x})
+			documentos_empregado = documentos_empregado.get('Documentos')
 			docsEmpregadoDict=[]
 			for row in documentos_empregado:
 				l = dict()
-				file=open(row['no_documento'], 'rb')
+				file=open(str(row['no_documento']), 'rb')
 				data=file.read()
 				l['file'] = data.encode('base64')
 				for collumn in row:
 					l[collumn]=row[collumn]
 				docsEmpregadoDict.append(l)
-
 		return docsEmpregadoDict
 			
 		
