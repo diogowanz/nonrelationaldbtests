@@ -14,11 +14,11 @@ import mongo
 Model = mongo.Model()
 
 path_docs = '/home/wanzeller/documentos_carga'
-orgaos = 100
-empregados_por_orgao = 200
-dependente_por_empregado = 3
+orgaos = 1
+empregados_por_orgao = 1
+dependente_por_empregado = 1
 documento_por_empregado = 2
-documento_por_dependente = 0
+documento_por_dependente = 2
 
 
 def geraNum (l):
@@ -74,7 +74,7 @@ def carregaEmpregados():
 			dt_nascimento = geraDataNascimento()
 			dt_contratacao = geraDataContratacao(dt_nascimento)
 			dt_desligamento = geraDataDesligamento(dt_contratacao,dt_nascimento)
-			Model.insereEmpregado('nome empregado '+str(n),str(dt_contratacao),str(dt_desligamento),str(dt_nascimento),'M'+geraNum(6),geraNum(7),geraNum(11),orgao['id_orgao'],'','')
+			Model.insereEmpregado('nome empregado '+str(n),str(dt_contratacao),str(dt_desligamento),str(dt_nascimento),'M'+geraNum(6),geraNum(7),geraNum(11),orgao['id_orgao'],'')
 			n+=1
 	
 def carregaDependentes():
@@ -112,7 +112,6 @@ def carregaDocDependente():
 	len_docs = len(docs)
 	for empregado in empregados:
 		dependentes = Model.listaDependentes('','',empregado['nu_matricula'],'','')
-		print dependentes
 		for dependente in dependentes:
 			l = 0
 			n=0	
@@ -123,9 +122,6 @@ def carregaDocDependente():
 					l = 0
 				file=open(path_docs+'/'+docs[l], 'rb')
 				data=file.read()
-				print empregado['nu_matricula']
-				print dependente['nu_rg']
-				print dependente['nu_cpf']
 				tipo_documentos = Model.listaTipoDocumentos('','')
 				Model.insereDocDependente(empregado['nu_matricula'], dependente['nu_rg'],dependente['nu_cpf'],'',tipo_documentos[n]['id_tipo_documento'], str(n)+docs[l],data.encode('base64'))
 				file.close()
