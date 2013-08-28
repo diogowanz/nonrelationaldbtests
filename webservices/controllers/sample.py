@@ -82,7 +82,7 @@ def listaDependentes(nomeEmpregado,nomeDependente,matricula,dt_nascimento,tp_vin
 	return dependentes
 	
 @service.xmlrpc
-@service.soap('retornaDocEmpregado',returns={ 'documentos': [{'documento': {'no_documento':str,'file':str}}]},
+@service.soap('retornaDocEmpregado',returns={ 'documentos': [{'documento': {'tp_documento':str, 'dh_updload':str,'no_documento':str,'file':str}}]},
 args={'nu_matricula':str, 'no_documento':str, 'tp_documento':str})
 def retornaDocEmpregado (nu_matricula,no_documento,tp_documento):
 	documentos = Model.retornaDocEmpregado(nu_matricula,no_documento,tp_documento)
@@ -95,7 +95,7 @@ def retornaDocEmpregado (nu_matricula,no_documento,tp_documento):
 	return documentos
 	
 @service.xmlrpc
-@service.soap('retornaDocDependente',returns={ 'documentos': [{'documento': {'no_documento':str,'file':str}}]},
+@service.soap('retornaDocDependente',returns={ 'documentos': [{'documento': {'tp_documento':str, 'dh_updload':str,'no_documento':str,'file':str}}]},
 args={'nu_rg':str, 'nu_cpf':str, 'nu_certidao':str, 'no_documento':str, 'tp_documento':str})
 def retornaDocDependente (nu_rg,nu_cpf,nu_certidao, no_documento, tp_documento):
 	documentos = Model.retornaDocDependente(nu_rg,nu_cpf,nu_certidao, no_documento, tp_documento)

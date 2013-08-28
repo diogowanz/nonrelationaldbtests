@@ -6,12 +6,12 @@ import datetime
 from array import array
 
 #db = __import__(sys.argv[1])
-#import postgres_dict
-import mongo
+import postgres_dict
+#import mongo
 
 #Model = db.Model()
-#Model = postgres_dict.Model()
-Model = mongo.Model()
+Model = postgres_dict.Model()
+#Model = mongo.Model()
 
 path_docs = '/home/wanzeller/documentos_carga'
 orgaos = 1
@@ -102,7 +102,7 @@ def carregaDocEmpregado():
 			file=open(path_docs+'/'+docs[l], 'rb')
 			data=file.read()
 			tipo_documentos = Model.listaTipoDocumentos('','')
-			Model.insereDocEmpregado(empregado['nu_matricula'],tipo_documentos[n]['id_tipo_documento'], str(n)+docs[l],data.encode('base64'))
+			Model.insereDocEmpregado(empregado['nu_matricula'],str(int(tipo_documentos[n]['id_tipo_documento'])), str(n)+docs[l],data.encode('base64'))
 			file.close()
 			n+=1
 

@@ -1,0 +1,21 @@
+(dp1
+S'output'
+p2
+S"<type 'exceptions.AttributeError'> Tag not found: service (No elements found)"
+p3
+sS'layer'
+p4
+S'/home/wanzeller/www-dev/web2py/applications/webservices/controllers/testews.py'
+p5
+sS'code'
+p6
+S'def test_soap_sub():\n\tfrom gluon.contrib.pysimplesoap.client import SoapClient, SoapFault\n\t #create a SOAP client\n\tclient = SoapClient(wsdl="http://127.0.0.1:8000/webservices/sample/call/soap?WSDL=None")\n\t #call SOAP method\n\tresponse = client.listaOrgao(nome=\'orgao 1\',endereco=\'\',cidade=\'\',uf=\'\')\n\t#response = client.insereOrgao(cnpj=\'1223456\',nome=\'Ministerio WEB\',endereco=\'dfdf\',cidade=\'dddd\',uf=\'df\')\n\t#response = client.insereEmpregado(nome=\'Empregado WEB\',dt_contratacao=\'18/07/2013\',dt_desligamento=\'\',dt_nascimento=\'19/09/1989\',nu_matricula=\'M123456\',rg=\'123\',cpf=\'123456\',id_orgao=\'2\',documentos=\'\',dependentes=\'\')\n\ttry:\n\t\t#result = response[\'s\']\n\t\tresult = response\n\texcept SoapFault:\n\t\tresult = None\n\t\t\n\treturn dict(xml_request=client.xml_request,xml_response=client.xml_response,result=result)\n\n#\timport mongo\n#\tModel = mongo.Model()\n#\torgaos = Model.listaOrgao(nome=\'Ministerio 1\')\n#\treturn dict(orgaos)\n\nresponse._vars=response._caller(test_soap_sub)\n'
+p7
+sS'snapshot'
+p8
+(dp9
+sS'traceback'
+p10
+S'Traceback (most recent call last):\n  File "/home/wanzeller/www-dev/web2py/gluon/restricted.py", line 212, in restricted\n    exec ccode in environment\n  File "/home/wanzeller/www-dev/web2py/applications/webservices/controllers/testews.py", line 22, in <module>\n  File "/home/wanzeller/www-dev/web2py/gluon/globals.py", line 194, in <lambda>\n    self._caller = lambda f: f()\n  File "/home/wanzeller/www-dev/web2py/applications/webservices/controllers/testews.py", line 4, in test_soap_sub\n    client = SoapClient(wsdl="http://127.0.0.1:8000/webservices/sample/call/soap?WSDL=None")\n  File "/home/wanzeller/www-dev/web2py/gluon/contrib/pysimplesoap/client.py", line 139, in __init__\n    self.services = wsdl and self.wsdl_parse(wsdl, debug=trace, cache=cache)\n  File "/home/wanzeller/www-dev/web2py/gluon/contrib/pysimplesoap/client.py", line 465, in wsdl_parse\n    for service in wsdl.service:\n  File "/home/wanzeller/www-dev/web2py/gluon/contrib/pysimplesoap/simplexml.py", line 350, in __getattr__\n    return self.__call__(tag)\n  File "/home/wanzeller/www-dev/web2py/gluon/contrib/pysimplesoap/simplexml.py", line 346, in __call__\n    raise AttributeError(u"Tag not found: %s (%s)" % (tag, unicode(e)))\nAttributeError: Tag not found: service (No elements found)\n'
+p11
+s.

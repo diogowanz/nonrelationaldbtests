@@ -49,7 +49,7 @@ class Model:
 			dbh.orgaos.insert(orgao,safe=True)
 			return "Orgao inserido com sucesso."
 		
-	def insereEmpregado(self,nome,dt_contratacao,dt_desligamento,dt_nascimento,nu_matricula,rg,cpf,id_orgao,documentos,dependentes):
+	def insereEmpregado(self,nome,dt_contratacao,dt_desligamento,dt_nascimento,nu_matricula,rg,cpf,id_orgao,documentos):
 		if self.validaCampo(str(nome))  or self.validaCampo(str(dt_contratacao)) or self.validaCampo(str(dt_nascimento)) or self.validaCampo(str(nu_matricula)) or self.validaCampo(str(rg)) or self.validaCampo(str(cpf)) or self.validaCampo(str(id_orgao)):
 			return "Favor informar os seguintes campos: Nome, Data de Contratacao, Data de Nascimento, Matricula, RG, CPF e ID da Empresa."
 		else:
@@ -67,8 +67,7 @@ class Model:
 				"nu_rg" : rg,
 				"nu_cpf" : cpf,
 				"id_orgao" : orgao.get('_id'),
-				"Documentos" : documentos,
-				"Dependentes": dependentes
+				"Documentos" : documentos
 			}
 			
 			dbh.empregados.insert(empregado,safe=True)
@@ -86,7 +85,9 @@ class Model:
 			if len(vinculo) == 0:
 				return "Vinculo informado nao existe."
 			else:
+				empregado = dbh.empregados.find_one({'nu_matricula': nu_matricula_responsavel})
 				dependente = {
+					"id_empregado" : empregado.get('_id'),
 					"no_empregado_dependente" : nome.strip().upper(),
 					"nu_rg" : rg,
 					"nu_cpf" : cpf,
@@ -96,13 +97,6 @@ class Model:
 					"Documentos" : documentos
 				}
 				dbh.dependentes.insert(dependente,safe=True)
-				newDependente = dbh.dependentes.find_one(dependente)
-				empregado = dbh.empregados.find_one({'nu_matricula': nu_matricula_responsavel})
-				if empregado.get('Dependentes') == None or empregado.get('Dependentes') == '':
-					dbh.empregados.update({"_id":empregado.get('_id')},{"$set":{"Dependentes":[newDependente.get('_id')]}},safe=True)
-				else:
-					dbh.empregados.update({"_id":empregado.get('_id')},
-						{"$push":{"Dependentes":newDependente.get('_id')}}, safe=True)
 				return "Dependente inserido com sucesso!"	
 		
 	def insereDocEmpregado(self,matricula,tp_documento, no_doc,file):
@@ -133,57 +127,56 @@ class Model:
 					self.upload_file(file,no_doc)
 					new_doc = {
 								"tp_documento" : tp_documento,
-								"no_documento" : no_doc.strip().upper(),
+								"no_documento" : no_doc.strip(),
 								"dh_updload" : datetime.datetime.now()
 							}
 					if empregado.get('Documentos') == None or empregado.get('Documentos') == '':
 						dbh.empregados.update({"nu_matricula":matricula},{"$set":{"Documentos":[new_doc]}},safe=True)
 					else:
-						dbh.empregados.update({"nu_matricula":matricula},
-					{"$push":{"Documentos":new_doc}}, safe=True)
+						dbh.empregados.update({"nu_matricula":matricula},{"$push":{"Documentos":new_doc}}, safe=True)
 					return "Documento inserido!"
-			
-	def insereDocDependente(self,empreg_matricula, rg_dependente,cpf_dependente,certidao_dependente,tp_documento, no_doc,file):
+		
+	def insereDocDependente(self,empreg_matricula,rg_dependente,cpf_dependente,certidao_dependente,tp_documento, no_doc,file):
 		if self.validaCampo(str(empreg_matricula)) or self.validaCampo(str(tp_documento)) or self.validaCampo(str(no_doc)):
 			return "Favor informar os seguintes campos: Matricula do Responsavel, Tipo de Documento, Nome do Documento."
 		elif self.validaCampo(str(rg_dependente)) and self.validaCampo(str(cpf_dependente)) and self.validaCampo(str(certidao_dependente)):
 			return "Favor informar pelo menos um dos seguintes campos: RG do Dependente, CPF do Dependente, Certidao do Dependente."
 		else:
-			dbh = self.conectaMongo()
-			tp_documento = ObjectId(tp_documento)
-			tipo_documento = dbh.tp_documentos.find_one({"_id":tp_documento})
-			if len(tipo_documento) == 0:
-				return "O tipo de documento informado nao existe"
-			else:
-				if not self.validaCampo(empreg_matricula):
-					queryEmpregado = {
-						'nu_matricula' : empreg_matricula.strip().upper()
+			if not self.validaCampo(empreg_matricula):
+				queryEmpregado = {
+					'nu_matricula' : empreg_matricula.strip().upper()
+				}
+				if not (self.validaCampo(rg_dependente)):
+					query = {
+						'nu_rg' : rg_dependente
 					}
-					if not (self.validaCampo(rg_dependente)):
-						query = {
-							'nu_rg' : rg_dependente
-						}
-					elif not (self.validaCampo(cpf_dependente)):
-						query = {
-							'nu_cpf' : cpf_dependente
-						}
-					elif not (self.validaCampo(certidao_dependente)):
-						query = {
-							'nu_certidao' : certidao_dependente
-						}
-					else:
-						print 'Insira os dados do dependente'
+				elif not (self.validaCampo(cpf_dependente)):
+					query = {
+						'nu_cpf' : cpf_dependente
+					}
+				elif not (self.validaCampo(certidao_dependente)):
+					query = {
+						'nu_certidao' : certidao_dependente
+					}
 				else:
-					print 'Insira a matricula do empregado.'
+					return 'Insira os dados do dependente'
+				dbh = self.conectaMongo()
 				empregado = dbh.empregados.find_one(queryEmpregado)
 				dependente = dbh.dependentes.find_one(query)
-				
-				if empregado == None:
-					print "O Empregado informado nao foi encontrado!"
+			
+			if empregado == None:
+				print "O Empregado informado nao foi encontrado!"
+			elif dependente == None:
+				return "O dependente informado nao foi encontrado!"
+			else:
+				tp_documento = ObjectId(tp_documento)
+				tipo_documento = dbh.tp_documentos.find_one({"_id":tp_documento})
+				if len(tipo_documento) == 0:
+					return "O tipo de documento informado nao existe"
 				else:
 					config = ConfigParser.ConfigParser()
 					config.read("config.conf")
-					if not os.path.exists("/var/mongoDocs/"+str(empregado.get("id_orgao"))):
+					if not os.path.exists(config.get("path", "filePath")+str(empregado.get("id_orgao"))):
 						os.makedirs(config.get("path", "filePath")+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id"))+'/'+str(dependente.get("_id")))
 					elif not os.path.exists(config.get("path", "filePath")+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id"))):
 						os.makedirs(config.get("path", "filePath")+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id"))+'/'+str(dependente.get("_id")))
@@ -193,17 +186,16 @@ class Model:
 					self.upload_file(file,no_doc)
 					new_doc = {
 								"tp_documento" : tp_documento,
-								"no_documento" : no_doc.strip().upper(),
+								"no_documento" : no_doc.strip(),
 								"dh_updload" : datetime.datetime.now()
 							}
-					if dependente.get('Documentos') == None:
+					if dependente.get('Documentos') == None or dependente.get('Documentos') == '':
 						dbh.dependentes.update({"_id":dependente.get('_id')},{"$set":{"Documentos":[new_doc]}},safe=True)
+						return "Documento inserido!"
 					else:
-						dbh.depententes.update({"_id":dependente.get('_id')},
-					{"$push":{"Documentos":new_doc}}, safe=True)
-					return "Documento inserido!"
-		
-		
+						dbh.dependentes.update({"_id":dependente.get('_id')},{"$push":{"Documentos":new_doc}}, safe=True)
+						return "Documento inserido!"
+					
 	def listaOrgaos(self,nome='',endereco='',cidade='',uf=''):
 		dbh = self.conectaMongo()
 		query = dict()
@@ -257,15 +249,24 @@ class Model:
 			return empregadoDict
 					
 	def listaDependentes(self,nomeEmpregado='',nomeDependente='',matricula='',dt_nascimento='',tp_vinculo=''):
-		dbh = self.conectaMongo()		
-		query = dict()
+		dbh = self.conectaMongo()
+		x = []
+		if not(self.validaCampo(nomeEmpregado)):
+			x.append({'no_empregado' : {"$regex" : '(^|\w)'+nomeEmpregado.strip().upper()+'*'}})
+		if not(self.validaCampo(matricula)):
+			x.append({'nu_matricula' : matricula.strip().upper()})
+		empregado = dbh.empregados.find_one({'$and' : x})
+		id_empregado = empregado.get('_id')
+		query = []
 		if not(self.validaCampo(nomeDependente)):
-			query['no_empregado_dependente'] = {"$regex" : '(^|\w)'+nomeDependente.strip().upper()+'*'}
+			query.append({'no_empregado_dependente' : {"$regex" : '(^|\w)'+nomeDependente.strip().upper()+'*'}})
 		if not(self.validaCampo(dt_nascimento)):
-			query['dt_nascimento'] = {"$regex": '(^|\w)'+dt_nascimento+'*'}
+			query.append({'dt_nascimento' : {"$regex": '(^|\w)'+dt_nascimento+'*'}})
 		if not(self.validaCampo(tp_vinculo)):
-			query['tp_vinculo'] = {"$regex": '(^|\w)'+tp_vinculo+'*'}
-		dependentes = dbh.dependentes.find(query)
+			query.append({'tp_vinculo' : {"$regex": '(^|\w)'+tp_vinculo+'*'}})
+		if not(self.validaCampo(str(id_empregado))):
+			query.append({'id_empregado' : id_empregado})
+		dependentes = dbh.dependentes.find({'$and' : query})
 		if dependentes.count() == 0:
 			print "Nenhum dado econtrado. Verifique os parametros de busca."
 		else:
@@ -283,23 +284,22 @@ class Model:
 		else:
 			dbh = self.conectaMongo()
 			x = []
-			x.append = {'nu_matricula' : nu_matricula.strip().upper()}
+			x.append({'nu_matricula' : nu_matricula.strip().upper()})
 			if not(self.validaCampo(no_documento)):
-				x.append = {'Documentos.no_documento' : {"$regex" : '(^|\w)'+no_documento.strip().upper()+'*'}}
+				x.append({'Documentos.no_documento' : {"$regex" : '(^|\w)'+no_documento.strip().upper()+'*'}})
 			if not(self.validaCampo(tp_documento)):
-				x.append = {'Documentos.tp_documento': {"$regex" : '(^|\w)'+tp_documento+'*'}}
-			documentos_empregado = dbh.empregados.find({$and : x})
-
+				x.append({'Documentos.tp_documento': {"$regex" : '(^|\w)'+tp_documento+'*'}})
+			documentos_empregado = dbh.empregados.find_one({'$and' : x})
+			documentos_empregado = documentos_empregado.get('Documentos')
 			docsEmpregadoDict=[]
 			for row in documentos_empregado:
 				l = dict()
-				file=open(row['no_documento'], 'rb')
+				file=open(str(row['no_documento']), 'rb')
 				data=file.read()
 				l['file'] = data.encode('base64')
 				for collumn in row:
 					l[collumn]=row[collumn]
 				docsEmpregadoDict.append(l)
-
 		return docsEmpregadoDict
 			
 		

@@ -1,0 +1,400 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" properties="2.4" jmeter="2.9 r1437961">
+  <hashTree>
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Plano de Teste" enabled="true">
+      <stringProp name="TestPlan.comments"></stringProp>
+      <boolProp name="TestPlan.functional_mode">false</boolProp>
+      <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
+      <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="Variáveis Definidas Pelo Usuário" enabled="true">
+        <collectionProp name="Arguments.arguments"/>
+      </elementProp>
+      <stringProp name="TestPlan.user_define_classpath"></stringProp>
+    </TestPlan>
+    <hashTree>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="python webservice users" enabled="true">
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <stringProp name="LoopController.loops">1</stringProp>
+        </elementProp>
+        <stringProp name="ThreadGroup.num_threads">1</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">0</stringProp>
+        <longProp name="ThreadGroup.start_time">1375227630000</longProp>
+        <longProp name="ThreadGroup.end_time">1375227630000</longProp>
+        <boolProp name="ThreadGroup.scheduler">false</boolProp>
+        <stringProp name="ThreadGroup.duration"></stringProp>
+        <stringProp name="ThreadGroup.delay"></stringProp>
+      </ThreadGroup>
+      <hashTree>
+        <SoapSampler guiclass="SoapSamplerGui" testclass="SoapSampler" testname="Insere Dependente" enabled="true">
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments"/>
+          </elementProp>
+          <stringProp name="SoapSampler.URL_DATA">http://127.0.0.1:8000/webservices/sample/call/soap?WSDL=None</stringProp>
+          <stringProp name="HTTPSamper.xml_data">&lt;soapenv:Envelope xmlns:soapenv=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot; xmlns:soap=&quot;http://127.0.0.1:8000/webservices/sample/call/soap&quot;&gt;
+   &lt;soapenv:Header/&gt;
+   &lt;soapenv:Body&gt;
+      &lt;soap:insereDependente&gt;
+         &lt;!--You may enter the following 8 items in any order--&gt;
+         &lt;soap:rg&gt;123456&lt;/soap:rg&gt;
+         &lt;soap:documentos&gt;&lt;/soap:documentos&gt;
+         &lt;soap:nome&gt;DEPENDENTE JMETER 1&lt;/soap:nome&gt;
+         &lt;soap:nu_matricula_responsavel&gt;M761045&lt;/soap:nu_matricula_responsavel&gt;
+         &lt;soap:tp_vinculo&gt;521d46156e9552085cdee32b&lt;/soap:tp_vinculo&gt;
+         &lt;soap:certidao&gt;654321&lt;/soap:certidao&gt;
+         &lt;soap:cpf&gt;09876543212&lt;/soap:cpf&gt;
+         &lt;soap:dt_nascimento&gt;01/01/1990&lt;/soap:dt_nascimento&gt;
+      &lt;/soap:insereDependente&gt;
+   &lt;/soapenv:Body&gt;
+&lt;/soapenv:Envelope&gt;</stringProp>
+          <stringProp name="SoapSampler.xml_data_file"></stringProp>
+          <stringProp name="SoapSampler.SOAP_ACTION">http://127.0.0.1:8000/webservices/sample/call/soap?op=insereDependente</stringProp>
+          <stringProp name="SoapSampler.SEND_SOAP_ACTION">true</stringProp>
+          <boolProp name="HTTPSampler.use_keepalive">false</boolProp>
+        </SoapSampler>
+        <hashTree/>
+        <SoapSampler guiclass="SoapSamplerGui" testclass="SoapSampler" testname="Insere Documento Dependente" enabled="true">
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments"/>
+          </elementProp>
+          <stringProp name="SoapSampler.URL_DATA">http://127.0.0.1:8000/webservices/sample/call/soap?WSDL=None</stringProp>
+          <stringProp name="HTTPSamper.xml_data">&lt;soapenv:Envelope xmlns:soapenv=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot; xmlns:soap=&quot;http://127.0.0.1:8000/webservices/sample/call/soap&quot;&gt;
+   &lt;soapenv:Header/&gt;
+   &lt;soapenv:Body&gt;
+      &lt;soap:insereDocDependente&gt;
+         &lt;!--You may enter the following 7 items in any order--&gt;
+         &lt;soap:certidao_dependente&gt;?&lt;/soap:certidao_dependente&gt;
+         &lt;soap:rg_dependente&gt;?&lt;/soap:rg_dependente&gt;
+         &lt;soap:cpf_dependente&gt;?&lt;/soap:cpf_dependente&gt;
+         &lt;soap:file&gt;?&lt;/soap:file&gt;
+         &lt;soap:tp_documento&gt;?&lt;/soap:tp_documento&gt;
+         &lt;soap:no_doc&gt;?&lt;/soap:no_doc&gt;
+         &lt;soap:empreg_matricula&gt;?&lt;/soap:empreg_matricula&gt;
+      &lt;/soap:insereDocDependente&gt;
+   &lt;/soapenv:Body&gt;
+&lt;/soapenv:Envelope&gt;</stringProp>
+          <stringProp name="SoapSampler.xml_data_file"></stringProp>
+          <stringProp name="SoapSampler.SOAP_ACTION">http://127.0.0.1:8000/webservices/sample/call/soap?op=insereDocDependente</stringProp>
+          <stringProp name="SoapSampler.SEND_SOAP_ACTION">true</stringProp>
+          <boolProp name="HTTPSampler.use_keepalive">false</boolProp>
+        </SoapSampler>
+        <hashTree/>
+        <SoapSampler guiclass="SoapSamplerGui" testclass="SoapSampler" testname="Insere Documento Empregado" enabled="true">
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments"/>
+          </elementProp>
+          <stringProp name="TestPlan.comments">	</stringProp>
+          <stringProp name="SoapSampler.URL_DATA">http://127.0.0.1:8000/webservices/sample/call/soap?WSDL=None</stringProp>
+          <stringProp name="HTTPSamper.xml_data">&lt;soapenv:Envelope xmlns:soapenv=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot; xmlns:soap=&quot;http://127.0.0.1:8000/webservices/sample/call/soap&quot;&gt;
+   &lt;soapenv:Header/&gt;
+   &lt;soapenv:Body&gt;
+      &lt;soap:insereDocEmpregado&gt;
+         &lt;!--You may enter the following 4 items in any order--&gt;
+         &lt;soap:matricula&gt;?&lt;/soap:matricula&gt;
+         &lt;soap:tp_documento&gt;?&lt;/soap:tp_documento&gt;
+         &lt;soap:no_doc&gt;?&lt;/soap:no_doc&gt;
+         &lt;soap:file&gt;?&lt;/soap:file&gt;
+      &lt;/soap:insereDocEmpregado&gt;
+   &lt;/soapenv:Body&gt;
+&lt;/soapenv:Envelope&gt;</stringProp>
+          <stringProp name="SoapSampler.xml_data_file"></stringProp>
+          <stringProp name="SoapSampler.SOAP_ACTION">http://127.0.0.1:8000/webservices/sample/call/soap?op=retornaDocEmpregado</stringProp>
+          <stringProp name="SoapSampler.SEND_SOAP_ACTION">true</stringProp>
+          <boolProp name="HTTPSampler.use_keepalive">false</boolProp>
+        </SoapSampler>
+        <hashTree/>
+        <SoapSampler guiclass="SoapSamplerGui" testclass="SoapSampler" testname="Insere Empregado" enabled="true">
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments"/>
+          </elementProp>
+          <stringProp name="SoapSampler.URL_DATA">http://127.0.0.1:8000/webservices/sample/call/soap?WSDL=None</stringProp>
+          <stringProp name="HTTPSamper.xml_data">&lt;soapenv:Envelope xmlns:soapenv=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot; xmlns:soap=&quot;http://127.0.0.1:8000/webservices/sample/call/soap&quot;&gt;
+   &lt;soapenv:Header/&gt;
+   &lt;soapenv:Body&gt;
+      &lt;soap:insereEmpregado&gt;
+         &lt;!--You may enter the following 10 items in any order--&gt;
+         &lt;soap:dt_contratacao&gt;?&lt;/soap:dt_contratacao&gt;
+         &lt;soap:rg&gt;?&lt;/soap:rg&gt;
+         &lt;soap:dt_desligamento&gt;?&lt;/soap:dt_desligamento&gt;
+         &lt;soap:nome&gt;?&lt;/soap:nome&gt;
+         &lt;soap:id_orgao&gt;?&lt;/soap:id_orgao&gt;
+         &lt;soap:nu_matricula&gt;?&lt;/soap:nu_matricula&gt;
+         &lt;soap:documentos&gt;?&lt;/soap:documentos&gt;
+         &lt;soap:dependentes&gt;?&lt;/soap:dependentes&gt;
+         &lt;soap:cpf&gt;?&lt;/soap:cpf&gt;
+         &lt;soap:dt_nascimento&gt;?&lt;/soap:dt_nascimento&gt;
+      &lt;/soap:insereEmpregado&gt;
+   &lt;/soapenv:Body&gt;
+&lt;/soapenv:Envelope&gt;</stringProp>
+          <stringProp name="SoapSampler.xml_data_file"></stringProp>
+          <stringProp name="SoapSampler.SOAP_ACTION">http://127.0.0.1:8000/webservices/sample/call/soap?op=insereEmpregado</stringProp>
+          <stringProp name="SoapSampler.SEND_SOAP_ACTION">true</stringProp>
+          <boolProp name="HTTPSampler.use_keepalive">false</boolProp>
+        </SoapSampler>
+        <hashTree/>
+        <SoapSampler guiclass="SoapSamplerGui" testclass="SoapSampler" testname="Insere Orgãos" enabled="true">
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments"/>
+          </elementProp>
+          <stringProp name="SoapSampler.URL_DATA">http://127.0.0.1:8000/webservices/sample/call/soap?WSDL=None</stringProp>
+          <stringProp name="HTTPSamper.xml_data">&lt;soapenv:Envelope xmlns:soapenv=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot; xmlns:soap=&quot;http://127.0.0.1:8000/webservices/sample/call/soap&quot;&gt;
+   &lt;soapenv:Header/&gt;
+   &lt;soapenv:Body&gt;
+      &lt;soap:insereOrgao&gt;
+         &lt;!--You may enter the following 5 items in any order--&gt;
+         &lt;soap:cnpj&gt;?&lt;/soap:cnpj&gt;
+         &lt;soap:cidade&gt;?&lt;/soap:cidade&gt;
+         &lt;soap:endereco&gt;?&lt;/soap:endereco&gt;
+         &lt;soap:uf&gt;?&lt;/soap:uf&gt;
+         &lt;soap:nome&gt;?&lt;/soap:nome&gt;
+      &lt;/soap:insereOrgao&gt;
+   &lt;/soapenv:Body&gt;
+&lt;/soapenv:Envelope&gt;</stringProp>
+          <stringProp name="SoapSampler.xml_data_file"></stringProp>
+          <stringProp name="SoapSampler.SOAP_ACTION">http://127.0.0.1:8000/webservices/sample/call/soap?op=insereOrgao</stringProp>
+          <stringProp name="SoapSampler.SEND_SOAP_ACTION">true</stringProp>
+          <boolProp name="HTTPSampler.use_keepalive">false</boolProp>
+        </SoapSampler>
+        <hashTree/>
+        <SoapSampler guiclass="SoapSamplerGui" testclass="SoapSampler" testname="Lista Dependentes" enabled="true">
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments"/>
+          </elementProp>
+          <stringProp name="SoapSampler.URL_DATA">http://127.0.0.1:8000/webservices/sample/call/soap?WSDL=None</stringProp>
+          <stringProp name="HTTPSamper.xml_data">&lt;soapenv:Envelope xmlns:soapenv=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot; xmlns:soap=&quot;http://127.0.0.1:8000/webservices/sample/call/soap&quot;&gt;
+   &lt;soapenv:Header/&gt;
+   &lt;soapenv:Body&gt;
+      &lt;soap:listaDependentes&gt;
+         &lt;!--You may enter the following 5 items in any order--&gt;
+         &lt;soap:matricula&gt;&lt;/soap:matricula&gt;
+         &lt;soap:tp_vinculo&gt;&lt;/soap:tp_vinculo&gt;
+         &lt;soap:dt_nascimento&gt;1971-08-17&lt;/soap:dt_nascimento&gt;
+         &lt;soap:nomeEmpregado&gt;&lt;/soap:nomeEmpregado&gt;
+         &lt;soap:nomeDependente&gt;&lt;/soap:nomeDependente&gt;
+      &lt;/soap:listaDependentes&gt;
+   &lt;/soapenv:Body&gt;
+&lt;/soapenv:Envelope&gt;</stringProp>
+          <stringProp name="SoapSampler.xml_data_file"></stringProp>
+          <stringProp name="SoapSampler.SOAP_ACTION">http://127.0.0.1:8000/webservices/sample/call/soap?op=listaDependentes</stringProp>
+          <stringProp name="SoapSampler.SEND_SOAP_ACTION">true</stringProp>
+          <boolProp name="HTTPSampler.use_keepalive">false</boolProp>
+        </SoapSampler>
+        <hashTree/>
+        <SoapSampler guiclass="SoapSamplerGui" testclass="SoapSampler" testname="Lista Empregados" enabled="true">
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments"/>
+          </elementProp>
+          <stringProp name="SoapSampler.URL_DATA">http://127.0.0.1:8000/webservices/sample/call/soap?WSDL=None</stringProp>
+          <stringProp name="HTTPSamper.xml_data">&lt;soapenv:Envelope xmlns:soapenv=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot; xmlns:soap=&quot;http://127.0.0.1:8000/webservices/sample/call/soap&quot;&gt;
+   &lt;soapenv:Header/&gt;
+   &lt;soapenv:Body&gt;
+      &lt;soap:listaEmpregados&gt;
+         &lt;!--You may enter the following 5 items in any order--&gt;
+         &lt;soap:dt_contratacao&gt;&lt;/soap:dt_contratacao&gt;
+         &lt;soap:dt_nascimento&gt;&lt;/soap:dt_nascimento&gt;
+         &lt;soap:dt_desligamento&gt;&lt;/soap:dt_desligamento&gt;
+         &lt;soap:nu_matricula&gt;m1111&lt;/soap:nu_matricula&gt;
+         &lt;soap:nome&gt;&lt;/soap:nome&gt;
+      &lt;/soap:listaEmpregados&gt;
+   &lt;/soapenv:Body&gt;
+&lt;/soapenv:Envelope&gt;</stringProp>
+          <stringProp name="SoapSampler.xml_data_file"></stringProp>
+          <stringProp name="SoapSampler.SOAP_ACTION">http://127.0.0.1:8000/webservices/sample/call/soap?op=listaEmpregados</stringProp>
+          <stringProp name="SoapSampler.SEND_SOAP_ACTION">true</stringProp>
+          <boolProp name="HTTPSampler.use_keepalive">false</boolProp>
+        </SoapSampler>
+        <hashTree/>
+        <SoapSampler guiclass="SoapSamplerGui" testclass="SoapSampler" testname="Lista Orgãos" enabled="true">
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments"/>
+          </elementProp>
+          <stringProp name="SoapSampler.URL_DATA">http://127.0.0.1:8000/webservices/sample/call/soap?WSDL=None</stringProp>
+          <stringProp name="HTTPSamper.xml_data">&lt;soapenv:Envelope xmlns:soapenv=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot; xmlns:soap=&quot;http://127.0.0.1:8000/webservices/sample/call/soap&quot;&gt;
+   &lt;soapenv:Header/&gt;
+   &lt;soapenv:Body&gt;
+      &lt;soap:listaOrgao&gt;
+         &lt;!--You may enter the following 4 items in any order--&gt;
+         &lt;soap:endereco&gt;&lt;/soap:endereco&gt;
+         &lt;soap:cidade&gt;&lt;/soap:cidade&gt;
+         &lt;soap:uf&gt;&lt;/soap:uf&gt;
+         &lt;soap:nome&gt;orgao 20&lt;/soap:nome&gt;
+      &lt;/soap:listaOrgao&gt;
+   &lt;/soapenv:Body&gt;
+&lt;/soapenv:Envelope&gt;</stringProp>
+          <stringProp name="SoapSampler.xml_data_file"></stringProp>
+          <stringProp name="SoapSampler.SOAP_ACTION">http://127.0.0.1:8000/webservices/sample/call/soap?op=listaOrgao</stringProp>
+          <stringProp name="SoapSampler.SEND_SOAP_ACTION">true</stringProp>
+          <boolProp name="HTTPSampler.use_keepalive">false</boolProp>
+        </SoapSampler>
+        <hashTree/>
+        <SoapSampler guiclass="SoapSamplerGui" testclass="SoapSampler" testname="Lista Vinculos" enabled="true">
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments"/>
+          </elementProp>
+          <stringProp name="SoapSampler.URL_DATA">http://127.0.0.1:8000/webservices/sample/call/soap?WSDL=None</stringProp>
+          <stringProp name="HTTPSamper.xml_data">&lt;soapenv:Envelope xmlns:soapenv=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot; xmlns:soap=&quot;http://127.0.0.1:8000/webservices/sample/call/soap&quot;&gt;
+   &lt;soapenv:Header/&gt;
+   &lt;soapenv:Body&gt;
+      &lt;soap:listaVinculos&gt;
+         &lt;!--You may enter the following 2 items in any order--&gt;
+         &lt;soap:nu_tipo_vinculo&gt;&lt;/soap:nu_tipo_vinculo&gt;
+         &lt;soap:no_tipo_vinculo&gt;r&lt;/soap:no_tipo_vinculo&gt;
+      &lt;/soap:listaVinculos&gt;
+   &lt;/soapenv:Body&gt;
+&lt;/soapenv:Envelope&gt;</stringProp>
+          <stringProp name="SoapSampler.xml_data_file"></stringProp>
+          <stringProp name="SoapSampler.SOAP_ACTION">http://127.0.0.1:8000/webservices/sample/call/soap?op=listaVinculos</stringProp>
+          <stringProp name="SoapSampler.SEND_SOAP_ACTION">true</stringProp>
+          <boolProp name="HTTPSampler.use_keepalive">false</boolProp>
+        </SoapSampler>
+        <hashTree/>
+        <SoapSampler guiclass="SoapSamplerGui" testclass="SoapSampler" testname="Lista Tipo Documentos" enabled="true">
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments"/>
+          </elementProp>
+          <stringProp name="SoapSampler.URL_DATA">http://127.0.0.1:8000/webservices/sample/call/soap?WSDL=None</stringProp>
+          <stringProp name="HTTPSamper.xml_data">&lt;soapenv:Envelope xmlns:soapenv=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot; xmlns:soap=&quot;http://127.0.0.1:8000/webservices/sample/call/soap&quot;&gt;
+   &lt;soapenv:Header/&gt;
+   &lt;soapenv:Body&gt;
+      &lt;soap:listaTipoDocumentos&gt;
+         &lt;!--You may enter the following 2 items in any order--&gt;
+         &lt;soap:no_tipo_documento&gt;&lt;/soap:no_tipo_documento&gt;
+         &lt;soap:nu_tipo_documento&gt;&lt;/soap:nu_tipo_documento&gt;
+      &lt;/soap:listaTipoDocumentos&gt;
+   &lt;/soapenv:Body&gt;
+&lt;/soapenv:Envelope&gt;</stringProp>
+          <stringProp name="SoapSampler.xml_data_file"></stringProp>
+          <stringProp name="SoapSampler.SOAP_ACTION">http://127.0.0.1:8000/webservices/sample/call/soap?op=listaTipoDocumentos</stringProp>
+          <stringProp name="SoapSampler.SEND_SOAP_ACTION">true</stringProp>
+          <boolProp name="HTTPSampler.use_keepalive">false</boolProp>
+        </SoapSampler>
+        <hashTree/>
+        <SoapSampler guiclass="SoapSamplerGui" testclass="SoapSampler" testname="Lista Documentos Empregado" enabled="true">
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments"/>
+          </elementProp>
+          <stringProp name="SoapSampler.URL_DATA">http://127.0.0.1:8000/webservices/sample/call/soap?WSDL=None</stringProp>
+          <stringProp name="HTTPSamper.xml_data">&lt;soapenv:Envelope xmlns:soapenv=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot; xmlns:soap=&quot;http://127.0.0.1:8000/webservices/sample/call/soap&quot;&gt;
+   &lt;soapenv:Header/&gt;
+   &lt;soapenv:Body&gt;
+      &lt;soap:retornaDocEmpregado&gt;
+         &lt;!--You may enter the following 3 items in any order--&gt;
+         &lt;soap:nu_matricula&gt;M632898&lt;/soap:nu_matricula&gt;
+         &lt;soap:tp_documento&gt;&lt;/soap:tp_documento&gt;
+         &lt;soap:no_documento&gt;&lt;/soap:no_documento&gt;
+      &lt;/soap:retornaDocEmpregado&gt;
+   &lt;/soapenv:Body&gt;
+&lt;/soapenv:Envelope&gt;</stringProp>
+          <stringProp name="SoapSampler.xml_data_file"></stringProp>
+          <stringProp name="SoapSampler.SOAP_ACTION">http://127.0.0.1:8000/webservices/sample/call/soap?op=retornaDocEmpregado</stringProp>
+          <stringProp name="SoapSampler.SEND_SOAP_ACTION">true</stringProp>
+          <boolProp name="HTTPSampler.use_keepalive">false</boolProp>
+        </SoapSampler>
+        <hashTree/>
+        <SoapSampler guiclass="SoapSamplerGui" testclass="SoapSampler" testname="Lista Documentos Dependente" enabled="true">
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments"/>
+          </elementProp>
+          <stringProp name="SoapSampler.URL_DATA">http://127.0.0.1:8000/webservices/sample/call/soap?WSDL=None</stringProp>
+          <stringProp name="HTTPSamper.xml_data">&lt;soapenv:Envelope xmlns:soapenv=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot; xmlns:soap=&quot;http://127.0.0.1:8000/webservices/sample/call/soap&quot;&gt;
+   &lt;soapenv:Header/&gt;
+   &lt;soapenv:Body&gt;
+      &lt;soap:retornaDocDependente&gt;
+         &lt;!--You may enter the following 5 items in any order--&gt;
+         &lt;soap:nu_certidao&gt;&lt;/soap:nu_certidao&gt;
+         &lt;soap:no_documento&gt;&lt;/soap:no_documento&gt;
+         &lt;soap:tp_documento&gt;&lt;/soap:tp_documento&gt;
+         &lt;soap:nu_cpf&gt;15908082547&lt;/soap:nu_cpf&gt;
+         &lt;soap:nu_rg&gt;&lt;/soap:nu_rg&gt;
+      &lt;/soap:retornaDocDependente&gt;
+   &lt;/soapenv:Body&gt;
+&lt;/soapenv:Envelope&gt;</stringProp>
+          <stringProp name="SoapSampler.xml_data_file"></stringProp>
+          <stringProp name="SoapSampler.SOAP_ACTION">http://127.0.0.1:8000/webservices/sample/call/soap?op=retornaDocDependente</stringProp>
+          <stringProp name="SoapSampler.SEND_SOAP_ACTION">true</stringProp>
+          <boolProp name="HTTPSampler.use_keepalive">false</boolProp>
+        </SoapSampler>
+        <hashTree/>
+        <ResultCollector guiclass="GraphVisualizer" testclass="ResultCollector" testname="Graph Results" enabled="true">
+          <boolProp name="ResultCollector.error_logging">false</boolProp>
+          <objProp>
+            <name>saveConfig</name>
+            <value class="SampleSaveConfiguration">
+              <time>true</time>
+              <latency>true</latency>
+              <timestamp>true</timestamp>
+              <success>true</success>
+              <label>true</label>
+              <code>true</code>
+              <message>true</message>
+              <threadName>true</threadName>
+              <dataType>true</dataType>
+              <encoding>false</encoding>
+              <assertions>true</assertions>
+              <subresults>true</subresults>
+              <responseData>false</responseData>
+              <samplerData>false</samplerData>
+              <xml>false</xml>
+              <fieldNames>false</fieldNames>
+              <responseHeaders>false</responseHeaders>
+              <requestHeaders>false</requestHeaders>
+              <responseDataOnError>false</responseDataOnError>
+              <saveAssertionResultsFailureMessage>false</saveAssertionResultsFailureMessage>
+              <assertionsResultsToSave>0</assertionsResultsToSave>
+              <bytes>true</bytes>
+            </value>
+          </objProp>
+          <stringProp name="filename">/home/wanzeller/python webservice users graph.jmx</stringProp>
+        </ResultCollector>
+        <hashTree/>
+        <ResultCollector guiclass="SimpleDataWriter" testclass="ResultCollector" testname="Simple Data Writer" enabled="true">
+          <boolProp name="ResultCollector.error_logging">false</boolProp>
+          <objProp>
+            <name>saveConfig</name>
+            <value class="SampleSaveConfiguration">
+              <time>true</time>
+              <latency>true</latency>
+              <timestamp>true</timestamp>
+              <success>true</success>
+              <label>true</label>
+              <code>true</code>
+              <message>true</message>
+              <threadName>true</threadName>
+              <dataType>true</dataType>
+              <encoding>true</encoding>
+              <assertions>true</assertions>
+              <subresults>true</subresults>
+              <responseData>true</responseData>
+              <samplerData>true</samplerData>
+              <xml>true</xml>
+              <fieldNames>true</fieldNames>
+              <responseHeaders>true</responseHeaders>
+              <requestHeaders>true</requestHeaders>
+              <responseDataOnError>false</responseDataOnError>
+              <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+              <assertionsResultsToSave>0</assertionsResultsToSave>
+              <bytes>true</bytes>
+              <url>true</url>
+              <fileName>true</fileName>
+              <hostname>true</hostname>
+              <threadCounts>true</threadCounts>
+              <sampleCount>true</sampleCount>
+              <idleTime>true</idleTime>
+            </value>
+          </objProp>
+          <stringProp name="filename">/home/wanzeller/jmeter test plans/responses.jmx</stringProp>
+        </ResultCollector>
+        <hashTree/>
+        <ResultSaver guiclass="ResultSaverGui" testclass="ResultSaver" testname="Save Responses to a file" enabled="true">
+          <stringProp name="FileSaver.filename">/home/wanzeller/jmeter test plans/test7</stringProp>
+          <boolProp name="FileSaver.errorsonly">false</boolProp>
+          <boolProp name="FileSaver.skipautonumber">false</boolProp>
+          <boolProp name="FileSaver.skipsuffix">false</boolProp>
+          <boolProp name="FileSaver.successonly">false</boolProp>
+          <stringProp name="FileSaver.variablename">FILENAME</stringProp>
+        </ResultSaver>
+        <hashTree/>
+      </hashTree>
+    </hashTree>
+  </hashTree>
+</jmeterTestPlan>

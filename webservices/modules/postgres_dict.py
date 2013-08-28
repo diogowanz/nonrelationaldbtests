@@ -33,7 +33,7 @@ class Model:
 			#return resultado
 			return "Orgao inserido com sucesso."
 
-	def insereEmpregado(self,nome,dt_contratacao,dt_desligamento,dt_nascimento,nu_matricula,rg,cpf,id_orgao,documentos,dependentes):
+	def insereEmpregado(self,nome,dt_contratacao,dt_desligamento,dt_nascimento,nu_matricula,rg,cpf,id_orgao,documentos):
 		if self.validaCampo(str(nome))  or self.validaCampo(str(dt_contratacao)) or self.validaCampo(str(dt_nascimento)) or self.validaCampo(str(nu_matricula)) or self.validaCampo(str(rg)) or self.validaCampo(str(cpf)) or self.validaCampo(str(id_orgao)):
 			return "Favor informar os seguintes campos: Nome, Data de Contratacao, Data de Nascimento, Matricula, RG, CPF e ID da Empresa."
 		else:
@@ -45,8 +45,6 @@ class Model:
 				values += ",'"+dt_desligamento+"')"
 			if documentos == None:
 				documentos = 'Null'
-			if dependentes == None:
-				dependentes = 'Null'
 			sql = "insert into tb004_empregado (no_empregado, dt_contratacao,dt_nascimento,nu_matricula,nu_rg,nu_cpf,id_orgao,dt_desligamento) values "+values
 			cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 			resultado = cursor.execute(sql)
@@ -109,12 +107,12 @@ class Model:
 			cursor.execute(sql)
 			conn.commit()
 			resultEmpregado = cursor
-			if len(resultEmpregado) != 0:
-				sql = "select id_tipo_documento from tb001_tipo_documento where id_tipo_documento = "+tp_documento.split()
+			if resultEmpregado.arraysize != 0:
+				sql = "select id_tipo_documento from tb001_tipo_documento where id_tipo_documento = " + tp_documento
 				cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 				cursor.execute(sql)
 				resultado = cursor #verificar
-				if len(resultado) != 0:
+				if resultado.arraysize != 0:
 					resultEmpregado = resultEmpregado.fetchone()
 					config = ConfigParser.ConfigParser()
 					config.read("config.conf")
@@ -124,7 +122,7 @@ class Model:
 						os.makedirs(config.get("path", "filePath")+str(resultEmpregado["id_orgao"])+'/'+str(resultEmpregado["id_empregado"]))
 					no_doc = config.get("path", "filePath")+str(resultEmpregado["id_orgao"])+'/'+str(resultEmpregado["id_empregado"])+'/'+no_doc
 					self.upload_file(file,no_doc)
-					sql = "insert into tb006_documento (no_documento,id_tipo_documento,id_empregado,dh_upload) values ('"+no_doc+"',"+tp_documento.split()+","+str(resultEmpregado['id_empregado'])+",'"+str(datetime.datetime.now())+"')"
+					sql = "insert into tb006_documento (no_documento,id_tipo_documento,id_empregado,dh_upload) values ('"+no_doc+"',"+tp_documento+","+str(resultEmpregado['id_empregado'])+",'"+str(datetime.datetime.now())+"')"
 					cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 					cursor.execute(sql)
 					conn.commit()
@@ -148,13 +146,13 @@ class Model:
 			cursor1.execute(sql)
 			conn.commit()
 			resultEmpregado = cursor1
-			if len(resultEmpregado) != 0:
+			if resultEmpregado.arraysize != 0:
 				filtro = ''
-				if self.validaCampo(rg_dependente):
+				if self.validaCampo(str(rg_dependente)):
 					pass
 				else:
 					filtro +=" and nu_rg = "+str(rg_dependente).strip() 
-				if self.validaCampo(cpf_dependente):
+				if self.validaCampo(str(cpf_dependente)):
 					pass
 				else:
 					filtro +=" and nu_cpf = "+str(cpf_dependente).strip()
@@ -167,13 +165,13 @@ class Model:
 				cursor2.execute(sql)
 				conn.commit()
 				resultDependente = cursor2
-				if len(resultDependente) != 0:
-					sql = "select id_tipo_documento from tb001_tipo_documento where id_tipo_documento = "+tp_documento.split()
+				if resultDependente.arraysize != 0:
+					sql = "select id_tipo_documento from tb001_tipo_documento where id_tipo_documento = "+str(tp_documento)
 					cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 					cursor.execute(sql)
 					conn.commit()
 					resultado = cursor
-					if len(resultado) != 0:
+					if resultado.arraysize != 0:
 						resultEmpregado = resultEmpregado.fetchone()
 						resultDependente = resultDependente.fetchone()
 						config = ConfigParser.ConfigParser()
@@ -186,7 +184,7 @@ class Model:
 							os.makedirs(config.get("path", "filePath")+str(resultEmpregado["id_orgao"])+'/'+str(resultEmpregado["id_empregado"])+'/'+str(resultDependente["id_empregado_dependente"]))
 						no_doc = config.get("path", "filePath")+str(resultEmpregado["id_orgao"])+'/'+str(resultEmpregado["id_empregado"])+'/'+str(resultDependente["id_empregado_dependente"])+'/'+no_doc
 						self.upload_file(file,no_doc)
-						sql = "insert into tb006_documento (id_tipo_documento,id_empregado,id_empregado_dependente,no_documento,dh_upload) values("+tp_documento.split()+","+str(resultEmpregado["id_empregado"])+","+str(resultDependente["id_empregado_dependente"])+",'"+no_doc+"','"+str(datetime.datetime.now())+"')"
+						sql = "insert into tb006_documento (id_tipo_documento,id_empregado,id_empregado_dependente,no_documento,dh_upload) values("+str(tp_documento)+","+str(resultEmpregado["id_empregado"])+","+str(resultDependente["id_empregado_dependente"])+",'"+no_doc+"','"+str(datetime.datetime.now())+"')"
 						cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 						cursor.execute(sql)
 						conn.commit()
@@ -214,7 +212,7 @@ class Model:
 		resultado = cursor.execute(sql)
 		conn.commit()
 
-		if len(cursor) == 0:
+		if cursor.arraysize == 0:
 			print "Nenhum dado econtrado. Verifique os parametros de busca."
 		else:
 			orgaosDict=[]
