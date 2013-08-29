@@ -15,7 +15,7 @@
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
           <boolProp name="LoopController.continue_forever">false</boolProp>
-          <stringProp name="LoopController.loops">1</stringProp>
+          <stringProp name="LoopController.loops">10</stringProp>
         </elementProp>
         <stringProp name="ThreadGroup.num_threads">1</stringProp>
         <stringProp name="ThreadGroup.ramp_time">0</stringProp>
@@ -26,7 +26,7 @@
         <stringProp name="ThreadGroup.delay"></stringProp>
       </ThreadGroup>
       <hashTree>
-        <SoapSampler guiclass="SoapSamplerGui" testclass="SoapSampler" testname="Insere Dependente" enabled="true">
+        <SoapSampler guiclass="SoapSamplerGui" testclass="SoapSampler" testname="Insere Dependente" enabled="false">
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
             <collectionProp name="Arguments.arguments"/>
           </elementProp>
@@ -36,14 +36,14 @@
    &lt;soapenv:Body&gt;
       &lt;soap:insereDependente&gt;
          &lt;!--You may enter the following 8 items in any order--&gt;
-         &lt;soap:rg&gt;123456&lt;/soap:rg&gt;
+         &lt;soap:rg&gt;${rg}&lt;/soap:rg&gt;
          &lt;soap:documentos&gt;&lt;/soap:documentos&gt;
-         &lt;soap:nome&gt;DEPENDENTE JMETER 1&lt;/soap:nome&gt;
-         &lt;soap:nu_matricula_responsavel&gt;M761045&lt;/soap:nu_matricula_responsavel&gt;
-         &lt;soap:tp_vinculo&gt;521d46156e9552085cdee32b&lt;/soap:tp_vinculo&gt;
-         &lt;soap:certidao&gt;654321&lt;/soap:certidao&gt;
-         &lt;soap:cpf&gt;09876543212&lt;/soap:cpf&gt;
-         &lt;soap:dt_nascimento&gt;01/01/1990&lt;/soap:dt_nascimento&gt;
+         &lt;soap:nome&gt;${nome}&lt;/soap:nome&gt;
+         &lt;soap:nu_matricula_responsavel&gt;${nu_matricula_responsavel}&lt;/soap:nu_matricula_responsavel&gt;
+         &lt;soap:tp_vinculo&gt;${tp_vinculo}&lt;/soap:tp_vinculo&gt;
+         &lt;soap:certidao&gt;${certidao}&lt;/soap:certidao&gt;
+         &lt;soap:cpf&gt;${cpf}&lt;/soap:cpf&gt;
+         &lt;soap:dt_nascimento&gt;${dt_nascimento}&lt;/soap:dt_nascimento&gt;
       &lt;/soap:insereDependente&gt;
    &lt;/soapenv:Body&gt;
 &lt;/soapenv:Envelope&gt;</stringProp>
@@ -52,8 +52,20 @@
           <stringProp name="SoapSampler.SEND_SOAP_ACTION">true</stringProp>
           <boolProp name="HTTPSampler.use_keepalive">false</boolProp>
         </SoapSampler>
-        <hashTree/>
-        <SoapSampler guiclass="SoapSamplerGui" testclass="SoapSampler" testname="Insere Documento Dependente" enabled="true">
+        <hashTree>
+          <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Data Set Config" enabled="false">
+            <stringProp name="delimiter">;</stringProp>
+            <stringProp name="fileEncoding"></stringProp>
+            <stringProp name="filename">/home/wanzeller/jmeter test plans/cargaMongo/empregados.csv</stringProp>
+            <boolProp name="quotedData">true</boolProp>
+            <boolProp name="recycle">true</boolProp>
+            <stringProp name="shareMode">Current thread</stringProp>
+            <boolProp name="stopThread">false</boolProp>
+            <stringProp name="variableNames">nome,rg,cpf,certidao,dt_nascimento,tp_vinculo,documentos,nu_matricula_responsavel</stringProp>
+          </CSVDataSet>
+          <hashTree/>
+        </hashTree>
+        <SoapSampler guiclass="SoapSamplerGui" testclass="SoapSampler" testname="Insere Documento Dependente" enabled="false">
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
             <collectionProp name="Arguments.arguments"/>
           </elementProp>
@@ -63,13 +75,13 @@
    &lt;soapenv:Body&gt;
       &lt;soap:insereDocDependente&gt;
          &lt;!--You may enter the following 7 items in any order--&gt;
-         &lt;soap:certidao_dependente&gt;?&lt;/soap:certidao_dependente&gt;
-         &lt;soap:rg_dependente&gt;?&lt;/soap:rg_dependente&gt;
-         &lt;soap:cpf_dependente&gt;?&lt;/soap:cpf_dependente&gt;
-         &lt;soap:file&gt;?&lt;/soap:file&gt;
-         &lt;soap:tp_documento&gt;?&lt;/soap:tp_documento&gt;
-         &lt;soap:no_doc&gt;?&lt;/soap:no_doc&gt;
-         &lt;soap:empreg_matricula&gt;?&lt;/soap:empreg_matricula&gt;
+         &lt;soap:certidao_dependente&gt;${certidao_dependente}&lt;/soap:certidao_dependente&gt;
+         &lt;soap:rg_dependente&gt;${rg_dependente}&lt;/soap:rg_dependente&gt;
+         &lt;soap:cpf_dependente&gt;${cpf_dependente}&lt;/soap:cpf_dependente&gt;
+         &lt;soap:file&gt;${file}&lt;/soap:file&gt;
+         &lt;soap:tp_documento&gt;${tp_documento}&lt;/soap:tp_documento&gt;
+         &lt;soap:no_doc&gt;${no_doc}&lt;/soap:no_doc&gt;
+         &lt;soap:empreg_matricula&gt;${empreg_matricula}&lt;/soap:empreg_matricula&gt;
       &lt;/soap:insereDocDependente&gt;
    &lt;/soapenv:Body&gt;
 &lt;/soapenv:Envelope&gt;</stringProp>
@@ -78,8 +90,20 @@
           <stringProp name="SoapSampler.SEND_SOAP_ACTION">true</stringProp>
           <boolProp name="HTTPSampler.use_keepalive">false</boolProp>
         </SoapSampler>
-        <hashTree/>
-        <SoapSampler guiclass="SoapSamplerGui" testclass="SoapSampler" testname="Insere Documento Empregado" enabled="true">
+        <hashTree>
+          <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Data Set Config" enabled="false">
+            <stringProp name="filename">/home/wanzeller/jmeter test plans/cargaMongo/docDependentes.csv</stringProp>
+            <stringProp name="fileEncoding"></stringProp>
+            <stringProp name="variableNames">empreg_matricula,rg_dependente,cpf_dependente,certidao_dependente,tp_documento, no_doc,file</stringProp>
+            <stringProp name="delimiter">;</stringProp>
+            <boolProp name="quotedData">false</boolProp>
+            <boolProp name="recycle">true</boolProp>
+            <boolProp name="stopThread">false</boolProp>
+            <stringProp name="shareMode">Current thread</stringProp>
+          </CSVDataSet>
+          <hashTree/>
+        </hashTree>
+        <SoapSampler guiclass="SoapSamplerGui" testclass="SoapSampler" testname="Insere Documento Empregado" enabled="false">
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
             <collectionProp name="Arguments.arguments"/>
           </elementProp>
@@ -90,10 +114,10 @@
    &lt;soapenv:Body&gt;
       &lt;soap:insereDocEmpregado&gt;
          &lt;!--You may enter the following 4 items in any order--&gt;
-         &lt;soap:matricula&gt;?&lt;/soap:matricula&gt;
-         &lt;soap:tp_documento&gt;?&lt;/soap:tp_documento&gt;
-         &lt;soap:no_doc&gt;?&lt;/soap:no_doc&gt;
-         &lt;soap:file&gt;?&lt;/soap:file&gt;
+         &lt;soap:matricula&gt;${matricula}&lt;/soap:matricula&gt;
+         &lt;soap:tp_documento&gt;${tp_documento}&lt;/soap:tp_documento&gt;
+         &lt;soap:no_doc&gt;${no_doc}&lt;/soap:no_doc&gt;
+         &lt;soap:file&gt;${file}&lt;/soap:file&gt;
       &lt;/soap:insereDocEmpregado&gt;
    &lt;/soapenv:Body&gt;
 &lt;/soapenv:Envelope&gt;</stringProp>
@@ -102,8 +126,20 @@
           <stringProp name="SoapSampler.SEND_SOAP_ACTION">true</stringProp>
           <boolProp name="HTTPSampler.use_keepalive">false</boolProp>
         </SoapSampler>
-        <hashTree/>
-        <SoapSampler guiclass="SoapSamplerGui" testclass="SoapSampler" testname="Insere Empregado" enabled="true">
+        <hashTree>
+          <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Data Set Config" enabled="false">
+            <stringProp name="filename">/home/wanzeller/jmeter test plans/cargaMongo/docEmpregados.csv</stringProp>
+            <stringProp name="fileEncoding"></stringProp>
+            <stringProp name="variableNames">matricula,tp_documento, no_doc,file</stringProp>
+            <stringProp name="delimiter">;</stringProp>
+            <boolProp name="quotedData">false</boolProp>
+            <boolProp name="recycle">true</boolProp>
+            <boolProp name="stopThread">false</boolProp>
+            <stringProp name="shareMode">Current thread</stringProp>
+          </CSVDataSet>
+          <hashTree/>
+        </hashTree>
+        <SoapSampler guiclass="SoapSamplerGui" testclass="SoapSampler" testname="Insere Empregado" enabled="false">
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
             <collectionProp name="Arguments.arguments"/>
           </elementProp>
@@ -113,16 +149,16 @@
    &lt;soapenv:Body&gt;
       &lt;soap:insereEmpregado&gt;
          &lt;!--You may enter the following 10 items in any order--&gt;
-         &lt;soap:dt_contratacao&gt;?&lt;/soap:dt_contratacao&gt;
-         &lt;soap:rg&gt;?&lt;/soap:rg&gt;
-         &lt;soap:dt_desligamento&gt;?&lt;/soap:dt_desligamento&gt;
-         &lt;soap:nome&gt;?&lt;/soap:nome&gt;
-         &lt;soap:id_orgao&gt;?&lt;/soap:id_orgao&gt;
-         &lt;soap:nu_matricula&gt;?&lt;/soap:nu_matricula&gt;
-         &lt;soap:documentos&gt;?&lt;/soap:documentos&gt;
-         &lt;soap:dependentes&gt;?&lt;/soap:dependentes&gt;
-         &lt;soap:cpf&gt;?&lt;/soap:cpf&gt;
-         &lt;soap:dt_nascimento&gt;?&lt;/soap:dt_nascimento&gt;
+         &lt;soap:dt_contratacao&gt;${dt_contratacao}&lt;/soap:dt_contratacao&gt;
+         &lt;soap:rg&gt;${rg}&lt;/soap:rg&gt;
+         &lt;soap:dt_desligamento&gt;${dt_desligamento}&lt;/soap:dt_desligamento&gt;
+         &lt;soap:nome&gt;${nome}&lt;/soap:nome&gt;
+         &lt;soap:id_orgao&gt;${id_orgao}&lt;/soap:id_orgao&gt;
+         &lt;soap:nu_matricula&gt;${nu_matricula}&lt;/soap:nu_matricula&gt;
+         &lt;soap:documentos&gt;${documentos}&lt;/soap:documentos&gt;
+         &lt;soap:dependentes&gt;${dependentes}&lt;/soap:dependentes&gt;
+         &lt;soap:cpf&gt;${cpf}&lt;/soap:cpf&gt;
+         &lt;soap:dt_nascimento&gt;${dt_nascimento}&lt;/soap:dt_nascimento&gt;
       &lt;/soap:insereEmpregado&gt;
    &lt;/soapenv:Body&gt;
 &lt;/soapenv:Envelope&gt;</stringProp>
@@ -131,7 +167,19 @@
           <stringProp name="SoapSampler.SEND_SOAP_ACTION">true</stringProp>
           <boolProp name="HTTPSampler.use_keepalive">false</boolProp>
         </SoapSampler>
-        <hashTree/>
+        <hashTree>
+          <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Data Set Config" enabled="false">
+            <stringProp name="filename">/home/wanzeller/jmeter test plans/cargaMongo/empregados.csv</stringProp>
+            <stringProp name="fileEncoding"></stringProp>
+            <stringProp name="variableNames">nome,dt_contratacao,dt_desligamento,dt_nascimento,nu_matricula,rg,cpf,id_orgao,documentos</stringProp>
+            <stringProp name="delimiter">;</stringProp>
+            <boolProp name="quotedData">false</boolProp>
+            <boolProp name="recycle">true</boolProp>
+            <boolProp name="stopThread">false</boolProp>
+            <stringProp name="shareMode">Current thread</stringProp>
+          </CSVDataSet>
+          <hashTree/>
+        </hashTree>
         <SoapSampler guiclass="SoapSamplerGui" testclass="SoapSampler" testname="Insere Orgãos" enabled="true">
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
             <collectionProp name="Arguments.arguments"/>
@@ -142,11 +190,11 @@
    &lt;soapenv:Body&gt;
       &lt;soap:insereOrgao&gt;
          &lt;!--You may enter the following 5 items in any order--&gt;
-         &lt;soap:cnpj&gt;?&lt;/soap:cnpj&gt;
-         &lt;soap:cidade&gt;?&lt;/soap:cidade&gt;
-         &lt;soap:endereco&gt;?&lt;/soap:endereco&gt;
-         &lt;soap:uf&gt;?&lt;/soap:uf&gt;
-         &lt;soap:nome&gt;?&lt;/soap:nome&gt;
+         &lt;soap:cnpj&gt;${cnpj}&lt;/soap:cnpj&gt;
+         &lt;soap:cidade&gt;${cidade}&lt;/soap:cidade&gt;
+         &lt;soap:endereco&gt;${endereco}&lt;/soap:endereco&gt;
+         &lt;soap:uf&gt;${uf}&lt;/soap:uf&gt;
+         &lt;soap:nome&gt;${nome}&lt;/soap:nome&gt;
       &lt;/soap:insereOrgao&gt;
    &lt;/soapenv:Body&gt;
 &lt;/soapenv:Envelope&gt;</stringProp>
@@ -155,8 +203,20 @@
           <stringProp name="SoapSampler.SEND_SOAP_ACTION">true</stringProp>
           <boolProp name="HTTPSampler.use_keepalive">false</boolProp>
         </SoapSampler>
-        <hashTree/>
-        <SoapSampler guiclass="SoapSamplerGui" testclass="SoapSampler" testname="Lista Dependentes" enabled="true">
+        <hashTree>
+          <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Data Set Config" enabled="true">
+            <stringProp name="filename">/home/wanzeller/jmeter test plans/cargaMongo/orgaos.csv</stringProp>
+            <stringProp name="fileEncoding"></stringProp>
+            <stringProp name="variableNames">cnpj,nome,endereco,cidade,uf</stringProp>
+            <stringProp name="delimiter">;</stringProp>
+            <boolProp name="quotedData">false</boolProp>
+            <boolProp name="recycle">true</boolProp>
+            <boolProp name="stopThread">false</boolProp>
+            <stringProp name="shareMode">Current thread</stringProp>
+          </CSVDataSet>
+          <hashTree/>
+        </hashTree>
+        <SoapSampler guiclass="SoapSamplerGui" testclass="SoapSampler" testname="Lista Dependentes" enabled="false">
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
             <collectionProp name="Arguments.arguments"/>
           </elementProp>
@@ -180,7 +240,7 @@
           <boolProp name="HTTPSampler.use_keepalive">false</boolProp>
         </SoapSampler>
         <hashTree/>
-        <SoapSampler guiclass="SoapSamplerGui" testclass="SoapSampler" testname="Lista Empregados" enabled="true">
+        <SoapSampler guiclass="SoapSamplerGui" testclass="SoapSampler" testname="Lista Empregados" enabled="false">
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
             <collectionProp name="Arguments.arguments"/>
           </elementProp>
@@ -204,7 +264,7 @@
           <boolProp name="HTTPSampler.use_keepalive">false</boolProp>
         </SoapSampler>
         <hashTree/>
-        <SoapSampler guiclass="SoapSamplerGui" testclass="SoapSampler" testname="Lista Orgãos" enabled="true">
+        <SoapSampler guiclass="SoapSamplerGui" testclass="SoapSampler" testname="Lista Orgãos" enabled="false">
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
             <collectionProp name="Arguments.arguments"/>
           </elementProp>
@@ -227,7 +287,7 @@
           <boolProp name="HTTPSampler.use_keepalive">false</boolProp>
         </SoapSampler>
         <hashTree/>
-        <SoapSampler guiclass="SoapSamplerGui" testclass="SoapSampler" testname="Lista Vinculos" enabled="true">
+        <SoapSampler guiclass="SoapSamplerGui" testclass="SoapSampler" testname="Lista Vinculos" enabled="false">
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
             <collectionProp name="Arguments.arguments"/>
           </elementProp>
@@ -248,7 +308,7 @@
           <boolProp name="HTTPSampler.use_keepalive">false</boolProp>
         </SoapSampler>
         <hashTree/>
-        <SoapSampler guiclass="SoapSamplerGui" testclass="SoapSampler" testname="Lista Tipo Documentos" enabled="true">
+        <SoapSampler guiclass="SoapSamplerGui" testclass="SoapSampler" testname="Lista Tipo Documentos" enabled="false">
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
             <collectionProp name="Arguments.arguments"/>
           </elementProp>
@@ -269,7 +329,7 @@
           <boolProp name="HTTPSampler.use_keepalive">false</boolProp>
         </SoapSampler>
         <hashTree/>
-        <SoapSampler guiclass="SoapSamplerGui" testclass="SoapSampler" testname="Lista Documentos Empregado" enabled="true">
+        <SoapSampler guiclass="SoapSamplerGui" testclass="SoapSampler" testname="Lista Documentos Empregado" enabled="false">
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
             <collectionProp name="Arguments.arguments"/>
           </elementProp>
@@ -291,7 +351,7 @@
           <boolProp name="HTTPSampler.use_keepalive">false</boolProp>
         </SoapSampler>
         <hashTree/>
-        <SoapSampler guiclass="SoapSamplerGui" testclass="SoapSampler" testname="Lista Documentos Dependente" enabled="true">
+        <SoapSampler guiclass="SoapSamplerGui" testclass="SoapSampler" testname="Lista Documentos Dependente" enabled="false">
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
             <collectionProp name="Arguments.arguments"/>
           </elementProp>
@@ -393,6 +453,38 @@
           <boolProp name="FileSaver.successonly">false</boolProp>
           <stringProp name="FileSaver.variablename">FILENAME</stringProp>
         </ResultSaver>
+        <hashTree/>
+        <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
+          <boolProp name="ResultCollector.error_logging">false</boolProp>
+          <objProp>
+            <name>saveConfig</name>
+            <value class="SampleSaveConfiguration">
+              <time>true</time>
+              <latency>true</latency>
+              <timestamp>true</timestamp>
+              <success>true</success>
+              <label>true</label>
+              <code>true</code>
+              <message>true</message>
+              <threadName>true</threadName>
+              <dataType>true</dataType>
+              <encoding>false</encoding>
+              <assertions>true</assertions>
+              <subresults>true</subresults>
+              <responseData>false</responseData>
+              <samplerData>false</samplerData>
+              <xml>false</xml>
+              <fieldNames>false</fieldNames>
+              <responseHeaders>false</responseHeaders>
+              <requestHeaders>false</requestHeaders>
+              <responseDataOnError>false</responseDataOnError>
+              <saveAssertionResultsFailureMessage>false</saveAssertionResultsFailureMessage>
+              <assertionsResultsToSave>0</assertionsResultsToSave>
+              <bytes>true</bytes>
+            </value>
+          </objProp>
+          <stringProp name="filename"></stringProp>
+        </ResultCollector>
         <hashTree/>
       </hashTree>
     </hashTree>
