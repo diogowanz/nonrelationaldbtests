@@ -33,25 +33,33 @@ class Model:
 			#return resultado
 			return "Orgao inserido com sucesso."
 
-	def insereEmpregado(self,nome,dt_contratacao,dt_desligamento,dt_nascimento,nu_matricula,rg,cpf,id_orgao,documentos):
-		if self.validaCampo(str(nome))  or self.validaCampo(str(dt_contratacao)) or self.validaCampo(str(dt_nascimento)) or self.validaCampo(str(nu_matricula)) or self.validaCampo(str(rg)) or self.validaCampo(str(cpf)) or self.validaCampo(str(id_orgao)):
+	def insereEmpregado(self,nome,dt_contratacao,dt_desligamento,dt_nascimento,nu_matricula,rg,cpf,cnpj_orgao,documentos):
+		if self.validaCampo(str(nome))  or self.validaCampo(str(dt_contratacao)) or self.validaCampo(str(dt_nascimento)) or self.validaCampo(str(nu_matricula)) or self.validaCampo(str(rg)) or self.validaCampo(str(cpf)) or self.validaCampo(str(cnpj_orgao)):
 			return "Favor informar os seguintes campos: Nome, Data de Contratacao, Data de Nascimento, Matricula, RG, CPF e ID da Empresa."
 		else:
 			conn = self.abreConexao()
-			values = "('"+nome.strip().upper()+"','"+dt_contratacao+"','"+dt_nascimento+"','"+nu_matricula.strip().upper()+"',"+str(rg)+","+str(cpf)+","+str(id_orgao)
-			if self.validaCampo(dt_desligamento):
-				values += ",NULL)"
-			else:
-				values += ",'"+dt_desligamento+"')"
-			if documentos == None:
-				documentos = 'Null'
-			sql = "insert into tb004_empregado (no_empregado, dt_contratacao,dt_nascimento,nu_matricula,nu_rg,nu_cpf,id_orgao,dt_desligamento) values "+values
+			sql = "select id_orgao from tb002_orgao where nu_cnpj ="+str(cnpj_orgao)
 			cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-			resultado = cursor.execute(sql)
+			cursor.execute(sql)
 			conn.commit()
-			#cursor.close()
-			#return resultado
-			return "empregado inserido com sucesso!"
+			if cursor.arraysize == 0 :
+				return "O orgao informando nao e valido."
+			else:
+				orgao = cursor.fetchone()
+				values = "('"+nome.strip().upper()+"','"+dt_contratacao+"','"+dt_nascimento+"','"+nu_matricula.strip().upper()+"',"+str(rg)+","+str(cpf)+","+str(orgao['id_orgao'])
+				if self.validaCampo(dt_desligamento):
+					values += ",NULL)"
+				else:
+					values += ",'"+dt_desligamento+"')"
+				if documentos == None:
+					documentos = 'Null'
+				sql = "insert into tb004_empregado (no_empregado, dt_contratacao,dt_nascimento,nu_matricula,nu_rg,nu_cpf,id_orgao,dt_desligamento) values "+values
+				cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+				resultado = cursor.execute(sql)
+				conn.commit()
+				#cursor.close()
+				#return resultado
+				return "empregado inserido com sucesso!"
 		
 	def insereDependente(self,nome,rg,cpf,certidao,dt_nascimento,tp_vinculo,documentos,nu_matricula_responsavel):
 		if self.validaCampo(str(nome))  or self.validaCampo(str(dt_nascimento)) or self.validaCampo(str(tp_vinculo)) or self.validaCampo(str(nu_matricula_responsavel)):

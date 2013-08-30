@@ -74,7 +74,7 @@ def carregaEmpregados():
 			dt_nascimento = geraDataNascimento()
 			dt_contratacao = geraDataContratacao(dt_nascimento)
 			dt_desligamento = geraDataDesligamento(dt_contratacao,dt_nascimento)
-			Model.insereEmpregado('nome empregado '+str(n),str(dt_contratacao),str(dt_desligamento),str(dt_nascimento),'M'+geraNum(6),geraNum(7),geraNum(11),orgao['id_orgao'],'')
+			Model.insereEmpregado('nome empregado '+str(n),str(dt_contratacao),str(dt_desligamento),str(dt_nascimento),'M'+geraNum(6),geraNum(7),geraNum(11),orgao['nu_cnpj'],'')
 			n+=1
 	
 def carregaDependentes():

@@ -37,7 +37,7 @@
       &lt;soap:insereDependente&gt;
          &lt;!--You may enter the following 8 items in any order--&gt;
          &lt;soap:rg&gt;${rg}&lt;/soap:rg&gt;
-         &lt;soap:documentos&gt;&lt;/soap:documentos&gt;
+         &lt;soap:documentos&gt;${documentos}&lt;/soap:documentos&gt;
          &lt;soap:nome&gt;${nome}&lt;/soap:nome&gt;
          &lt;soap:nu_matricula_responsavel&gt;${nu_matricula_responsavel}&lt;/soap:nu_matricula_responsavel&gt;
          &lt;soap:tp_vinculo&gt;${tp_vinculo}&lt;/soap:tp_vinculo&gt;
@@ -56,7 +56,7 @@
           <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Data Set Config" enabled="false">
             <stringProp name="delimiter">;</stringProp>
             <stringProp name="fileEncoding"></stringProp>
-            <stringProp name="filename">/home/wanzeller/jmeter test plans/cargaMongo/empregados.csv</stringProp>
+            <stringProp name="filename">/home/wanzeller/jmeter test plans/cargaPostgres/dependentes.csv</stringProp>
             <boolProp name="quotedData">true</boolProp>
             <boolProp name="recycle">true</boolProp>
             <stringProp name="shareMode">Current thread</stringProp>
@@ -92,11 +92,11 @@
         </SoapSampler>
         <hashTree>
           <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Data Set Config" enabled="false">
-            <stringProp name="filename">/home/wanzeller/jmeter test plans/cargaMongo/docDependentes.csv</stringProp>
+            <stringProp name="filename">/home/wanzeller/jmeter test plans/cargaPostgres/docDependentes.csv</stringProp>
             <stringProp name="fileEncoding"></stringProp>
             <stringProp name="variableNames">empreg_matricula,rg_dependente,cpf_dependente,certidao_dependente,tp_documento, no_doc,file</stringProp>
             <stringProp name="delimiter">;</stringProp>
-            <boolProp name="quotedData">false</boolProp>
+            <boolProp name="quotedData">true</boolProp>
             <boolProp name="recycle">true</boolProp>
             <boolProp name="stopThread">false</boolProp>
             <stringProp name="shareMode">Current thread</stringProp>
@@ -128,11 +128,11 @@
         </SoapSampler>
         <hashTree>
           <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Data Set Config" enabled="false">
-            <stringProp name="filename">/home/wanzeller/jmeter test plans/cargaMongo/docEmpregados.csv</stringProp>
+            <stringProp name="filename">/home/wanzeller/jmeter test plans/cargaPostgres/docEmpregados.csv</stringProp>
             <stringProp name="fileEncoding"></stringProp>
-            <stringProp name="variableNames">matricula,tp_documento, no_doc,file</stringProp>
+            <stringProp name="variableNames">matricula,tp_documento,no_doc,file</stringProp>
             <stringProp name="delimiter">;</stringProp>
-            <boolProp name="quotedData">false</boolProp>
+            <boolProp name="quotedData">true</boolProp>
             <boolProp name="recycle">true</boolProp>
             <boolProp name="stopThread">false</boolProp>
             <stringProp name="shareMode">Current thread</stringProp>
@@ -153,10 +153,9 @@
          &lt;soap:rg&gt;${rg}&lt;/soap:rg&gt;
          &lt;soap:dt_desligamento&gt;${dt_desligamento}&lt;/soap:dt_desligamento&gt;
          &lt;soap:nome&gt;${nome}&lt;/soap:nome&gt;
-         &lt;soap:id_orgao&gt;${id_orgao}&lt;/soap:id_orgao&gt;
+         &lt;soap:cnpj_orgao&gt;${cnpj_orgao}&lt;/soap:cnpj_orgao&gt;
          &lt;soap:nu_matricula&gt;${nu_matricula}&lt;/soap:nu_matricula&gt;
          &lt;soap:documentos&gt;${documentos}&lt;/soap:documentos&gt;
-         &lt;soap:dependentes&gt;${dependentes}&lt;/soap:dependentes&gt;
          &lt;soap:cpf&gt;${cpf}&lt;/soap:cpf&gt;
          &lt;soap:dt_nascimento&gt;${dt_nascimento}&lt;/soap:dt_nascimento&gt;
       &lt;/soap:insereEmpregado&gt;
@@ -169,9 +168,9 @@
         </SoapSampler>
         <hashTree>
           <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Data Set Config" enabled="false">
-            <stringProp name="filename">/home/wanzeller/jmeter test plans/cargaMongo/empregados.csv</stringProp>
+            <stringProp name="filename">/home/wanzeller/jmeter test plans/cargaPostgres/empregados.csv</stringProp>
             <stringProp name="fileEncoding"></stringProp>
-            <stringProp name="variableNames">nome,dt_contratacao,dt_desligamento,dt_nascimento,nu_matricula,rg,cpf,id_orgao,documentos</stringProp>
+            <stringProp name="variableNames">nome,dt_contratacao,dt_desligamento,dt_nascimento,nu_matricula,rg,cpf,cnpj_orgao,documentos</stringProp>
             <stringProp name="delimiter">;</stringProp>
             <boolProp name="quotedData">false</boolProp>
             <boolProp name="recycle">true</boolProp>
@@ -180,7 +179,7 @@
           </CSVDataSet>
           <hashTree/>
         </hashTree>
-        <SoapSampler guiclass="SoapSamplerGui" testclass="SoapSampler" testname="Insere Orgãos" enabled="true">
+        <SoapSampler guiclass="SoapSamplerGui" testclass="SoapSampler" testname="Insere Orgãos" enabled="false">
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
             <collectionProp name="Arguments.arguments"/>
           </elementProp>
@@ -204,8 +203,8 @@
           <boolProp name="HTTPSampler.use_keepalive">false</boolProp>
         </SoapSampler>
         <hashTree>
-          <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Data Set Config" enabled="true">
-            <stringProp name="filename">/home/wanzeller/jmeter test plans/cargaMongo/orgaos.csv</stringProp>
+          <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Data Set Config" enabled="false">
+            <stringProp name="filename">/home/wanzeller/jmeter test plans/cargaPostgres/orgaos.csv</stringProp>
             <stringProp name="fileEncoding"></stringProp>
             <stringProp name="variableNames">cnpj,nome,endereco,cidade,uf</stringProp>
             <stringProp name="delimiter">;</stringProp>
@@ -216,7 +215,7 @@
           </CSVDataSet>
           <hashTree/>
         </hashTree>
-        <SoapSampler guiclass="SoapSamplerGui" testclass="SoapSampler" testname="Lista Dependentes" enabled="false">
+        <SoapSampler guiclass="SoapSamplerGui" testclass="SoapSampler" testname="Lista Dependentes" enabled="true">
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
             <collectionProp name="Arguments.arguments"/>
           </elementProp>
@@ -226,9 +225,9 @@
    &lt;soapenv:Body&gt;
       &lt;soap:listaDependentes&gt;
          &lt;!--You may enter the following 5 items in any order--&gt;
-         &lt;soap:matricula&gt;&lt;/soap:matricula&gt;
+         &lt;soap:matricula&gt;M&lt;/soap:matricula&gt;
          &lt;soap:tp_vinculo&gt;&lt;/soap:tp_vinculo&gt;
-         &lt;soap:dt_nascimento&gt;1971-08-17&lt;/soap:dt_nascimento&gt;
+         &lt;soap:dt_nascimento&gt;&lt;/soap:dt_nascimento&gt;
          &lt;soap:nomeEmpregado&gt;&lt;/soap:nomeEmpregado&gt;
          &lt;soap:nomeDependente&gt;&lt;/soap:nomeDependente&gt;
       &lt;/soap:listaDependentes&gt;

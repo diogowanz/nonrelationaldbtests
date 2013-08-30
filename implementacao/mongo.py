@@ -49,29 +49,29 @@ class Model:
 			dbh.orgaos.insert(orgao,safe=True)
 			return "Orgao inserido com sucesso."
 		
-	def insereEmpregado(self,nome,dt_contratacao,dt_desligamento,dt_nascimento,nu_matricula,rg,cpf,id_orgao,documentos):
-		if self.validaCampo(str(nome))  or self.validaCampo(str(dt_contratacao)) or self.validaCampo(str(dt_nascimento)) or self.validaCampo(str(nu_matricula)) or self.validaCampo(str(rg)) or self.validaCampo(str(cpf)) or self.validaCampo(str(id_orgao)):
+	def insereEmpregado(self,nome,dt_contratacao,dt_desligamento,dt_nascimento,nu_matricula,rg,cpf,cnpj_orgao,documentos):
+		if self.validaCampo(str(nome))  or self.validaCampo(str(dt_contratacao)) or self.validaCampo(str(dt_nascimento)) or self.validaCampo(str(nu_matricula)) or self.validaCampo(str(rg)) or self.validaCampo(str(cpf)) or self.validaCampo(str(cnpj_orgao)):
 			return "Favor informar os seguintes campos: Nome, Data de Contratacao, Data de Nascimento, Matricula, RG, CPF e ID da Empresa."
 		else:
 			dbh = self.conectaMongo()
-			
-			idorgao = ObjectId(id_orgao)
-			orgao = dbh.orgaos.find_one({'_id': idorgao})
-			
-			empregado = {
-				"no_empregado" : nome.strip().upper(),
-				"dt_contratacao" : dt_contratacao,
-				"dt_desligamento" : dt_desligamento,
-				"dt_nascimento" : dt_nascimento,
-				"nu_matricula" : nu_matricula.strip().upper(),
-				"nu_rg" : rg,
-				"nu_cpf" : cpf,
-				"id_orgao" : orgao.get('_id'),
-				"Documentos" : documentos
-			}
-			
-			dbh.empregados.insert(empregado,safe=True)
-			return "empregado inserido com sucesso!"
+			orgao = dbh.orgaos.find_one({'nu_cnpj': cnpj_orgao})
+			if len(orgao) == 0:
+				return "O orgao informado nao e valido."
+			else:
+				empregado = {
+					"no_empregado" : nome.strip().upper(),
+					"dt_contratacao" : dt_contratacao,
+					"dt_desligamento" : dt_desligamento,
+					"dt_nascimento" : dt_nascimento,
+					"nu_matricula" : nu_matricula.strip().upper(),
+					"nu_rg" : rg,
+					"nu_cpf" : cpf,
+					"id_orgao" : orgao.get('_id'),
+					"Documentos" : documentos
+				}
+				
+				dbh.empregados.insert(empregado,safe=True)
+				return "empregado inserido com sucesso!"
 		
 	def insereDependente(self,nome,rg,cpf,certidao,dt_nascimento,tp_vinculo,documentos,nu_matricula_responsavel):
 		if self.validaCampo(str(nome))  or self.validaCampo(str(dt_nascimento)) or self.validaCampo(str(tp_vinculo)) or self.validaCampo(str(nu_matricula_responsavel)):
@@ -118,7 +118,7 @@ class Model:
 					return "O tipo de documento informado nao existe"
 				else:
 					config = ConfigParser.ConfigParser()
-					config.read("config.conf")
+					config.read("./config.conf")
 					if not os.path.exists(config.get("path", "filePath")+str(empregado.get("id_orgao"))):
 						os.makedirs(config.get("path", "filePath")+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id")))
 					elif not os.path.exists(config.get("path", "filePath")+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id"))):

@@ -3,8 +3,8 @@
 def index(): return dict(message="hello from sample.py")
 
 #import mongo
-model = local_import('mongo')
-#model = local_import('postgres_dict')
+#model = local_import('mongo')
+model = local_import('postgres_dict')
 
 
 from gluon.tools import Service
@@ -19,9 +19,9 @@ def insereOrgao(cnpj,nome,endereco,cidade,uf):
     return s
     
 @service.xmlrpc
-@service.soap('insereEmpregado',returns={'s':str},args={'nome':str, 'dt_contratacao':str, 'dt_desligamento':str, 'dt_nascimento':str, 'nu_matricula':str, 'rg':str, 'cpf':str, 'id_orgao':str, 'documentos':str, 'dependentes':str})
-def insereEmpregado(nome,dt_contratacao,dt_desligamento,dt_nascimento,nu_matricula,rg,cpf,id_orgao,documentos,dependentes):
-    s = Model.insereEmpregado(nome,dt_contratacao,dt_desligamento,dt_nascimento,nu_matricula,rg,cpf,id_orgao,documentos,dependentes)
+@service.soap('insereEmpregado',returns={'s':str},args={'nome':str, 'dt_contratacao':str, 'dt_desligamento':str, 'dt_nascimento':str, 'nu_matricula':str, 'rg':str, 'cpf':str, 'cnpj_orgao':str, 'documentos':str})
+def insereEmpregado(nome,dt_contratacao,dt_desligamento,dt_nascimento,nu_matricula,rg,cpf,cnpj_orgao,documentos):
+    s = Model.insereEmpregado(nome,dt_contratacao,dt_desligamento,dt_nascimento,nu_matricula,rg,cpf,cnpj_orgao,documentos)
     return s
     
 @service.xmlrpc
