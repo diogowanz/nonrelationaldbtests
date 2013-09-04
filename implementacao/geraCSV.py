@@ -127,7 +127,7 @@ def carregaDocEmpregado():
 				file=open(path_docs+'/'+docs[l], 'rb')
 				data=file.read()
 				tipo_documentos = Model.listaTipoDocumentos('','')
-				spamwriter.writerow([empregado['nu_matricula'],str(tipo_documentos[n]['id_tipo_documento']), str(n)+docs[l],data.encode('base64')])
+				spamwriter.writerow([empregado['nu_matricula'],str(tipo_documentos[n]['id_tipo_documento']), str(n)+docs[l],''+data.encode('base64')+''])
 				Model.insereDocEmpregado(empregado['nu_matricula'],str(tipo_documentos[n]['id_tipo_documento']), str(n)+docs[l],data.encode('base64'))
 				file.close()
 				n+=1
@@ -151,7 +151,7 @@ def carregaDocDependente():
 					file=open(path_docs+'/'+docs[l], 'rb')
 					data=file.read()
 					tipo_documentos = Model.listaTipoDocumentos('','')
-					spamwriter.writerow([empregado['nu_matricula'], dependente['nu_rg'],dependente['nu_cpf'],'',tipo_documentos[n]['id_tipo_documento'], str(n)+docs[l],data.encode('base64')])
+					spamwriter.writerow([empregado['nu_matricula'], dependente['nu_rg'],dependente['nu_cpf'],'',tipo_documentos[n]['id_tipo_documento'], str(n)+docs[l],''+data.encode('base64')+''])
 					Model.insereDocDependente(empregado['nu_matricula'], dependente['nu_rg'],dependente['nu_cpf'],'',tipo_documentos[n]['id_tipo_documento'], str(n)+docs[l],data.encode('base64'))
 					file.close()
 					n+=1

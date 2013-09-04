@@ -3,8 +3,8 @@
 def index(): return dict(message="hello from sample.py")
 
 #import mongo
-#model = local_import('mongo')
-model = local_import('postgres_dict')
+model = local_import('mongo')
+#model = local_import('postgres_dict')
 
 
 from gluon.tools import Service
