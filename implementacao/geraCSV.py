@@ -13,8 +13,8 @@ Model = db.Model()
 
 path_docs = '/home/wanzeller/documentos_carga'
 orgaos = 10
-empregados_por_orgao = 1
-dependente_por_empregado = 1
+empregados_por_orgao = 10
+dependente_por_empregado = 2
 documento_por_empregado = 2
 documento_por_dependente = 2
 if sys.argv[1] == 'mongo':
@@ -156,20 +156,55 @@ def carregaDocDependente():
 					file.close()
 					n+=1
 					
+def consultaOrgaos():
+	db = Model.conectaMongo()
+	orgaos = db.orgaos.find(limit=100)
+	with open (path_csv + '/consultaOrgaos.csv', 'wb') as csvfile:
+		spamwriter = csv.writer(csvfile,delimiter=';', quoting=csv.QUOTE_MINIMAL)
+		for orgao in orgaos:
+			param_orgaos = ['nu_cnpj','nome','no_endereco','no_cidade','no_uf']
+			seq = [1,1,1,2,3,4,5]
+			num_param = choice(seq)
+			n=1
+			nu_cnpj = ''
+			nome=''
+			no_endereco=''
+			no_cidade = ''
+			no_uf = ''
+			while n < num_param:
+				w=randint(0,(4-(n-1)))
+				param = param_orgaos[w]
+				if param == 'nu_cnpj':
+					nu_cnpj = orgao['nu_cnpj']
+					if num_param == 1:
+						nu_cnpj = nu_cnpj[0:randint(0,len(nu_cnpj))]
+				if param == 'nome':
+					nome = orgao['no_orgao']
+				if param == 'no_endereco':
+					no_endereco = orgao['no_endereco']
+				if param == 'no_cidade':
+					no_cidade = orgao['no_cidade']
+				if param == 'no_uf':
+					no_uf = orgao['no_uf']
+				param_orgaos.remove(param)
+				n+=1
+			spamwriter.writerow([nu_cnpj,nome,no_endereco,no_cidade,no_uf])
+					
 def main():
 	if sys.argv[1] == 'mongo':
-		db = Model.conectaMongo()
-		db.drop_collection('empregados')
-		db.drop_collection('dependentes')
-		db.drop_collection('orgaos')
-		carregaOrgaos()
-		carregaEmpregados()
-		carregaDependentes()
-		carregaDocEmpregado()
-		carregaDocDependente()
-		db.drop_collection('empregados')
-		db.drop_collection('dependentes')
-		db.drop_collection('orgaos')
+		#db = Model.conectaMongo()
+		#db.drop_collection('empregados')
+		#db.drop_collection('dependentes')
+		#db.drop_collection('orgaos')
+		#carregaOrgaos()
+		#carregaEmpregados()
+		#carregaDependentes()
+		#carregaDocEmpregado()
+		#carregaDocDependente()
+		consultaOrgaos()
+		#db.drop_collection('empregados')
+		#db.drop_collection('dependentes')
+		#db.drop_collection('orgaos')
 		print "Os arquivos csv para o mongo foram criados."
 	elif sys.argv[1] == 'postgres_dict':
 		conn = Model.abreConexao()

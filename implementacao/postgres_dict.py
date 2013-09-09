@@ -204,9 +204,11 @@ class Model:
 			else:
 				return "Empregado nao encontrado!"
 					
-	def listaOrgaos(self,nome='',endereco='',cidade='',uf=''):
+	def listaOrgaos(self,cnpj="",nome='',endereco='',cidade='',uf=''):
 		conn = self.abreConexao()
 		filtro = ''
+		if not(self.validaCampo(cnpj)):
+			filtro += " and nu_cnpj like '%"+cnpj+"%'"
 		if not(self.validaCampo(nome)):
 			filtro += " and no_orgao like '%"+nome.strip().upper()+"%'"
 		if not(self.validaCampo(endereco)):

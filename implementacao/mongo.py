@@ -38,16 +38,32 @@ class Model:
 			return "Favor informar todos os campos."
 		else:
 			dbh = self.conectaMongo()
-			orgao = {
-				"nu_cnpj" : cnpj,
-				"no_orgao" : nome.strip().upper(),
-				"no_endereco" : endereco.strip().upper(),
-				"no_cidade" : cidade.strip().upper(),
-				"no_uf" : uf.strip().upper()
-			}
-			
-			dbh.orgaos.insert(orgao,safe=True)
-			return "Orgao inserido com sucesso."
+			orgao = dbh.orgaos.find_one({'nu_cnpj': cnpj})
+			if orgao != None:
+				if len(orgao) == 0:
+					orgao = {
+						"nu_cnpj" : cnpj,
+						"no_orgao" : nome.strip().upper(),
+						"no_endereco" : endereco.strip().upper(),
+						"no_cidade" : cidade.strip().upper(),
+						"no_uf" : uf.strip().upper()
+					}
+					
+					dbh.orgaos.insert(orgao,safe=True)
+					return "Orgao inserido com sucesso."
+				else:
+					return "Orgao de cnpj '"+cnpj+"' ja existe."
+			else:
+					orgao = {
+						"nu_cnpj" : cnpj,
+						"no_orgao" : nome.strip().upper(),
+						"no_endereco" : endereco.strip().upper(),
+						"no_cidade" : cidade.strip().upper(),
+						"no_uf" : uf.strip().upper()
+					}
+					
+					dbh.orgaos.insert(orgao,safe=True)
+					return "Orgao inserido com sucesso."
 		
 	def insereEmpregado(self,nome,dt_contratacao,dt_desligamento,dt_nascimento,nu_matricula,rg,cpf,cnpj_orgao,documentos):
 		if self.validaCampo(str(nome))  or self.validaCampo(str(dt_contratacao)) or self.validaCampo(str(dt_nascimento)) or self.validaCampo(str(nu_matricula)) or self.validaCampo(str(rg)) or self.validaCampo(str(cpf)) or self.validaCampo(str(cnpj_orgao)):
@@ -55,23 +71,46 @@ class Model:
 		else:
 			dbh = self.conectaMongo()
 			orgao = dbh.orgaos.find_one({'nu_cnpj': cnpj_orgao})
-			if len(orgao) == 0:
-				return "O orgao informado nao e valido."
+			if orgao != None:
+				if len(orgao) == 0:
+					return "O orgao informado nao e valido."
+				else:
+					empregado = dbh.empregados.find_one({'$or' : [{'nu_rg': rg},{'nu_cpf' : cpf},{'nu_matricula':nu_matricula.strip().upper()}]})
+					if empregado != None:
+						if len(empregado) == 0:
+							empregado = {
+								"no_empregado" : nome.strip().upper(),
+								"dt_contratacao" : dt_contratacao,
+								"dt_desligamento" : dt_desligamento,
+								"dt_nascimento" : dt_nascimento,
+								"nu_matricula" : nu_matricula.strip().upper(),
+								"nu_rg" : rg,
+								"nu_cpf" : cpf,
+								"id_orgao" : orgao.get('_id'),
+								"Documentos" : documentos
+							}
+							
+							dbh.empregados.insert(empregado,safe=True)
+							return "empregado inserido com sucesso!"
+						else:
+							return "O empregado informado ja existe"
+					else:
+						empregado = {
+							"no_empregado" : nome.strip().upper(),
+							"dt_contratacao" : dt_contratacao,
+							"dt_desligamento" : dt_desligamento,
+							"dt_nascimento" : dt_nascimento,
+							"nu_matricula" : nu_matricula.strip().upper(),
+							"nu_rg" : rg,
+							"nu_cpf" : cpf,
+							"id_orgao" : orgao.get('_id'),
+							"Documentos" : documentos
+						}
+						
+						dbh.empregados.insert(empregado,safe=True)
+						return "empregado inserido com sucesso!"
 			else:
-				empregado = {
-					"no_empregado" : nome.strip().upper(),
-					"dt_contratacao" : dt_contratacao,
-					"dt_desligamento" : dt_desligamento,
-					"dt_nascimento" : dt_nascimento,
-					"nu_matricula" : nu_matricula.strip().upper(),
-					"nu_rg" : rg,
-					"nu_cpf" : cpf,
-					"id_orgao" : orgao.get('_id'),
-					"Documentos" : documentos
-				}
-				
-				dbh.empregados.insert(empregado,safe=True)
-				return "empregado inserido com sucesso!"
+				return "O orgao informado nao e valido."
 		
 	def insereDependente(self,nome,rg,cpf,certidao,dt_nascimento,tp_vinculo,documentos,nu_matricula_responsavel):
 		if self.validaCampo(str(nome))  or self.validaCampo(str(dt_nascimento)) or self.validaCampo(str(tp_vinculo)) or self.validaCampo(str(nu_matricula_responsavel)):
@@ -86,18 +125,42 @@ class Model:
 				return "Vinculo informado nao existe."
 			else:
 				empregado = dbh.empregados.find_one({'nu_matricula': nu_matricula_responsavel})
-				dependente = {
-					"id_empregado" : empregado.get('_id'),
-					"no_empregado_dependente" : nome.strip().upper(),
-					"nu_rg" : rg,
-					"nu_cpf" : cpf,
-					"nu_certidao" : certidao,
-					"dt_nascimento" : dt_nascimento,
-					"tp_vinculo" : vinculo.get("_id"),
-					"Documentos" : documentos
-				}
-				dbh.dependentes.insert(dependente,safe=True)
-				return "Dependente inserido com sucesso!"	
+				if empregado != None:
+					if len(empregado) != 0:
+						dependente = dbh.dependentes.find_one({'$or' : [{'nu_rg': rg},{'nu_cpf' : cpf},{'nu_certidao':certidao}]})
+						if dependente != None:
+							if len(dependente) == 0:
+								dependente = {
+									"id_empregado" : empregado.get('_id'),
+									"no_empregado_dependente" : nome.strip().upper(),
+									"nu_rg" : rg,
+									"nu_cpf" : cpf,
+									"nu_certidao" : certidao,
+									"dt_nascimento" : dt_nascimento,
+									"tp_vinculo" : vinculo.get("_id"),
+									"Documentos" : documentos
+								}
+								dbh.dependentes.insert(dependente,safe=True)
+								return "Dependente inserido com sucesso!"
+							else:
+								return "O dependente informado ja existe."
+						else:
+							dependente = {
+								"id_empregado" : empregado.get('_id'),
+								"no_empregado_dependente" : nome.strip().upper(),
+								"nu_rg" : rg,
+								"nu_cpf" : cpf,
+								"nu_certidao" : certidao,
+								"dt_nascimento" : dt_nascimento,
+								"tp_vinculo" : vinculo.get("_id"),
+								"Documentos" : documentos
+							}
+							dbh.dependentes.insert(dependente,safe=True)
+							return "Dependente inserido com sucesso!"
+					else:
+						return "O responsavel informado nao foi encontrado."
+				else:
+					return "O responsavel informado nao foi encontrado."
 		
 	def insereDocEmpregado(self,matricula,tp_documento, no_doc,file):
 		if self.validaCampo(str(matricula))  or self.validaCampo(str(tp_documento)) or self.validaCampo(str(no_doc)):
@@ -196,9 +259,11 @@ class Model:
 						dbh.dependentes.update({"_id":dependente.get('_id')},{"$push":{"Documentos":new_doc}}, safe=True)
 						return "Documento inserido!"
 					
-	def listaOrgaos(self,nome='',endereco='',cidade='',uf=''):
+	def listaOrgaos(self,cnpj='',nome='',endereco='',cidade='',uf=''):
 		dbh = self.conectaMongo()
 		query = dict()
+		if not(self.validaCampo(cnpj)):
+			query['nu_cnpj'] = {"$regex" : '(^|\w)'+cnpj+'*'}
 		if not(self.validaCampo(nome)):
 			query['no_orgao'] = {"$regex" : '(^|\w)'+nome.strip().upper()+'*'}
 		if not(self.validaCampo(endereco)):

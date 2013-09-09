@@ -6,17 +6,17 @@ import datetime
 from array import array
 
 #db = __import__(sys.argv[1])
-import postgres_dict
-#import mongo
+#import postgres_dict
+import mongo
 
 #Model = db.Model()
-Model = postgres_dict.Model()
-#Model = mongo.Model()
+#Model = postgres_dict.Model()
+Model = mongo.Model()
 
 path_docs = '/home/wanzeller/documentos_carga'
-orgaos = 1
-empregados_por_orgao = 1
-dependente_por_empregado = 1
+orgaos = 200
+empregados_por_orgao = 500
+dependente_por_empregado = 3
 documento_por_empregado = 2
 documento_por_dependente = 2
 
