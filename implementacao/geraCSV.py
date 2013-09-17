@@ -7,9 +7,12 @@ from array import array
 import csv
 import psycopg2
 import psycopg2.extras
+from pymongo import Connection
+from bson import ObjectId
+import shutil, errno
+import mongo
 
-db = __import__(sys.argv[1])
-Model = db.Model()
+Model = mongo.Model()
 
 path_docs = '/home/wanzeller/documentos_carga'
 orgaos = 10
@@ -17,14 +20,16 @@ empregados_por_orgao = 10
 dependente_por_empregado = 2
 documento_por_empregado = 2
 documento_por_dependente = 2
-if sys.argv[1] == 'mongo':
-	path_csv = '/home/wanzeller/jmeter test plans/cargaMongo'
-elif sys.argv[1] == 'postgres_dict':
-	path_csv = '/home/wanzeller/jmeter test plans/cargaPostgres'
-else:
-	print "Favor informar parametro"
-	exit()
+path_csv_p = '/home/wanzeller/jmeter test plans/cargaPostgres'
+path_csv = '/home/wanzeller/jmeter test plans/cargaMongo'
 
+def copyanything (src, dst):
+	try:
+		shutil.copytree(src,dst)
+	except OSError as exc:
+		if exc.errno == errno.ENOTDIR:
+			shutil.copy(src,dst)
+		else: raise
 
 def geraNum (l):
 	n=0
@@ -74,6 +79,7 @@ def carregaOrgaos():
 			spamwriter.writerow([cnpj,'orgao '+str(n),'endereco orgao '+str(n),'cidade orgao '+str(n),'df'])
 			Model.insereOrgao(cnpj,'orgao '+str(n),'endereco orgao '+str(n),'cidade orgao '+str(n),'df')
 			n+=1
+		copyanything(path_csv + '/orgaos.csv',path_csv_p + '/orgaos.csv')
 
 def carregaEmpregados():
 	orgaos = Model.listaOrgaos(nome='orgao')
@@ -92,58 +98,47 @@ def carregaEmpregados():
 				spamwriter.writerow([nome,str(dt_contratacao),str(dt_desligamento),str(dt_nascimento),matricula,rg,cpf,orgao['nu_cnpj'],''])
 				Model.insereEmpregado(nome,str(dt_contratacao),str(dt_desligamento),str(dt_nascimento),matricula,rg,cpf,orgao['nu_cnpj'],'')
 				n+=1
+		copyanything(path_csv + '/empregados.csv',path_csv_p + '/empregados.csv')
 	
 def carregaDependentes():
-	empregados = Model.listaEmpregados()
+	empregados = Model.listaEmpregados('','','','','','','','')
 	with open (path_csv + '/dependentes.csv', 'wb') as csvfile:
 		spamwriter = csv.writer(csvfile,delimiter=';', quoting=csv.QUOTE_MINIMAL)
-		for empregado in empregados:
-			n=0
-			while n < dependente_por_empregado:
-				vinculos = Model.listaVinculos('','')
-				dt_nascimento = geraDataNascimento()
-				nome = 'nome dependente'+str(n)+' empregado '+str(empregado['id_empregado'])
-				rg = geraNum(7)
-				cpf = geraNum(11)
-				certidao = geraNum(11)
-				spamwriter.writerow([nome,rg,cpf,certidao,str(dt_nascimento),vinculos[n]["id_tipo_vinculo"],'',empregado['nu_matricula']])
-				Model.insereDependente(nome,rg,cpf,certidao,str(dt_nascimento),vinculos[n]["id_tipo_vinculo"],'',empregado['nu_matricula'])
-				n+=1
+		with open (path_csv_p + '/dependentes.csv', 'wb') as csvfilep:
+			spamwriterp = csv.writer(csvfilep,delimiter=';', quoting=csv.QUOTE_MINIMAL)
+			for empregado in empregados:
+				n=0
+				while n < dependente_por_empregado:
+					vinculos = Model.listaVinculos('','')
+					conn = psycopg2.connect(host='localhost', database="rhdb001", user="postgres", password="123456")
+					sql="select * from tb003_tipo_vinculo where no_tipo_vinculo = '"+vinculos[n]["no_tipo_vinculo"]+"'"
+					cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+					cursor.execute(sql)
+					conn.commit()
+					x = cursor.fetchone()
+					dt_nascimento = geraDataNascimento()
+					nome = 'nome dependente'+str(n)+' empregado '+str(empregado['id_empregado'])
+					rg = geraNum(7)
+					cpf = geraNum(11)
+					certidao = geraNum(11)
+					spamwriter.writerow([nome,rg,cpf,certidao,str(dt_nascimento),vinculos[n]["id_tipo_vinculo"],'',empregado['nu_matricula']])
+					spamwriterp.writerow([nome,rg,cpf,certidao,str(dt_nascimento),x["id_tipo_vinculo"],'',empregado['nu_matricula']])
+					Model.insereDependente(nome,rg,cpf,certidao,str(dt_nascimento),vinculos[n]["id_tipo_vinculo"],'',empregado['nu_matricula'])
+					n+=1
+			#copyanything(path_csv + '/dependentes.csv',path_csv_p + '/dependentes.csv')
 
 def carregaDocEmpregado():
-	empregados = Model.listaEmpregados()
+	empregados = Model.listaEmpregados('','','','','','','','')
 	docs = os.listdir(path_docs)
 	len_docs = len(docs)
 	with open (path_csv + '/docEmpregados.csv', 'wb') as csvfile:
 		spamwriter = csv.writer(csvfile,delimiter=';', quoting=csv.QUOTE_MINIMAL)
-		for empregado in empregados:
-			l = 0
-			n=0
-			while n < documento_por_empregado:
-				if l < len_docs:
-					l+=1
-				else:
-					l = 0
-				file=open(path_docs+'/'+docs[l], 'rb')
-				data=file.read()
-				tipo_documentos = Model.listaTipoDocumentos('','')
-				spamwriter.writerow([empregado['nu_matricula'],str(tipo_documentos[n]['id_tipo_documento']), str(n)+docs[l],''+data.encode('base64')+''])
-				Model.insereDocEmpregado(empregado['nu_matricula'],str(tipo_documentos[n]['id_tipo_documento']), str(n)+docs[l],data.encode('base64'))
-				file.close()
-				n+=1
-
-def carregaDocDependente():
-	empregados = Model.listaEmpregados()
-	docs = os.listdir(path_docs)
-	len_docs = len(docs)
-	with open (path_csv + '/docDependentes.csv', 'wb') as csvfile:
-		spamwriter = csv.writer(csvfile,delimiter=';', quoting=csv.QUOTE_MINIMAL)
-		for empregado in empregados:
-			dependentes = Model.listaDependentes('','',empregado['nu_matricula'],'','')
-			for dependente in dependentes:
+		with open (path_csv_p + '/docEmpregados.csv', 'wb') as csvfilep:
+			spamwriterp = csv.writer(csvfilep,delimiter=';', quoting=csv.QUOTE_MINIMAL)
+			for empregado in empregados:
 				l = 0
-				n=0	
-				while n < documento_por_dependente:
+				n=0
+				while n < documento_por_empregado:
 					if l < len_docs:
 						l+=1
 					else:
@@ -151,10 +146,50 @@ def carregaDocDependente():
 					file=open(path_docs+'/'+docs[l], 'rb')
 					data=file.read()
 					tipo_documentos = Model.listaTipoDocumentos('','')
-					spamwriter.writerow([empregado['nu_matricula'], dependente['nu_rg'],dependente['nu_cpf'],'',tipo_documentos[n]['id_tipo_documento'], str(n)+docs[l],''+data.encode('base64')+''])
-					Model.insereDocDependente(empregado['nu_matricula'], dependente['nu_rg'],dependente['nu_cpf'],'',tipo_documentos[n]['id_tipo_documento'], str(n)+docs[l],data.encode('base64'))
+					conn = psycopg2.connect(host='localhost', database="rhdb001", user="postgres", password="123456")
+					sql="select * from tb001_tipo_documento where no_tipo_documento = '"+tipo_documentos[n]['no_tipo_documento']+"'"
+					cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+					cursor.execute(sql)
+					conn.commit()
+					x = cursor.fetchone()
+					spamwriter.writerow([empregado['nu_matricula'],str(tipo_documentos[n]['id_tipo_documento']), str(n)+docs[l],''+data.encode('base64')+''])
+					spamwriterp.writerow([empregado['nu_matricula'],str(x['id_tipo_documento']), str(n)+docs[l],''+data.encode('base64')+''])
+					#Model.insereDocEmpregado(empregado['nu_matricula'],str(tipo_documentos[n]['id_tipo_documento']), str(n)+docs[l],data.encode('base64'))
 					file.close()
 					n+=1
+
+def carregaDocDependente():
+	empregados = Model.listaEmpregados('','','','','','','','')
+	docs = os.listdir(path_docs)
+	len_docs = len(docs)
+	with open (path_csv + '/docDependentes.csv', 'wb') as csvfile:
+		spamwriter = csv.writer(csvfile,delimiter=';', quoting=csv.QUOTE_MINIMAL)
+		with open (path_csv_p + '/docDependentes.csv', 'wb') as csvfilep:
+			spamwriterp = csv.writer(csvfilep,delimiter=';', quoting=csv.QUOTE_MINIMAL)
+			for empregado in empregados:
+				dependentes = Model.listaDependentes('','',empregado['nu_matricula'],'','','','','')
+				for dependente in dependentes:
+					l = 0
+					n=0	
+					while n < documento_por_dependente:
+						if l < len_docs:
+							l+=1
+						else:
+							l = 0
+						file=open(path_docs+'/'+docs[l], 'rb')
+						data=file.read()
+						tipo_documentos = Model.listaTipoDocumentos('','')
+						conn = psycopg2.connect(host='localhost', database="rhdb001", user="postgres", password="123456")
+						sql="select * from tb001_tipo_documento where no_tipo_documento = '"+tipo_documentos[n]['no_tipo_documento']+"'"
+						cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+						cursor.execute(sql)
+						conn.commit()
+						x = cursor.fetchone()
+						spamwriter.writerow([empregado['nu_matricula'], dependente['nu_rg'],dependente['nu_cpf'],'',tipo_documentos[n]['id_tipo_documento'], str(n)+docs[l],''+data.encode('base64')+''])
+						spamwriterp.writerow([empregado['nu_matricula'], dependente['nu_rg'],dependente['nu_cpf'],'',x['id_tipo_documento'], str(n)+docs[l],''+data.encode('base64')+''])
+						#Model.insereDocDependente(empregado['nu_matricula'], dependente['nu_rg'],dependente['nu_cpf'],'',tipo_documentos[n]['id_tipo_documento'], str(n)+docs[l],data.encode('base64'))
+						file.close()
+						n+=1
 					
 def consultaOrgaos():
 	db = Model.conectaMongo()
@@ -165,19 +200,20 @@ def consultaOrgaos():
 			param_orgaos = ['nu_cnpj','nome','no_endereco','no_cidade','no_uf']
 			seq = [1,1,1,2,3,4,5]
 			num_param = choice(seq)
-			n=1
+			n=0
 			nu_cnpj = ''
 			nome=''
 			no_endereco=''
 			no_cidade = ''
 			no_uf = ''
 			while n < num_param:
-				w=randint(0,(4-(n-1)))
+				w=randint(0,(4-n))
 				param = param_orgaos[w]
 				if param == 'nu_cnpj':
 					nu_cnpj = orgao['nu_cnpj']
-					if num_param == 1:
-						nu_cnpj = nu_cnpj[0:randint(0,len(nu_cnpj))]
+					if num_param == 1 and choice([0,0,1]):
+						nu_cnpj = str(nu_cnpj)
+						nu_cnpj = nu_cnpj[0:randint(0,randint(5,len(nu_cnpj)))]
 				if param == 'nome':
 					nome = orgao['no_orgao']
 				if param == 'no_endereco':
@@ -189,48 +225,43 @@ def consultaOrgaos():
 				param_orgaos.remove(param)
 				n+=1
 			spamwriter.writerow([nu_cnpj,nome,no_endereco,no_cidade,no_uf])
+	copyanything(path_csv + '/consultaOrgaos.csv',path_csv_p + '/consultaOrgaos.csv')
 					
 def main():
-	if sys.argv[1] == 'mongo':
-		#db = Model.conectaMongo()
-		#db.drop_collection('empregados')
-		#db.drop_collection('dependentes')
-		#db.drop_collection('orgaos')
-		#carregaOrgaos()
-		#carregaEmpregados()
-		#carregaDependentes()
-		#carregaDocEmpregado()
-		#carregaDocDependente()
-		consultaOrgaos()
-		#db.drop_collection('empregados')
-		#db.drop_collection('dependentes')
-		#db.drop_collection('orgaos')
-		print "Os arquivos csv para o mongo foram criados."
-	elif sys.argv[1] == 'postgres_dict':
-		conn = Model.abreConexao()
-		sql = "delete from tb006_documento; "
-		sql += "delete from tb005_empregado_dependente; "
-		sql += "delete from tb004_empregado; "
-		sql += "delete from tb002_orgao; "
-		cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-		cursor.execute(sql)
-		conn.commit()
-		carregaOrgaos()
-		carregaEmpregados()
-		carregaDependentes()
-		carregaDocEmpregado()
-		carregaDocDependente()
-		sql = "delete from tb006_documento; "
-		sql += "delete from tb005_empregado_dependente; "
-		sql += "delete from tb004_empregado; "
-		sql += "delete from tb002_orgao; "
-		cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-		cursor.execute(sql)
-		conn.commit()
-		print "Os arquivos csv para o postgres foram criados."
-		 		
-	else:
-		return "Erro ao determinar base"
+	conn = psycopg2.connect(host='localhost', database="rhdb001", user="postgres", password="123456")
+	db = Model.conectaMongo()
+	print 'drop mongo'
+	db.drop_collection('empregados')
+	db.drop_collection('dependentes')
+	db.drop_collection('orgaos')
+	print 'drop postgres'
+	sql = "delete from tb006_documento; "
+	sql += "delete from tb005_empregado_dependente; "
+	sql += "delete from tb004_empregado; "
+	sql += "delete from tb002_orgao; "
+	cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+	cursor.execute(sql)
+	conn.commit()
+	print 'gera arquivos'
+	carregaOrgaos()
+	carregaEmpregados()
+	carregaDependentes()
+	carregaDocEmpregado()
+	carregaDocDependente()
+	#consultaOrgaos()
+	print 'drop mongo'
+	db.drop_collection('empregados')
+	db.drop_collection('dependentes')
+	db.drop_collection('orgaos')
+	print 'drop postgres'
+	sql = "delete from tb006_documento; "
+	sql += "delete from tb005_empregado_dependente; "
+	sql += "delete from tb004_empregado; "
+	sql += "delete from tb002_orgao; "
+	cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+	cursor.execute(sql)
+	conn.commit()
+	print "Os arquivos csv foram criados."
 
 		
 if __name__=="__main__":

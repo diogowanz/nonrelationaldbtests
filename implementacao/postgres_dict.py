@@ -81,25 +81,45 @@ class Model:
 				if cursor.arraysize != 0:
 					resultado = cursor.fetchone()
 					id_tipo_vinculo = resultado['id_tipo_vinculo']
-					values = "('"+nome.strip().upper()+"','"+dt_nascimento+"',"+str(id_tipo_vinculo)+","+str(responsavel['id_empregado'])
-					if self.validaCampo(rg):
-						values += ",NULL"
-					else:
-						values = values +","+str(rg).strip()
-					if self.validaCampo(cpf):
-						values += ",NULL"
-					else:
-						values += ","+str(cpf).strip()
-					if self.validaCampo(rg):
-						values += ",NULL"
-					else:
-						values += ","+str(certidao).strip()
-					values += ")"
-					sql = "insert into tb005_empregado_dependente (no_empregado_dependente,dt_nascimento,id_tipo_vinculo,id_empregado,nu_rg,nu_cpf,nu_certidao) values "+values
+					filtro = ''
+					if not self.validaCampo(str(rg)):
+						filtro += ' rg = '+rg
+					if not self.validaCampo(str(cpf)):
+						if filtro == '':
+							filtro += ' cpf = '+cpf
+						else:
+							filtro += ' or cpf = '+cpf
+					if not self.validaCampo(str(certidao)):
+						if filtro == '':
+							filtro += ' nu_certidao = '+certidao
+						else:
+							filtro += ' or nu_certidao = '+certidao
+					sql = "select id_empregado_dependente from tb005_empregado_dependente where 1=1 and ("+filtro+")"
 					cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 					cursor.execute(sql)
 					conn.commit()
-					return "Dependente inserido com sucesso!"
+					if cursor.arraysize == 0:
+						values = "('"+nome.strip().upper()+"','"+dt_nascimento+"',"+str(id_tipo_vinculo)+","+str(responsavel['id_empregado'])
+						if self.validaCampo(rg):
+							values += ",NULL"
+						else:
+							values = values +","+str(rg).strip()
+						if self.validaCampo(cpf):
+							values += ",NULL"
+						else:
+							values += ","+str(cpf).strip()
+						if self.validaCampo(rg):
+							values += ",NULL"
+						else:
+							values += ","+str(certidao).strip()
+						values += ")"
+						sql = "insert into tb005_empregado_dependente (no_empregado_dependente,dt_nascimento,id_tipo_vinculo,id_empregado,nu_rg,nu_cpf,nu_certidao) values "+values
+						cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+						cursor.execute(sql)
+						conn.commit()
+						return "Dependente inserido com sucesso!"
+					else:
+						return "Dependente ja existe!"
 				else:
 					return "Tipo de vinculo informado invalido!"
 			else:
@@ -208,7 +228,7 @@ class Model:
 		conn = self.abreConexao()
 		filtro = ''
 		if not(self.validaCampo(cnpj)):
-			filtro += " and nu_cnpj like '%"+cnpj+"%'"
+			filtro += " and nu_cnpj::varchar like '%"+cnpj+"%'"
 		if not(self.validaCampo(nome)):
 			filtro += " and no_orgao like '%"+nome.strip().upper()+"%'"
 		if not(self.validaCampo(endereco)):
@@ -233,7 +253,7 @@ class Model:
 				orgaosDict.append(l)
 			return orgaosDict
 		
-	def listaEmpregados(self,nome='',dt_contratacao='',dt_desligamento='',dt_nascimento='',nu_matricula=''):
+	def listaEmpregados(self,nome,dt_contratacao,dt_desligamento,dt_nascimento,nu_matricula,rg,cpf, cnpj_orgao):
 		conn = self.abreConexao()
 		filtro = ''
 		if not(self.validaCampo(nome)):
@@ -255,15 +275,18 @@ class Model:
 		cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 		cursor.execute(sql)
 		conn.commit()
-		empregadosDict=[]
-		for row in cursor:
-			l = dict()
-			for collumn in row:
-				l[collumn]=row[collumn]
-			empregadosDict.append(l)
-		return empregadosDict
+		if cursor.arraysize == 0:
+			return "Nenhum dado econtrado. Verifique os parametros de busca."
+		else:
+			empregadosDict=[]
+			for row in cursor:
+				l = dict()
+				for collumn in row:
+					l[collumn]=row[collumn]
+				empregadosDict.append(l)
+			return empregadosDict
 		
-	def listaDependentes(self,nomeEmpregado='',nomeDependente='',matricula='',dt_nascimento='',tp_vinculo=''):
+	def listaDependentes(self,nomeEmpregado,nomeDependente,matricula,dt_nascimento,tp_vinculo,rg,cpf,certidao):
 		conn = self.abreConexao()
 		filtro = ''
 		if not(self.validaCampo(nomeDependente)):

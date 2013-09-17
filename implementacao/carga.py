@@ -6,12 +6,12 @@ import datetime
 from array import array
 
 #db = __import__(sys.argv[1])
-#import postgres_dict
-import mongo
+import postgres_dict
+#import mongo
 
 #Model = db.Model()
-#Model = postgres_dict.Model()
-Model = mongo.Model()
+Model = postgres_dict.Model()
+#Model = mongo.Model()
 
 path_docs = '/home/wanzeller/documentos_carga'
 orgaos = 200
@@ -78,7 +78,7 @@ def carregaEmpregados():
 			n+=1
 	
 def carregaDependentes():
-	empregados = Model.listaEmpregados()
+	empregados = Model.listaEmpregados('','','','','','','','')
 	for empregado in empregados:
 		n=0	
 		while n < dependente_por_empregado:
@@ -88,7 +88,7 @@ def carregaDependentes():
 			n+=1
 
 def carregaDocEmpregado():
-	empregados = Model.listaEmpregados()
+	empregados = Model.listaEmpregados('','','','','','','','')
 	docs = os.listdir(path_docs)
 	len_docs = len(docs)
 	for empregado in empregados:
@@ -107,11 +107,11 @@ def carregaDocEmpregado():
 			n+=1
 
 def carregaDocDependente():
-	empregados = Model.listaEmpregados()
+	empregados = Model.listaEmpregados('','','','','','','','')
 	docs = os.listdir(path_docs)
 	len_docs = len(docs)
 	for empregado in empregados:
-		dependentes = Model.listaDependentes('','',empregado['nu_matricula'],'','')
+		dependentes = Model.listaDependentes('','',empregado['nu_matricula'],'','','','','')
 		for dependente in dependentes:
 			l = 0
 			n=0	

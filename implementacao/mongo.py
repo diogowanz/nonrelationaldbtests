@@ -263,7 +263,7 @@ class Model:
 		dbh = self.conectaMongo()
 		query = dict()
 		if not(self.validaCampo(cnpj)):
-			query['nu_cnpj'] = {"$regex" : '(^|\w)'+cnpj+'*'}
+			query['nu_cnpj'] = {"$regex" : str(cnpj)}
 		if not(self.validaCampo(nome)):
 			query['no_orgao'] = {"$regex" : '(^|\w)'+nome.strip().upper()+'*'}
 		if not(self.validaCampo(endereco)):
@@ -286,24 +286,27 @@ class Model:
 			return orgaosDict
 			
 
-	def listaEmpregados(self,nome='',dt_contratacao='',dt_desligamento='',dt_nascimento='',nu_matricula=''):
+	def listaEmpregados(self,nome,dt_contratacao,dt_desligamento,dt_nascimento,nu_matricula,rg,cpf, cnpj_orgao):
 		dbh = self.conectaMongo()
-		query = dict()
+		query = []
 		if not(self.validaCampo(nome)):
-			query['no_empregado'] = {"$regex" : '(^|\w)'+nome.strip().upper()+'*'}
+			query.append({'no_empregado' : {"$regex" : nome.strip().upper()}})
 		if not(self.validaCampo(dt_contratacao)):
-			query['dt_contratacao'] = {"$regex": '(^|\w)'+dt_contratacao+'*'}
+			query.append({'dt_contratacao' : dt_contratacao})
 		if not(self.validaCampo(dt_desligamento)):
-			query['dt_desligamento'] = {"$regex": '(^|\w)'+dt_desligamento+'*'}
+			query.append({'dt_desligamento' : dt_desligamento})
 		if not(self.validaCampo(dt_nascimento)):
-			query['dt_nascimento'] = {"$regex": '(^|\w)'+dt_nascimento+'*'}
+			query.append({'dt_nascimento' : dt_nascimento})
 		if not(self.validaCampo(nu_matricula)):
-			query['nu_matricula'] = {"$regex": '(^|\w)'+nu_matricula.strip().upper()+'*'}
+			query.append({'nu_matricula' : {"$regex": nu_matricula.strip().upper()}})
 			
-		empregados = dbh.empregados.find(query)
+		if len(query) != 0:
+			empregados = dbh.empregados.find({'$and' : query})
+		else:
+			empregados = dbh.empregados.find()
 		
 		if empregados.count() == 0:
-			print "Nenhum dado econtrado. Verifique os parametros de busca."
+			return "Nenhum dado econtrado. Verifique os parametros de busca."
 		else:
 			empregadoDict=[]
 			for row in empregados:
@@ -313,7 +316,7 @@ class Model:
 				empregadoDict.append(l)
 			return empregadoDict
 					
-	def listaDependentes(self,nomeEmpregado='',nomeDependente='',matricula='',dt_nascimento='',tp_vinculo=''):
+	def listaDependentes(self,nomeEmpregado,nomeDependente,matricula,dt_nascimento,tp_vinculo,rg,cpf,certidao):
 		dbh = self.conectaMongo()
 		x = []
 		if not(self.validaCampo(nomeEmpregado)):

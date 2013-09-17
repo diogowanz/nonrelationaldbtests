@@ -44,9 +44,9 @@ def insereDocDependente(empreg_matricula, rg_dependente,cpf_dependente,certidao_
 
 @service.xmlrpc
 @service.soap('listaOrgao',returns={ 'orgaos': [{'orgao': {'id_orgao':str,'nu_cnpj':str,'no_orgao':str,'no_endereco': str,'no_cidade':str,'no_uf':str}}]},
-args={'nome':str, 'endereco':str, 'cidade':str, 'uf':str})
-def listaOrgaos(nome,endereco,cidade,uf):
-	orgaos = Model.listaOrgaos(nome,endereco,cidade,uf)
+args={'cnpj':str, 'nome':str, 'endereco':str, 'cidade':str, 'uf':str})
+def listaOrgaos(cnpj,nome,endereco,cidade,uf):
+	orgaos = Model.listaOrgaos(cnpj,nome,endereco,cidade,uf)
 	y = []
 	for orgao in orgaos:
 		x = dict()
@@ -57,9 +57,9 @@ def listaOrgaos(nome,endereco,cidade,uf):
 
 @service.xmlrpc
 @service.soap('listaEmpregados',returns={ 'empregados': [{'empregado': {'id_empregado':str,'no_empregado':str,'dt_contratacao':str,'dt_desligamento':str,'dt_nascimento':str,'nu_matricula':str,'nu_rg':str,'nu_cpf':str,'id_orgao':str,'Documentos':str,'Dependentes':str}}]},
-args={'nome':str, 'dt_contratacao':str, 'dt_desligamento':str, 'dt_nascimento':str, 'nu_matricula':str})
+args={'nome':str, 'dt_contratacao':str, 'dt_desligamento':str, 'dt_nascimento':str, 'nu_matricula':str,'rg':str,'cpf':str,'cnpj_orgao':str})
 def listaEmpregados(nome,dt_contratacao,dt_desligamento,dt_nascimento,nu_matricula):
-	empregados = Model.listaEmpregados(nome,dt_contratacao,dt_desligamento,dt_nascimento,nu_matricula)
+	empregados = Model.listaEmpregados(nome,dt_contratacao,dt_desligamento,dt_nascimento,nu_matricula,rg,cpf,cnpj_orgao)
 	y = []
 	for empregado in empregados:
 		x = dict()
@@ -70,9 +70,9 @@ def listaEmpregados(nome,dt_contratacao,dt_desligamento,dt_nascimento,nu_matricu
 
 @service.xmlrpc
 @service.soap('listaDependentes',returns={ 'dependentes': [{'dependente': {'id_empregado_dependente':str,'no_empregado_dependente':str,'nu_rg':str,'nu_cpf':str,'nu_certidao':str,'dt_nascimento':str,'tp_vinculo':str,'Documentos':str}}]},
-args={'nomeEmpregado':str, 'nomeDependente':str, 'matricula':str, 'dt_nascimento':str, 'tp_vinculo':str})
+args={'nomeEmpregado':str, 'nomeDependente':str, 'matricula':str, 'dt_nascimento':str, 'tp_vinculo':str,'rg':str,'cpf':str,'certidao':str})
 def listaDependentes(nomeEmpregado,nomeDependente,matricula,dt_nascimento,tp_vinculo):
-	dependentes = Model.listaDependentes(nomeEmpregado,nomeDependente,matricula,dt_nascimento,tp_vinculo)
+	dependentes = Model.listaDependentes(nomeEmpregado,nomeDependente,matricula,dt_nascimento,tp_vinculo,rg,cpf,certidao)
 	y = []
 	for dependente in dependentes:
 		x = dict()

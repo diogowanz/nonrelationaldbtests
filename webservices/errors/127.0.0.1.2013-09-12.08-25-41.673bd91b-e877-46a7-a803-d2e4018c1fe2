@@ -1,0 +1,487 @@
+(dp1
+S'output'
+p2
+S"<type 'exceptions.SyntaxError'> invalid syntax (mongo.py, line 293)"
+p3
+sS'layer'
+p4
+S'/home/wanzeller/www-dev/web2py/applications/webservices/controllers/sample.py'
+p5
+sS'code'
+p6
+S'# coding: utf8\n# tente algo como\ndef index(): return dict(message="hello from sample.py")\n\n#import mongo\nmodel = local_import(\'mongo\')\n#model = local_import(\'postgres_dict\')\n\n\nfrom gluon.tools import Service\nservice = Service(globals())\n\nModel = model.Model()\n    \n@service.xmlrpc\n@service.soap(\'insereOrgao\',returns={\'s\':str},args={\'cnpj\':str, \'nome\':str, \'endereco\':str, \'cidade\':str, \'uf\':str})\ndef insereOrgao(cnpj,nome,endereco,cidade,uf):\n    s = Model.insereOrgao(cnpj,nome,endereco,cidade,uf)\n    return s\n    \n@service.xmlrpc\n@service.soap(\'insereEmpregado\',returns={\'s\':str},args={\'nome\':str, \'dt_contratacao\':str, \'dt_desligamento\':str, \'dt_nascimento\':str, \'nu_matricula\':str, \'rg\':str, \'cpf\':str, \'cnpj_orgao\':str, \'documentos\':str})\ndef insereEmpregado(nome,dt_contratacao,dt_desligamento,dt_nascimento,nu_matricula,rg,cpf,cnpj_orgao,documentos):\n    s = Model.insereEmpregado(nome,dt_contratacao,dt_desligamento,dt_nascimento,nu_matricula,rg,cpf,cnpj_orgao,documentos)\n    return s\n    \n@service.xmlrpc\n@service.soap(\'insereDependente\',returns={\'s\':str},args={\'nome\':str, \'rg\':str, \'cpf\':str, \'certidao\':str, \'dt_nascimento\':str, \'tp_vinculo\':str, \'documentos\':str, \'nu_matricula_responsavel\':str})\ndef insereDependente(nome,rg,cpf,certidao,dt_nascimento,tp_vinculo,documentos,nu_matricula_responsavel):\n    s = Model.insereDependente(nome,rg,cpf,certidao,dt_nascimento,tp_vinculo,documentos,nu_matricula_responsavel)\n    return s\n    \n@service.xmlrpc\n@service.soap(\'insereDocEmpregado\',returns={\'s\':str},args={\'matricula\':str, \'tp_documento\':str, \'no_doc\':str, \'file\':str})\ndef insereDocEmpregado(matricula,tp_documento, no_doc,file):\n    s = Model.insereDocEmpregado(matricula,tp_documento, no_doc,file)\n    return s\n\n@service.xmlrpc\n@service.soap(\'insereDocDependente\',returns={\'s\':str},args={\'empreg_matricula\':str, \'rg_dependente\':str, \'cpf_dependente\':str, \'certidao_dependente\':str,\'tp_documento\':str,\'no_doc\':str,\'file\':str})\ndef insereDocDependente(empreg_matricula, rg_dependente,cpf_dependente,certidao_dependente,tp_documento, no_doc,file):\n    s = Model.insereDocDependente(empreg_matricula, rg_dependente,cpf_dependente,certidao_dependente,tp_documento, no_doc,file)\n    return s\n\n@service.xmlrpc\n@service.soap(\'listaOrgao\',returns={ \'orgaos\': [{\'orgao\': {\'id_orgao\':str,\'nu_cnpj\':str,\'no_orgao\':str,\'no_endereco\': str,\'no_cidade\':str,\'no_uf\':str}}]},\nargs={\'cnpj\':str, \'nome\':str, \'endereco\':str, \'cidade\':str, \'uf\':str})\ndef listaOrgaos(cnpj,nome,endereco,cidade,uf):\n\torgaos = Model.listaOrgaos(cnpj,nome,endereco,cidade,uf)\n\ty = []\n\tfor orgao in orgaos:\n\t\tx = dict()\n\t\tx[\'orgao\'] = orgao\n\t\ty.append(x)\n\torgaos = y\n\treturn orgaos\n\n@service.xmlrpc\n@service.soap(\'listaEmpregados\',returns={ \'empregados\': [{\'empregado\': {\'id_empregado\':str,\'no_empregado\':str,\'dt_contratacao\':str,\'dt_desligamento\':str,\'dt_nascimento\':str,\'nu_matricula\':str,\'nu_rg\':str,\'nu_cpf\':str,\'id_orgao\':str,\'Documentos\':str,\'Dependentes\':str}}]},\nargs={\'nome\':str, \'dt_contratacao\':str, \'dt_desligamento\':str, \'dt_nascimento\':str, \'nu_matricula\':str})\ndef listaEmpregados(nome,dt_contratacao,dt_desligamento,dt_nascimento,nu_matricula):\n\tempregados = Model.listaEmpregados(nome,dt_contratacao,dt_desligamento,dt_nascimento,nu_matricula)\n\ty = []\n\tfor empregado in empregados:\n\t\tx = dict()\n\t\tx[\'empregado\'] = empregado\n\t\ty.append(x)\n\tempregados = y\n\treturn empregados\n\n@service.xmlrpc\n@service.soap(\'listaDependentes\',returns={ \'dependentes\': [{\'dependente\': {\'id_empregado_dependente\':str,\'no_empregado_dependente\':str,\'nu_rg\':str,\'nu_cpf\':str,\'nu_certidao\':str,\'dt_nascimento\':str,\'tp_vinculo\':str,\'Documentos\':str}}]},\nargs={\'nomeEmpregado\':str, \'nomeDependente\':str, \'matricula\':str, \'dt_nascimento\':str, \'tp_vinculo\':str})\ndef listaDependentes(nomeEmpregado,nomeDependente,matricula,dt_nascimento,tp_vinculo):\n\tdependentes = Model.listaDependentes(nomeEmpregado,nomeDependente,matricula,dt_nascimento,tp_vinculo)\n\ty = []\n\tfor dependente in dependentes:\n\t\tx = dict()\n\t\tx[\'dependente\'] = dependente\n\t\ty.append(x)\n\tdependentes = y\n\treturn dependentes\n\t\n@service.xmlrpc\n@service.soap(\'retornaDocEmpregado\',returns={ \'documentos\': [{\'documento\': {\'tp_documento\':str, \'dh_updload\':str,\'no_documento\':str,\'file\':str}}]},\nargs={\'nu_matricula\':str, \'no_documento\':str, \'tp_documento\':str})\ndef retornaDocEmpregado (nu_matricula,no_documento,tp_documento):\n\tdocumentos = Model.retornaDocEmpregado(nu_matricula,no_documento,tp_documento)\n\ty = []\n\tfor documento in documentos:\n\t\tx = dict()\n\t\tx[\'documento\'] = documento\n\t\ty.append(x)\n\tdocumentos = y\n\treturn documentos\n\t\n@service.xmlrpc\n@service.soap(\'retornaDocDependente\',returns={ \'documentos\': [{\'documento\': {\'tp_documento\':str, \'dh_updload\':str,\'no_documento\':str,\'file\':str}}]},\nargs={\'nu_rg\':str, \'nu_cpf\':str, \'nu_certidao\':str, \'no_documento\':str, \'tp_documento\':str})\ndef retornaDocDependente (nu_rg,nu_cpf,nu_certidao, no_documento, tp_documento):\n\tdocumentos = Model.retornaDocDependente(nu_rg,nu_cpf,nu_certidao, no_documento, tp_documento)\n\ty = []\n\tfor documento in documentos:\n\t\tx = dict()\n\t\tx[\'documento\'] = documento\n\t\ty.append(x)\n\tdocumentos = y\n\treturn documentos\t\n\n@service.xmlrpc\n@service.soap(\'listaVinculos\',returns={ \'vinculos\': [{\'vinculo\': {\'id_tipo_vinculo\':str,\'no_tipo_vinculo\':str}}]},\nargs={\'nu_tipo_vinculo\':str, \'no_tipo_vinculo\':str})\ndef listaVinculos (nu_tipo_vinculo,no_tipo_vinculo):\n\tvinculos = Model.listaVinculos(nu_tipo_vinculo,no_tipo_vinculo)\n\ty = []\n\tfor vinculo in vinculos:\n\t\tx = dict()\n\t\tx[\'vinculo\'] = vinculo\n\t\ty.append(x)\n\tvinculos = y\n\treturn vinculos\n\t\n@service.xmlrpc\n@service.soap(\'listaTipoDocumentos\',returns={ \'tipos\': [{\'tipo\': {\'id_tipo_documento\':str,\'no_tipo_documento\':str}}]},\nargs={\'nu_tipo_documento\':str, \'no_tipo_documento\':str})\ndef listaTipoDocumentos (nu_tipo_documento,no_tipo_documento):\n\ttipos = Model.listaTipoDocumentos(nu_tipo_documento,no_tipo_documento)\n\ty = []\n\tfor tipo in tipos:\n\t\tx = dict()\n\t\tx[\'tipo\'] = tipo\n\t\ty.append(x)\n\ttipos = y\n\treturn tipos\n\ndef call():\n    return service()\n\nresponse._vars=response._caller(call)\n'
+p7
+sS'snapshot'
+p8
+(dp9
+S'exception'
+p10
+(dp11
+S'__getslice__'
+p12
+S"<method-wrapper '__getslice__' of exceptions.SyntaxError object>"
+p13
+sS'text'
+p14
+S'\'\\t\\t\\tquery.append({\\\'no_empregado\\\'} : {"$regex" : \\\'(^|\\\\w)\\\'+nome.strip().upper()+\\\'*\\\'})\\n\''
+p15
+sS'__str__'
+p16
+S"<method-wrapper '__str__' of exceptions.SyntaxError object>"
+p17
+sS'__reduce__'
+p18
+S'<built-in method __reduce__ of exceptions.SyntaxError object>'
+p19
+sS'__dict__'
+p20
+S'{}'
+p21
+sS'__sizeof__'
+p22
+S'<built-in method __sizeof__ of exceptions.SyntaxError object>'
+p23
+sS'__init__'
+p24
+S"<method-wrapper '__init__' of exceptions.SyntaxError object>"
+p25
+sS'__setattr__'
+p26
+S"<method-wrapper '__setattr__' of exceptions.SyntaxError object>"
+p27
+sS'__reduce_ex__'
+p28
+S'<built-in method __reduce_ex__ of exceptions.SyntaxError object>'
+p29
+sS'__new__'
+p30
+S'<built-in method __new__ of type object>'
+p31
+sS'__format__'
+p32
+S'<built-in method __format__ of exceptions.SyntaxError object>'
+p33
+sS'__class__'
+p34
+S"<type 'exceptions.SyntaxError'>"
+p35
+sS'filename'
+p36
+S"'applications/webservices/modules/mongo.py'"
+p37
+sS'lineno'
+p38
+S'293'
+p39
+sS'msg'
+p40
+S"'invalid syntax'"
+p41
+sS'__doc__'
+p42
+S"'Invalid syntax.'"
+p43
+sS'__getitem__'
+p44
+S"<method-wrapper '__getitem__' of exceptions.SyntaxError object>"
+p45
+sS'__setstate__'
+p46
+S'<built-in method __setstate__ of exceptions.SyntaxError object>'
+p47
+sS'__getattribute__'
+p48
+S"<method-wrapper '__getattribute__' of exceptions.SyntaxError object>"
+p49
+sS'print_file_and_line'
+p50
+S'None'
+p51
+sS'args'
+p52
+S'(\'invalid syntax\', (\'applications/webservices/modules/mongo.py\', 293, 32, \'\\t\\t\\tquery.append({\\\'no_empregado\\\'} : {"$regex" : \\\'(^|\\\\w)\\\'+nome.strip().upper()+\\\'*\\\'})\\n\'))'
+p53
+sS'__subclasshook__'
+p54
+S'<built-in method __subclasshook__ of type object>'
+p55
+sS'offset'
+p56
+S'32'
+p57
+sS'__unicode__'
+p58
+S'<built-in method __unicode__ of exceptions.SyntaxError object>'
+p59
+sS'__delattr__'
+p60
+S"<method-wrapper '__delattr__' of exceptions.SyntaxError object>"
+p61
+sS'__repr__'
+p62
+S"<method-wrapper '__repr__' of exceptions.SyntaxError object>"
+p63
+sS'__hash__'
+p64
+S"<method-wrapper '__hash__' of exceptions.SyntaxError object>"
+p65
+ssS'evalue'
+p66
+S'invalid syntax (mongo.py, line 293)'
+p67
+sS'request'
+p68
+cgluon.html
+XML_unpickle
+p69
+(S's\xcbE\x00\x00<div><table><tr><td style="font-weight:bold;vertical-align:top">ajax</td><td valign="top">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">application</td><td valign="top">:</td><td><div>webservices</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">args</td><td valign="top">:</td><td><div><table><tr><td><div>soap</div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">body</td><td valign="top">:</td><td><div>&lt;open file &#x27;&lt;fdopen&gt;&#x27;, mode &#x27;w+b&#x27; at 0xa77a910&gt;</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">cid</td><td valign="top">:</td><td><div>None</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">client</td><td valign="top">:</td><td><div>127.0.0.1</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">controller</td><td valign="top">:</td><td><div>sample</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">cookies</td><td valign="top">:</td><td><div><table></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">env</td><td valign="top">:</td><td><div><table><tr><td style="font-weight:bold;vertical-align:top">app_folders</td><td valign="top">:</td><td><div>set([&#x27;/home/wanzeller/www-dev/web2py/applications/webservices/&#x27;])</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">applications_parent</td><td valign="top">:</td><td><div>/home/wanzeller/www-dev/web2py</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">cmd_args</td><td valign="top">:</td><td><div><table></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">cmd_options</td><td valign="top">:</td><td><div>&lt;Values at 0xa10dc8c: {&#x27;verbose&#x27;: False, &#x27;ip&#x27;: &#x27;127.0.0.1&#x27;, &#x27;with_scheduler&#x27;: False, &#x27;ips&#x27;: [&#x27;127.0.1.1&#x27;], &#x27;shutdown_timeout&#x27;: 5, &#x27;taskbar&#x27;: False, &#x27;with_coverage&#x27;: False, &#x27;port&#x27;: 8000, &#x27;maxthreads&#x27;: None, &#x27;softcron&#x27;: False, &#x27;server_name&#x27;: &#x27;debian&#x27;, &#x27;bpython&#x27;: False, &#x27;nogui&#x27;: False, &#x27;pid_filename&#x27;: &#x27;httpserver.pid&#x27;, &#x27;extcron&#x27;: False, &#x27;runcron&#x27;: False, &#x27;run_system_tests&#x27;: False, &#x27;test&#x27;: None, &#x27;folder&#x27;: &#x27;/home/wanzeller/www-dev/web2py&#x27;, &#x27;config&#x27;: &#x27;&#x27;, &#x27;import_models&#x27;: False, &#x27;winservice&#x27;: &#x27;&#x27;, &#x27;shell&#x27;: None, &#x27;run&#x27;: &#x27;&#x27;, &#x27;log_filename&#x27;: &#x27;httpserver.log&#x27;, &#x27;debuglevel&#x27;: 30, &#x27;args&#x27;: [&#x27;&#x27;], &#x27;socket_timeout&#x27;: 5, &#x27;ssl_ca_certificate&#x27;: None, &#x27;scheduler&#x27;: None, &#x27;profiler_filename&#x27;: None, &#x27;ssl_private_key&#x27;: &#x27;&#x27;, &#x27;scheduler_groups&#x27;: None, &#x27;password&#x27;: &#x27;&lt;ask&gt;&#x27;, &#x27;request_queue_size&#x27;: 5, &#x27;ssl_certificate&#x27;: &#x27;&#x27;, &#x27;cronjob&#x27;: False, &#x27;numthreads&#x27;: None, &#x27;quiet&#x27;: False, &#x27;interfaces&#x27;: None, &#x27;minthreads&#x27;: None, &#x27;timeout&#x27;: 10, &#x27;plain&#x27;: False, &#x27;nobanner&#x27;: False}&gt;</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">content_length</td><td valign="top">:</td><td><div>590</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">content_type</td><td valign="top">:</td><td><div>text/xml</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">db_sessions</td><td valign="top">:</td><td><div>set([])</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">debugging</td><td valign="top">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">gluon_parent</td><td valign="top">:</td><td><div>/home/wanzeller/www-dev/web2py</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">http_connection</td><td valign="top">:</td><td><div>close</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">http_content_length</td><td valign="top">:</td><td><div>590</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">http_content_type</td><td valign="top">:</td><td><div>text/xml</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">http_host</td><td valign="top">:</td><td><div>127.0.0.1:8000</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">http_soapaction</td><td valign="top">:</td><td><div>&quot;http://127.0.0.1:8000/webservices/sample/call/soap?op=listaEmpregados&quot;</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">http_user_agent</td><td valign="top">:</td><td><div>Jakarta Commons-HttpClient/3.1</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">is_jython</td><td valign="top">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">is_pypy</td><td valign="top">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">local_hosts</td><td valign="top">:</td><td><div><table><tr><td><div>::1</div></td></tr><tr><td><div>127.0.1.1</div></td></tr><tr><td><div>::ffff:127.0.0.1</div></td></tr><tr><td><div>127.0.0.1</div></td></tr><tr><td><div>debian</div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">path_info</td><td valign="top">:</td><td><div>/webservices/sample/call/soap</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">query_string</td><td valign="top">:</td><td><div>WSDL=None</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">remote_addr</td><td valign="top">:</td><td><div>127.0.0.1</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">remote_port</td><td valign="top">:</td><td><div>37436</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">request_method</td><td valign="top">:</td><td><div>POST</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">request_uri</td><td valign="top">:</td><td><div>/webservices/sample/call/soap?WSDL=None</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">script_name</td><td valign="top">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">server_name</td><td valign="top">:</td><td><div>debian</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">server_port</td><td valign="top">:</td><td><div>8000</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">server_protocol</td><td valign="top">:</td><td><div>HTTP/1.1</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">server_software</td><td valign="top">:</td><td><div>Rocket 1.2.6</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">web2py_path</td><td valign="top">:</td><td><div>/home/wanzeller/www-dev/web2py</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">web2py_version</td><td valign="top">:</td><td><div>2.5.1-stable+timestamp.2013.06.06.15.39.19</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">wsgi_errors</td><td valign="top">:</td><td><div>&lt;open file &#x27;&lt;stderr&gt;&#x27;, mode &#x27;w&#x27; at 0xb73e40d0&gt;</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">wsgi_file_wrapper</td><td valign="top">:</td><td><div>&lt;class wsgiref.util.FileWrapper at 0xa09d68c&gt;</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">wsgi_input</td><td valign="top">:</td><td><div>&lt;socket._fileobject object at 0xacf586c&gt;</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">wsgi_multiprocess</td><td valign="top">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">wsgi_multithread</td><td valign="top">:</td><td><div>True</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">wsgi_run_once</td><td valign="top">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">wsgi_url_scheme</td><td valign="top">:</td><td><div>http</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">wsgi_version</td><td valign="top">:</td><td><div><table><tr><td><div>1</div></td></tr><tr><td><div>0</div></td></tr></table></div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">extension</td><td valign="top">:</td><td><div>html</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">folder</td><td valign="top">:</td><td><div>/home/wanzeller/www-dev/web2py/applications/webservices/</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">function</td><td valign="top">:</td><td><div>call</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">get_vars</td><td valign="top">:</td><td><div><table><tr><td style="font-weight:bold;vertical-align:top">WSDL</td><td valign="top">:</td><td><div>None</div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">global_settings</td><td valign="top">:</td><td><div><table><tr><td style="font-weight:bold;vertical-align:top">app_folders</td><td valign="top">:</td><td><div>set([&#x27;/home/wanzeller/www-dev/web2py/applications/webservices/&#x27;])</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">applications_parent</td><td valign="top">:</td><td><div>/home/wanzeller/www-dev/web2py</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">cmd_args</td><td valign="top">:</td><td><div><table></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">cmd_options</td><td valign="top">:</td><td><div>&lt;Values at 0xa10dc8c: {&#x27;verbose&#x27;: False, &#x27;ip&#x27;: &#x27;127.0.0.1&#x27;, &#x27;with_scheduler&#x27;: False, &#x27;ips&#x27;: [&#x27;127.0.1.1&#x27;], &#x27;shutdown_timeout&#x27;: 5, &#x27;taskbar&#x27;: False, &#x27;with_coverage&#x27;: False, &#x27;port&#x27;: 8000, &#x27;maxthreads&#x27;: None, &#x27;softcron&#x27;: False, &#x27;server_name&#x27;: &#x27;debian&#x27;, &#x27;bpython&#x27;: False, &#x27;nogui&#x27;: False, &#x27;pid_filename&#x27;: &#x27;httpserver.pid&#x27;, &#x27;extcron&#x27;: False, &#x27;runcron&#x27;: False, &#x27;run_system_tests&#x27;: False, &#x27;test&#x27;: None, &#x27;folder&#x27;: &#x27;/home/wanzeller/www-dev/web2py&#x27;, &#x27;config&#x27;: &#x27;&#x27;, &#x27;import_models&#x27;: False, &#x27;winservice&#x27;: &#x27;&#x27;, &#x27;shell&#x27;: None, &#x27;run&#x27;: &#x27;&#x27;, &#x27;log_filename&#x27;: &#x27;httpserver.log&#x27;, &#x27;debuglevel&#x27;: 30, &#x27;args&#x27;: [&#x27;&#x27;], &#x27;socket_timeout&#x27;: 5, &#x27;ssl_ca_certificate&#x27;: None, &#x27;scheduler&#x27;: None, &#x27;profiler_filename&#x27;: None, &#x27;ssl_private_key&#x27;: &#x27;&#x27;, &#x27;scheduler_groups&#x27;: None, &#x27;password&#x27;: &#x27;&lt;ask&gt;&#x27;, &#x27;request_queue_size&#x27;: 5, &#x27;ssl_certificate&#x27;: &#x27;&#x27;, &#x27;cronjob&#x27;: False, &#x27;numthreads&#x27;: None, &#x27;quiet&#x27;: False, &#x27;interfaces&#x27;: None, &#x27;minthreads&#x27;: None, &#x27;timeout&#x27;: 10, &#x27;plain&#x27;: False, &#x27;nobanner&#x27;: False}&gt;</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">db_sessions</td><td valign="top">:</td><td><div>set([])</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">debugging</td><td valign="top">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">gluon_parent</td><td valign="top">:</td><td><div>/home/wanzeller/www-dev/web2py</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">is_jython</td><td valign="top">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">is_pypy</td><td valign="top">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">local_hosts</td><td valign="top">:</td><td><div><table><tr><td><div>::1</div></td></tr><tr><td><div>127.0.1.1</div></td></tr><tr><td><div>::ffff:127.0.0.1</div></td></tr><tr><td><div>127.0.0.1</div></td></tr><tr><td><div>debian</div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">web2py_version</td><td valign="top">:</td><td><div>2.5.1-stable+timestamp.2013.06.06.15.39.19</div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">is_https</td><td valign="top">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">is_local</td><td valign="top">:</td><td><div>True</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">is_restful</td><td valign="top">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">now</td><td valign="top">:</td><td><div>datetime.datetime(2013, 9, 12, 8, 25, 41, 744387)</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">post_vars</td><td valign="top">:</td><td><div><table></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">raw_args</td><td valign="top">:</td><td><div>soap</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">raw_extension</td><td valign="top">:</td><td><div>None</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">url</td><td valign="top">:</td><td><div>/webservices/sample/call/soap</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">utcnow</td><td valign="top">:</td><td><div>datetime.datetime(2013, 9, 12, 11, 25, 41, 744402)</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">uuid</td><td valign="top">:</td><td><div>webservices/127.0.0.1.2013-09-12.08-25-41.673bd91b-e877-46a7-a803-d2e4018c1fe2</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">vars</td><td valign="top">:</td><td><div><table><tr><td style="font-weight:bold;vertical-align:top">WSDL</td><td valign="top">:</td><td><div>None</div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">wsgi</td><td valign="top">:</td><td><div><table><tr><td style="font-weight:bold;vertical-align:top">environ</td><td valign="top">:</td><td><div><table><tr><td style="font-weight:bold;vertical-align:top">CONTENT_LENGTH</td><td valign="top">:</td><td><div>590</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">CONTENT_TYPE</td><td valign="top">:</td><td><div>text/xml</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">HTTP_CONNECTION</td><td valign="top">:</td><td><div>close</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">HTTP_CONTENT_LENGTH</td><td valign="top">:</td><td><div>590</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">HTTP_CONTENT_TYPE</td><td valign="top">:</td><td><div>text/xml</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">HTTP_HOST</td><td valign="top">:</td><td><div>127.0.0.1:8000</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">HTTP_SOAPACTION</td><td valign="top">:</td><td><div>&quot;http://127.0.0.1:8000/webservices/sample/call/soap?op=listaEmpregados&quot;</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">HTTP_USER_AGENT</td><td valign="top">:</td><td><div>Jakarta Commons-HttpClient/3.1</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">PATH_INFO</td><td valign="top">:</td><td><div>/webservices/sample/call/soap</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">QUERY_STRING</td><td valign="top">:</td><td><div>WSDL=None</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">REMOTE_ADDR</td><td valign="top">:</td><td><div>127.0.0.1</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">REMOTE_PORT</td><td valign="top">:</td><td><div>37436</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">REQUEST_METHOD</td><td valign="top">:</td><td><div>POST</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">REQUEST_URI</td><td valign="top">:</td><td><div>/webservices/sample/call/soap?WSDL=None</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">SCRIPT_NAME</td><td valign="top">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">SERVER_NAME</td><td valign="top">:</td><td><div>debian</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">SERVER_PORT</td><td valign="top">:</td><td><div>8000</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">SERVER_PROTOCOL</td><td valign="top">:</td><td><div>HTTP/1.1</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">SERVER_SOFTWARE</td><td valign="top">:</td><td><div>Rocket 1.2.6</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">wsgi.errors</td><td valign="top">:</td><td><div>&lt;open file &#x27;&lt;stderr&gt;&#x27;, mode &#x27;w&#x27; at 0xb73e40d0&gt;</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">wsgi.file_wrapper</td><td valign="top">:</td><td><div>&lt;class wsgiref.util.FileWrapper at 0xa09d68c&gt;</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">wsgi.input</td><td valign="top">:</td><td><div>&lt;open file &#x27;&lt;fdopen&gt;&#x27;, mode &#x27;w+b&#x27; at 0xa77a910&gt;</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">wsgi.multiprocess</td><td valign="top">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">wsgi.multithread</td><td valign="top">:</td><td><div>True</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">wsgi.run_once</td><td valign="top">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">wsgi.url_scheme</td><td valign="top">:</td><td><div>http</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">wsgi.version</td><td valign="top">:</td><td><div>1</div></td></tr></table></div></td></tr></table></div></td></tr></table></div>'
+tRp70
+sS'frames'
+p71
+(lp72
+(dp73
+S'file'
+p74
+S'/home/wanzeller/www-dev/web2py/gluon/restricted.py'
+p75
+sS'dump'
+p76
+(dp77
+S'environment'
+p78
+S"{'A': <class 'gluon.html.A'>, 'ANY_OF': <class 'gluon.validators.ANY_OF'>, 'Auth': <class 'gluon.tools.Auth'>, 'B': <class 'gluon.html.B'>, 'BEAUTIFY': <class 'gluon.html.BEAUTIFY'>, 'BODY': <class 'gluon.html.BODY'>, 'BR': <class 'gluon.html.BR'>, 'BUTTON': <class 'gluon.html.BUTTON'>, 'CAT': <class 'gluon.html.CAT'>, 'CENTER': <class 'gluon.html.CENTER'>, ...}"
+p79
+sS'ccode'
+p80
+S'<code object <module> at 0xb04b7b8, file "/home/...tions/webservices/controllers/sample.py", line 3>'
+p81
+ssS'lnum'
+p82
+I212
+sS'lines'
+p83
+(dp84
+I207
+S'    try:'
+p85
+sI208
+S'        if isinstance(code, types.CodeType):'
+p86
+sI209
+S'            ccode = code'
+p87
+sI210
+S'        else:'
+p88
+sI211
+S'            ccode = compile2(code, layer)'
+p89
+sI212
+S'        exec ccode in environment'
+p90
+sI213
+S'    except HTTP:'
+p91
+sI214
+S'        raise'
+p92
+sI215
+S'    except RestrictedError:'
+p93
+sI216
+S'        # do not encapsulate (obfuscate) the original RestrictedError'
+p94
+ssS'call'
+p95
+S"(code='# coding: utf8\\n# tente algo como\\ndef index(): re...service()\\n\\nresponse._vars=response._caller(call)\\n', environment={'A': <class 'gluon.html.A'>, 'ANY_OF': <class 'gluon.validators.ANY_OF'>, 'Auth': <class 'gluon.tools.Auth'>, 'B': <class 'gluon.html.B'>, 'BEAUTIFY': <class 'gluon.html.BEAUTIFY'>, 'BODY': <class 'gluon.html.BODY'>, 'BR': <class 'gluon.html.BR'>, 'BUTTON': <class 'gluon.html.BUTTON'>, 'CAT': <class 'gluon.html.CAT'>, 'CENTER': <class 'gluon.html.CENTER'>, ...}, layer='/home/wanzeller/www-dev/web2py/applications/webservices/controllers/sample.py')"
+p96
+sS'func'
+p97
+S'restricted'
+p98
+sa(dp99
+g74
+S'/home/wanzeller/www-dev/web2py/applications/webservices/controllers/sample.py'
+p100
+sg76
+(dp101
+S'model'
+p102
+S'undefined'
+p103
+sS'local_import'
+p104
+S'<function <lambda>>'
+p105
+ssg82
+I6
+sg83
+(dp106
+I2
+S'# tente algo como'
+p107
+sI3
+S'def index(): return dict(message="hello from sample.py")'
+p108
+sI4
+S''
+sI5
+S'#import mongo'
+p109
+sI6
+S"model = local_import('mongo')"
+p110
+sI7
+S"#model = local_import('postgres_dict')"
+p111
+sI8
+S''
+sI9
+S''
+sI10
+S'from gluon.tools import Service'
+p112
+sI11
+S'service = Service(globals())'
+p113
+ssg95
+S'()'
+p114
+sg97
+S'<module>'
+p115
+sa(dp116
+g74
+S'/home/wanzeller/www-dev/web2py/gluon/compileapp.py'
+p117
+sg76
+(dp118
+S'global local_import_aux'
+p119
+S'<function local_import_aux>'
+p120
+sS'reload'
+p121
+S'False'
+p122
+sS'app'
+p123
+S"'webservices'"
+p124
+sS'name'
+p125
+S"'mongo'"
+p126
+ssg82
+I423
+sg83
+(dp127
+I418
+S"    environment['request'] = request"
+p128
+sI419
+S"    environment['response'] = response"
+p129
+sI420
+S"    environment['session'] = session"
+p130
+sI421
+S"    environment['local_import'] = \\"
+p131
+sI422
+S'        lambda name, reload=False, app=request.application:\\'
+p132
+sI423
+S'        local_import_aux(name, reload, app)'
+p133
+sI424
+S"    BaseAdapter.set_folder(pjoin(request.folder, 'databases'))"
+p134
+sI425
+S'    response._view_environment = copy.copy(environment)'
+p135
+sI426
+S'    custom_import_install()'
+p136
+sI427
+S'    return environment'
+p137
+ssg95
+S"(name='mongo', reload=False, app='webservices')"
+p138
+sg97
+S'<lambda>'
+p139
+sa(dp140
+g74
+S'/home/wanzeller/www-dev/web2py/gluon/compileapp.py'
+p141
+sg76
+(dp142
+S'name'
+p143
+S"'applications.webservices.modules.mongo'"
+p144
+sS'module'
+p145
+g103
+sS'builtin__import__'
+p146
+S'<function custom_importer>'
+p147
+ssg82
+I333
+sg83
+(dp148
+I328
+S'    This prevents conflict between applications and un-necessary execs.'
+p149
+sI329
+S'    It can be used to import any module, including regular Python modules.'
+p150
+sI330
+S'    """'
+p151
+sI331
+S"    items = name.replace('/', '.')"
+p152
+sI332
+S'    name = "applications.%s.modules.%s" % (app, items)'
+p153
+sI333
+S'    module = __import__(name)'
+p154
+sI334
+S'    for item in name.split(".")[1:]:'
+p155
+sI335
+S'        module = getattr(module, item)'
+p156
+sI336
+S'    if reload_force:'
+p157
+sI337
+S'        reload(module)'
+p158
+ssg95
+S"(name='applications.webservices.modules.mongo', reload_force=False, app='webservices')"
+p159
+sg97
+S'local_import_aux'
+p160
+sa(dp161
+g74
+S'/home/wanzeller/www-dev/web2py/gluon/custom_import.py'
+p162
+sg76
+(dp163
+S'fromlist'
+p164
+S'[]'
+p165
+sS'global NATIVE_IMPORTER'
+p166
+S'<built-in function __import__>'
+p167
+sS'level'
+p168
+S'-1'
+p169
+sS'globals'
+p170
+g21
+sS'locals'
+p171
+g21
+sS'name'
+p172
+S"'applications.webservices.modules.mongo'"
+p173
+ssg82
+I100
+sg83
+(dp174
+I96
+S'        finally:'
+p175
+sI97
+S'            if import_tb:'
+p176
+sI98
+S'                import_tb = None'
+p177
+sI99
+S''
+sI100
+S'    return NATIVE_IMPORTER(name, globals, locals, fromlist, level)'
+p178
+sI101
+S''
+sI102
+S''
+sI103
+S'class TrackImporter(object):'
+p179
+sI104
+S'    """'
+p180
+sI95
+S'            raise e2  # there is an error in the module'
+p181
+ssg95
+S"(name='applications.webservices.modules.mongo', globals={}, locals={}, fromlist=[], level=-1)"
+p182
+sg97
+S'custom_importer'
+p183
+sasS'pyver'
+p184
+S'Python 2.6.6: /usr/bin/python (prefix: /usr)'
+p185
+sS'session'
+p186
+g69
+(S's\x1a\x00\x00\x00<div><table></table></div>'
+tRp187
+sS'etype'
+p188
+S"<type 'exceptions.SyntaxError'>"
+p189
+sS'date'
+p190
+S'Thu Sep 12 08:25:41 2013'
+p191
+sS'response'
+p192
+g69
+(S's@+\x00\x00<div><table><tr><td style="font-weight:bold;vertical-align:top">body</td><td valign="top">:</td><td><div>&lt;cStringIO.StringO object at 0xacd6ae0&gt;</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">cookies</td><td valign="top">:</td><td><div><table><tr><td style="font-weight:bold;vertical-align:top">session_id_webservices</td><td valign="top">:</td><td><div>127.0.0.1-aece5edd-057b-4985-8878-ec8657690f1f<table><tr><td style="font-weight:bold;vertical-align:top">comment</td><td valign="top">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">domain</td><td valign="top">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">expires</td><td valign="top">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">httponly</td><td valign="top">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">max-age</td><td valign="top">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">path</td><td valign="top">:</td><td><div>/</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">secure</td><td valign="top">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">version</td><td valign="top">:</td><td><div></div></td></tr></table></div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">delimiters</td><td valign="top">:</td><td><div><table><tr><td><div>{{</div></td></tr><tr><td><div>}}</div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">files</td><td valign="top">:</td><td><div><table></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">flash</td><td valign="top">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">generic_patterns</td><td valign="top">:</td><td><div><table><tr><td><div>*</div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">google_analytics_id</td><td valign="top">:</td><td><div>None</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">headers</td><td valign="top">:</td><td><div><table><tr><td style="font-weight:bold;vertical-align:top">X-Powered-By</td><td valign="top">:</td><td><div>web2py</div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">logo</td><td valign="top">:</td><td><div><a class="brand" href="http://www.web2py.com/"><b>web<span>2</span>py</b>&trade;&nbsp;</a></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">menu</td><td valign="top">:</td><td><div><table><tr><td><div><table><tr><td><div>Home</div></td></tr><tr><td><div>False</div></td></tr><tr><td><div>/webservices/default/index</div></td></tr><tr><td><div><table></table></div></td></tr></table></div></td></tr><tr><td><div><table><tr><td><div><span class="highlighted">web2py</span></div></td></tr><tr><td><div>False</div></td></tr><tr><td><div>http://web2py.com</div></td></tr><tr><td><div><table><tr><td><div><table><tr><td><div>My Sites</div></td></tr><tr><td><div>False</div></td></tr><tr><td><div>/admin/default/site</div></td></tr></table></div></td></tr><tr><td><div><table><tr><td><div>This App</div></td></tr><tr><td><div>False</div></td></tr><tr><td><div>/admin/default/design/webservices</div></td></tr><tr><td><div>[(&lt;lazyT &#x27;Controller&#x27;&gt;, False, &#x27;/admin/default/edit/webservices/controllers/sample.py&#x27;), (&lt;lazyT &#x27;View&#x27;&gt;, False, &#x27;/admin/default/edit/webservices/views/sample/call.html&#x27;), (&lt;lazyT &#x27;Layout&#x27;&gt;, False, &#x27;/admin/default/edit/webservices/views/layout.html&#x27;), (&lt;lazyT &#x27;Stylesheet&#x27;&gt;, False, &#x27;/admin/default/edit/webservices/static/css/web2py.css&#x27;), (&lt;lazyT &#x27;DB Model&#x27;&gt;, False, &#x27;/admin/default/edit/webservices/models/db.py&#x27;), (&lt;lazyT &#x27;Menu Model&#x27;&gt;, False, &#x27;/admin/default/edit/webservices/models/menu.py&#x27;), (&lt;lazyT &#x27;Database&#x27;&gt;, False, &#x27;/webservices/appadmin/index&#x27;), (&lt;lazyT &#x27;Errors&#x27;&gt;, False, &#x27;/admin/default/errors/webservices&#x27;), (&lt;lazyT &#x27;About&#x27;&gt;, False, &#x27;/admin/default/about/webservices&#x27;)]</div></td></tr></table></div></td></tr><tr><td><div><table><tr><td><div>web2py.com</div></td></tr><tr><td><div>False</div></td></tr><tr><td><div>http://www.web2py.com</div></td></tr><tr><td><div>[(&lt;lazyT &#x27;Download&#x27;&gt;, False, &#x27;http://www.web2py.com/examples/default/download&#x27;), (&lt;lazyT &#x27;Support&#x27;&gt;, False, &#x27;http://www.web2py.com/examples/default/support&#x27;), (&lt;lazyT &#x27;Demo&#x27;&gt;, False, &#x27;http://web2py.com/demo_admin&#x27;), (&lt;lazyT &#x27;Quick Examples&#x27;&gt;, False, &#x27;http://web2py.com/examples/default/examples&#x27;), (&lt;lazyT &#x27;FAQ&#x27;&gt;, False, &#x27;http://web2py.com/AlterEgo&#x27;), (&lt;lazyT &#x27;Videos&#x27;&gt;, False, &#x27;http://www.web2py.com/examples/default/videos/&#x27;), (&lt;lazyT &#x27;Free Applications&#x27;&gt;, False, &#x27;http://web2py.com/appliances&#x27;), (&lt;lazyT &#x27;Plugins&#x27;&gt;, False, &#x27;http://web2py.com/plugins&#x27;), (&lt;lazyT &#x27;Layouts&#x27;&gt;, False, &#x27;http://web2py.com/layouts&#x27;), (&lt;lazyT &#x27;Recipes&#x27;&gt;, False, &#x27;http://web2pyslices.com/&#x27;), (&lt;lazyT &#x27;Semantic&#x27;&gt;, False, &#x27;http://web2py.com/semantic&#x27;)]</div></td></tr></table></div></td></tr><tr><td><div><table><tr><td><div>Documentation</div></td></tr><tr><td><div>False</div></td></tr><tr><td><div>http://www.web2py.com/book</div></td></tr><tr><td><div>[(&lt;lazyT &#x27;Preface&#x27;&gt;, False, &#x27;http://www.web2py.com/book/default/chapter/00&#x27;), (&lt;lazyT &#x27;Introduction&#x27;&gt;, False, &#x27;http://www.web2py.com/book/default/chapter/01&#x27;), (&lt;lazyT &#x27;Python&#x27;&gt;, False, &#x27;http://www.web2py.com/book/default/chapter/02&#x27;), (&lt;lazyT &#x27;Overview&#x27;&gt;, False, &#x27;http://www.web2py.com/book/default/chapter/03&#x27;), (&lt;lazyT &#x27;The Core&#x27;&gt;, False, &#x27;http://www.web2py.com/book/default/chapter/04&#x27;), (&lt;lazyT &#x27;The Views&#x27;&gt;, False, &#x27;http://www.web2py.com/book/default/chapter/05&#x27;), (&lt;lazyT &#x27;Database&#x27;&gt;, False, &#x27;http://www.web2py.com/book/default/chapter/06&#x27;), (&lt;lazyT &#x27;Forms and Validators&#x27;&gt;, False, &#x27;http://www.web2py.com/book/default/chapter/07&#x27;), (&lt;lazyT &#x27;Email and SMS&#x27;&gt;, False, &#x27;http://www.web2py.com/book/default/chapter/08&#x27;), (&lt;lazyT &#x27;Access Control&#x27;&gt;, False, &#x27;http://www.web2py.com/book/default/chapter/09&#x27;), (&lt;lazyT &#x27;Services&#x27;&gt;, False, &#x27;http://www.web2py.com/book/default/chapter/10&#x27;), (&lt;lazyT &#x27;Ajax Recipes&#x27;&gt;, False, &#x27;http://www.web2py.com/book/default/chapter/11&#x27;), (&lt;lazyT &#x27;Components and Plugins&#x27;&gt;, False, &#x27;http://www.web2py.com/book/default/chapter/12&#x27;), (&lt;lazyT &#x27;Deployment Recipes&#x27;&gt;, False, &#x27;http://www.web2py.com/book/default/chapter/13&#x27;), (&lt;lazyT &#x27;Other Recipes&#x27;&gt;, False, &#x27;http://www.web2py.com/book/default/chapter/14&#x27;), (&lt;lazyT &#x27;Buy this book&#x27;&gt;, False, &#x27;http://stores.lulu.com/web2py&#x27;)]</div></td></tr></table></div></td></tr><tr><td><div><table><tr><td><div>Community</div></td></tr><tr><td><div>False</div></td></tr><tr><td><div>None</div></td></tr><tr><td><div>[(&lt;lazyT &#x27;Groups&#x27;&gt;, False, &#x27;http://www.web2py.com/examples/default/usergroups&#x27;), (&lt;lazyT &#x27;Twitter&#x27;&gt;, False, &#x27;http://twitter.com/web2py&#x27;), (&lt;lazyT &#x27;Live Chat&#x27;&gt;, False, &#x27;http://webchat.freenode.net/?channels=web2py&#x27;)]</div></td></tr></table></div></td></tr><tr><td><div><table><tr><td><div>Plugins</div></td></tr><tr><td><div>False</div></td></tr><tr><td><div>None</div></td></tr><tr><td><div>[(&#x27;plugin_wiki&#x27;, False, &#x27;http://web2py.com/examples/default/download&#x27;), (&lt;lazyT &#x27;Other Plugins&#x27;&gt;, False, &#x27;http://web2py.com/plugins&#x27;), (&lt;lazyT &#x27;Layout Plugins&#x27;&gt;, False, &#x27;http://web2py.com/layouts&#x27;)]</div></td></tr></table></div></td></tr></table></div></td></tr></table></div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">meta</td><td valign="top">:</td><td><div><table><tr><td style="font-weight:bold;vertical-align:top">author</td><td valign="top">:</td><td><div>Your Name &lt;you@example.com&gt;</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">description</td><td valign="top">:</td><td><div>a cool new app</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">generator</td><td valign="top">:</td><td><div>Web2py Web Framework</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">keywords</td><td valign="top">:</td><td><div>web2py, python, framework</div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">models_to_run</td><td valign="top">:</td><td><div><table><tr><td><div>^\\w+\\.py$</div></td></tr><tr><td><div>^sample/\\w+\\.py$</div></td></tr><tr><td><div>^sample/call/\\w+\\.py$</div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">postprocessing</td><td valign="top">:</td><td><div><table></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top">session_cookie_expires</td><td valign="top">:</td><td><div>None</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">session_data_name</td><td valign="top">:</td><td><div>session_data_webservices</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">session_filename</td><td valign="top">:</td><td><div>/home/wanzeller/www-dev/web2py/applications/webservices/sessions/127.0.0.1-aece5edd-057b-4985-8878-ec8657690f1f</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">session_id</td><td valign="top">:</td><td><div>127.0.0.1-aece5edd-057b-4985-8878-ec8657690f1f</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">session_id_name</td><td valign="top">:</td><td><div>session_id_webservices</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">session_new</td><td valign="top">:</td><td><div>True</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">session_storage_type</td><td valign="top">:</td><td><div>file</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">status</td><td valign="top">:</td><td><div>200</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">subtitle</td><td valign="top">:</td><td><div>customize me!</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">title</td><td valign="top">:</td><td><div>Webservices</div></td></tr><tr><td style="font-weight:bold;vertical-align:top">view</td><td valign="top">:</td><td><div>sample/call.html</div></td></tr></table></div>'
+tRp193
+sS'locals'
+p194
+(dp195
+S'fromlist'
+p196
+S'[]'
+p197
+sS'name'
+p198
+S"'applications.webservices.modules.mongo'"
+p199
+sS'level'
+p200
+S'-1'
+p201
+sS'base_importer'
+p202
+S'<built-in function __import__>'
+p203
+sS'globals'
+p204
+g21
+sg194
+g21
+sssS'traceback'
+p205
+S'Traceback (most recent call last):\n  File "/home/wanzeller/www-dev/web2py/gluon/restricted.py", line 212, in restricted\n    exec ccode in environment\n  File "/home/wanzeller/www-dev/web2py/applications/webservices/controllers/sample.py", line 6, in <module>\n    model = local_import(\'mongo\')\n  File "/home/wanzeller/www-dev/web2py/gluon/compileapp.py", line 423, in <lambda>\n    local_import_aux(name, reload, app)\n  File "/home/wanzeller/www-dev/web2py/gluon/compileapp.py", line 333, in local_import_aux\n    module = __import__(name)\n  File "/home/wanzeller/www-dev/web2py/gluon/custom_import.py", line 100, in custom_importer\n    return NATIVE_IMPORTER(name, globals, locals, fromlist, level)\n  File "applications/webservices/modules/mongo.py", line 293\n    query.append({\'no_empregado\'} : {"$regex" : \'(^|\\w)\'+nome.strip().upper()+\'*\'})\n                                ^\nSyntaxError: invalid syntax\n'
+p206
+s.
