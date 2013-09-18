@@ -83,12 +83,12 @@ class Model:
 					id_tipo_vinculo = resultado['id_tipo_vinculo']
 					filtro = ''
 					if not self.validaCampo(str(rg)):
-						filtro += ' rg = '+rg
+						filtro += ' nu_rg = '+rg
 					if not self.validaCampo(str(cpf)):
 						if filtro == '':
-							filtro += ' cpf = '+cpf
+							filtro += ' nu_cpf = '+cpf
 						else:
-							filtro += ' or cpf = '+cpf
+							filtro += ' or nu_cpf = '+cpf
 					if not self.validaCampo(str(certidao)):
 						if filtro == '':
 							filtro += ' nu_certidao = '+certidao
@@ -98,7 +98,7 @@ class Model:
 					cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 					cursor.execute(sql)
 					conn.commit()
-					if cursor.arraysize == 0:
+					if cursor.rowcount == 0:
 						values = "('"+nome.strip().upper()+"','"+dt_nascimento+"',"+str(id_tipo_vinculo)+","+str(responsavel['id_empregado'])
 						if self.validaCampo(rg):
 							values += ",NULL"

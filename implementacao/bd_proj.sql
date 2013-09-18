@@ -52,7 +52,7 @@ CREATE SEQUENCE sq004_pk;
 CREATE TABLE tb004_empregado
 (
   id_empregado integer NOT NULL DEFAULT nextval('sq004_pk'::regclass),
-  no_empregado character varying(50),
+  no_empregado character varying(150),
   dt_contratacao date,
   dt_desligamento date,
   dt_nascimento date,
@@ -70,7 +70,7 @@ CREATE SEQUENCE sq005_pk;
 CREATE TABLE tb005_empregado_dependente
 (
   id_empregado_dependente integer NOT NULL DEFAULT nextval('sq005_pk'::regclass),
-  no_empregado_dependente character varying(50),
+  no_empregado_dependente character varying(150),
   nu_rg numeric(7,0),
   nu_cpf numeric(11,0),
   nu_certidao numeric(11,0),
