@@ -37,7 +37,7 @@
           <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Data Set Config" enabled="true">
             <stringProp name="filename">/home/wanzeller/jmeter test plans/${pathcsv}/docEmpregados.csv</stringProp>
             <stringProp name="fileEncoding"></stringProp>
-            <stringProp name="variableNames">matricula,tp_documento, no_doc,file</stringProp>
+            <stringProp name="variableNames">matricula,tp_documento,no_doc,file</stringProp>
             <stringProp name="delimiter">;</stringProp>
             <boolProp name="quotedData">true</boolProp>
             <boolProp name="recycle">false</boolProp>
@@ -130,7 +130,7 @@
               </value>
             </objProp>
             <stringProp name="filename"></stringProp>
-            <longProp name="interval_grouping">100</longProp>
+            <longProp name="interval_grouping">1000</longProp>
             <boolProp name="graph_aggregated">true</boolProp>
             <stringProp name="include_sample_labels"></stringProp>
             <stringProp name="exclude_sample_labels"></stringProp>
@@ -166,7 +166,7 @@
               </value>
             </objProp>
             <stringProp name="filename"></stringProp>
-            <longProp name="interval_grouping">500</longProp>
+            <longProp name="interval_grouping">1000</longProp>
             <boolProp name="graph_aggregated">true</boolProp>
             <stringProp name="include_sample_labels"></stringProp>
             <stringProp name="exclude_sample_labels"></stringProp>
@@ -204,7 +204,7 @@
             <stringProp name="filename">/home/wanzeller/python webservice users graph.jmx</stringProp>
           </ResultCollector>
           <hashTree/>
-          <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
+          <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="false">
             <boolProp name="ResultCollector.error_logging">false</boolProp>
             <objProp>
               <name>saveConfig</name>

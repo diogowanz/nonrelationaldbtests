@@ -271,7 +271,19 @@ class Model:
 		if not(self.validaCampo(nu_matricula)):
 			filtro += " AND nu_matricula like '%"+nu_matricula.strip().upper()+"%'"
 			
-		sql = "select * from tb004_empregado where 1=1 "+filtro
+		if not(self.validaCampo(rg)):
+			filtro += " AND nu_rg ="+rg.strip()
+			
+		if not(self.validaCampo(cpf)):
+			filtro += " AND nu_cpf ="+cpf.strip()
+			
+		if not(self.validaCampo(cnpj_orgao)):
+			join = " join tb002_orgao on tb002_orgao.id_orgao = tb004_empregado.id_orgao "
+			filtro += " AND tb002_orgao.nu_cnpj ="+cnpj_orgao.strip()
+		else:
+			join = ''
+			
+		sql = "select * from tb004_empregado "+join+"where 1=1 "+filtro
 		cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 		cursor.execute(sql)
 		conn.commit()
@@ -299,10 +311,20 @@ class Model:
 			filtro += " AND nu_matricula like '%"+matricula.strip().upper()+"%'"
 			
 		if not(self.validaCampo(dt_nascimento)):
-			filtro += " AND dt_nascimento = '"+dt_nascimento.strip()+"'"
+			filtro += " AND tb005_empregado_dependente.dt_nascimento = '"+dt_nascimento.strip()+"'"
 			
 		if not(self.validaCampo(tp_vinculo)):
 			filtro += " AND tb005_empregado_dependente.id_tipo_vinculo = "+tp_vinculo.strip()
+			
+		if not(self.validaCampo(rg)):
+			filtro += " AND tb005_empregado_dependente.nu_rg ="+rg.strip()
+			
+		if not(self.validaCampo(cpf)):
+			filtro += " AND tb005_empregado_dependente.nu_cpf ="+cpf.strip()
+			
+		if not(self.validaCampo(certidao)):
+			filtro += " AND nu_certidao ="+certidao.strip()
+			
 		sql = "select tb005_empregado_dependente.* from tb005_empregado_dependente join tb004_empregado on tb004_empregado.id_empregado =  tb005_empregado_dependente.id_empregado where 1=1 "+filtro
 		cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 		cursor.execute(sql)
@@ -432,6 +454,46 @@ class Model:
 					l[collumn]=row[collumn]
 				tipoDocumentosDict.append(l)
 			return tipoDocumentosDict
+			
+	def empregadosAtivos (self,cnpj_orgao):
+		conn = self.abreConexao()
+		if (self.validaCampo(str(cnpj_orgao))):
+			sql="select"
+			sql+="	tb002_orgao.id_orgao, "
+			sql+="	count(id_empregado) as empregados_ativos "
+			sql+="from tb002_orgao "
+			sql+="	join tb004_empregado on tb004_empregado.id_orgao = tb002_orgao.id_orgao "
+			sql+="	where dt_desligamento is null "
+			sql+="	group by tb002_orgao.id_orgao, no_orgao "
+			sql+="order by id_orgao "
+			cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+			resultado = cursor.execute(sql)
+			conn.commit()
+		else:
+			sql="select"
+			sql+="	tb002_orgao.id_orgao, "
+			sql+="	count(id_empregado) as empregados_ativos "
+			sql+="from tb002_orgao "
+			sql+="	join tb004_empregado on tb004_empregado.id_orgao = tb002_orgao.id_orgao "
+			sql+="	where dt_desligamento is null and nu_cnpj="+cnpj_orgao
+			sql+="	group by tb002_orgao.id_orgao, no_orgao "
+			sql+="order by id_orgao "
+			cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+			resultado = cursor.execute(sql)
+			conn.commit()
+			
+		if cursor.arraysize == 0:
+			print "Nenhum dado econtrado. Verifique os parametros de busca."
+		else:
+			estatisticaDict=[]
+			for row in cursor:
+				l = dict()
+				for collumn in row:
+					l[collumn]=row[collumn]
+				estatisticaDict.append(l)
+			return estatisticaDict
+			
+		
 					
 	def upload_file(self,file, name):
 		out = open(name, 'wb')

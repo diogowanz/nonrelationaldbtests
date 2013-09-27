@@ -27,7 +27,7 @@
         <stringProp name="ThreadGroup.ramp_time">0</stringProp>
         <longProp name="ThreadGroup.start_time">1375227630000</longProp>
         <longProp name="ThreadGroup.end_time">1375227630000</longProp>
-        <boolProp name="ThreadGroup.scheduler">true</boolProp>
+        <boolProp name="ThreadGroup.scheduler">false</boolProp>
         <stringProp name="ThreadGroup.duration">10</stringProp>
         <stringProp name="ThreadGroup.delay"></stringProp>
       </ThreadGroup>
@@ -167,7 +167,7 @@
               </value>
             </objProp>
             <stringProp name="filename"></stringProp>
-            <longProp name="interval_grouping">500</longProp>
+            <longProp name="interval_grouping">100</longProp>
             <boolProp name="graph_aggregated">true</boolProp>
             <stringProp name="include_sample_labels"></stringProp>
             <stringProp name="exclude_sample_labels"></stringProp>
@@ -205,7 +205,7 @@
             <stringProp name="filename">/home/wanzeller/python webservice users graph.jmx</stringProp>
           </ResultCollector>
           <hashTree/>
-          <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
+          <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="false">
             <boolProp name="ResultCollector.error_logging">false</boolProp>
             <objProp>
               <name>saveConfig</name>

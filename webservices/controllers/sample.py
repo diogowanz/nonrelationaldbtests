@@ -58,7 +58,7 @@ def listaOrgaos(cnpj,nome,endereco,cidade,uf):
 @service.xmlrpc
 @service.soap('listaEmpregados',returns={ 'empregados': [{'empregado': {'id_empregado':str,'no_empregado':str,'dt_contratacao':str,'dt_desligamento':str,'dt_nascimento':str,'nu_matricula':str,'nu_rg':str,'nu_cpf':str,'id_orgao':str,'Documentos':str,'Dependentes':str}}]},
 args={'nome':str, 'dt_contratacao':str, 'dt_desligamento':str, 'dt_nascimento':str, 'nu_matricula':str,'rg':str,'cpf':str,'cnpj_orgao':str})
-def listaEmpregados(nome,dt_contratacao,dt_desligamento,dt_nascimento,nu_matricula):
+def listaEmpregados(nome,dt_contratacao,dt_desligamento,dt_nascimento,nu_matricula,rg,cpf,cnpj_orgao):
 	empregados = Model.listaEmpregados(nome,dt_contratacao,dt_desligamento,dt_nascimento,nu_matricula,rg,cpf,cnpj_orgao)
 	y = []
 	for empregado in empregados:
@@ -71,7 +71,7 @@ def listaEmpregados(nome,dt_contratacao,dt_desligamento,dt_nascimento,nu_matricu
 @service.xmlrpc
 @service.soap('listaDependentes',returns={ 'dependentes': [{'dependente': {'id_empregado_dependente':str,'no_empregado_dependente':str,'nu_rg':str,'nu_cpf':str,'nu_certidao':str,'dt_nascimento':str,'tp_vinculo':str,'Documentos':str}}]},
 args={'nomeEmpregado':str, 'nomeDependente':str, 'matricula':str, 'dt_nascimento':str, 'tp_vinculo':str,'rg':str,'cpf':str,'certidao':str})
-def listaDependentes(nomeEmpregado,nomeDependente,matricula,dt_nascimento,tp_vinculo):
+def listaDependentes(nomeEmpregado,nomeDependente,matricula,dt_nascimento,tp_vinculo,rg,cpf,certidao):
 	dependentes = Model.listaDependentes(nomeEmpregado,nomeDependente,matricula,dt_nascimento,tp_vinculo,rg,cpf,certidao)
 	y = []
 	for dependente in dependentes:
@@ -132,6 +132,19 @@ def listaTipoDocumentos (nu_tipo_documento,no_tipo_documento):
 		y.append(x)
 	tipos = y
 	return tipos
+
+@service.xmlrpc
+@service.soap('empregadosAtivos',returns={ 'empregadosAtivos': [{'orgao': {'id_orgao':str,'qt_empregados_ativos':str}}]},
+args={'cnpj_orgao':str})
+def empregadosAtivos (cnpj_orgao):
+	empregadosAtivos = Model.empregadosAtivos(cnpj_orgao)
+	y = []
+	for orgao in empregadosAtivos:
+		x = dict()
+		x['orgao'] = orgao
+		y.append(x)
+	empregadosAtivos = y
+	return empregadosAtivos
 
 def call():
     return service()

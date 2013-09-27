@@ -79,10 +79,10 @@ def carregaOrgaos():
 			spamwriter.writerow([cnpj,'orgao '+str(n),'endereco orgao '+str(n),'cidade orgao '+str(n),'df'])
 			Model.insereOrgao(cnpj,'orgao '+str(n),'endereco orgao '+str(n),'cidade orgao '+str(n),'df')
 			n+=1
-		copyanything(path_csv + '/orgaos.csv',path_csv_p + '/orgaos.csv')
+	copyanything(path_csv + '/orgaos.csv',path_csv_p + '/orgaos.csv')
 
 def carregaEmpregados():
-	orgaos = Model.listaOrgaos(nome='orgao')
+	orgaos = Model.listaOrgaos('','','','','')
 	with open (path_csv + '/empregados.csv', 'wb') as csvfile:
 		spamwriter = csv.writer(csvfile,delimiter=';', quoting=csv.QUOTE_MINIMAL)
 		for orgao in orgaos:
@@ -98,7 +98,7 @@ def carregaEmpregados():
 				spamwriter.writerow([nome,str(dt_contratacao),str(dt_desligamento),str(dt_nascimento),matricula,rg,cpf,orgao['nu_cnpj'],''])
 				Model.insereEmpregado(nome,str(dt_contratacao),str(dt_desligamento),str(dt_nascimento),matricula,rg,cpf,orgao['nu_cnpj'],'')
 				n+=1
-		copyanything(path_csv + '/empregados.csv',path_csv_p + '/empregados.csv')
+	copyanything(path_csv + '/empregados.csv',path_csv_p + '/empregados.csv')
 	
 def carregaDependentes():
 	empregados = Model.listaEmpregados('','','','','','','','')
@@ -125,7 +125,7 @@ def carregaDependentes():
 					spamwriterp.writerow([nome,rg,cpf,certidao,str(dt_nascimento),x["id_tipo_vinculo"],'',empregado['nu_matricula']])
 					Model.insereDependente(nome,rg,cpf,certidao,str(dt_nascimento),vinculos[n]["id_tipo_vinculo"],'',empregado['nu_matricula'])
 					n+=1
-			#copyanything(path_csv + '/dependentes.csv',path_csv_p + '/dependentes.csv')
+					#copyanything(path_csv + '/dependentes.csv',path_csv_p + '/dependentes.csv')
 
 def carregaDocEmpregado():
 	empregados = Model.listaEmpregados('','','','','','','','')
@@ -230,11 +230,9 @@ def consultaOrgaos():
 def main():
 	conn = psycopg2.connect(host='localhost', database="rhdb001", user="postgres", password="123456")
 	db = Model.conectaMongo()
-	print 'drop mongo'
 	db.drop_collection('empregados')
 	db.drop_collection('dependentes')
 	db.drop_collection('orgaos')
-	print 'drop postgres'
 	sql = "delete from tb006_documento; "
 	sql += "delete from tb005_empregado_dependente; "
 	sql += "delete from tb004_empregado; "
@@ -242,18 +240,15 @@ def main():
 	cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 	cursor.execute(sql)
 	conn.commit()
-	print 'gera arquivos'
 	carregaOrgaos()
 	carregaEmpregados()
 	carregaDependentes()
 	carregaDocEmpregado()
 	carregaDocDependente()
 	#consultaOrgaos()
-	print 'drop mongo'
 	db.drop_collection('empregados')
 	db.drop_collection('dependentes')
 	db.drop_collection('orgaos')
-	print 'drop postgres'
 	sql = "delete from tb006_documento; "
 	sql += "delete from tb005_empregado_dependente; "
 	sql += "delete from tb004_empregado; "

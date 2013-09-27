@@ -7,7 +7,8 @@ import ConfigParser
 
 from pymongo import Connection
 #from pymongo.bson import ObjectId
-from bson import ObjectId 
+from bson import ObjectId
+from bson import Code
 from pymongo.errors import ConnectionFailure
 
 class Model:
@@ -299,6 +300,14 @@ class Model:
 			query.append({'dt_nascimento' : dt_nascimento})
 		if not(self.validaCampo(nu_matricula)):
 			query.append({'nu_matricula' : {"$regex": nu_matricula.strip().upper()}})
+		if not(self.validaCampo(rg)):
+			query.append({'nu_rg' : rg})
+		if not(self.validaCampo(cpf)):
+			query.append({'nu_cpf' : cpf})
+		if not(self.validaCampo(cnpj_orgao)):
+			orgao = dbh.orgaos.find_one({'nu_cnpj': cnpj_orgao})
+			if len(orgao) != 0:
+				query.append({'id_orgao' : orgao.get('_id')})
 			
 		if len(query) != 0:
 			empregados = dbh.empregados.find({'$and' : query})
@@ -323,8 +332,11 @@ class Model:
 			x.append({'no_empregado' : {"$regex" : '(^|\w)'+nomeEmpregado.strip().upper()+'*'}})
 		if not(self.validaCampo(matricula)):
 			x.append({'nu_matricula' : matricula.strip().upper()})
-		empregado = dbh.empregados.find_one({'$and' : x})
-		id_empregado = empregado.get('_id')
+		if len(x) != 0:
+			empregado = dbh.empregados.find_one({'$and' : x})
+			id_empregado = empregado.get('_id')
+		else:
+			id_empregado = ''
 		query = []
 		if not(self.validaCampo(nomeDependente)):
 			query.append({'no_empregado_dependente' : {"$regex" : '(^|\w)'+nomeDependente.strip().upper()+'*'}})
@@ -334,7 +346,18 @@ class Model:
 			query.append({'tp_vinculo' : {"$regex": '(^|\w)'+tp_vinculo+'*'}})
 		if not(self.validaCampo(str(id_empregado))):
 			query.append({'id_empregado' : id_empregado})
-		dependentes = dbh.dependentes.find({'$and' : query})
+		if not(self.validaCampo(rg)):
+			query.append({'nu_rg' : rg})
+		if not(self.validaCampo(cpf)):
+			query.append({'nu_cpf' : cpf})
+		if not(self.validaCampo(certidao)):
+			query.append({'nu_certidao' : certidao})
+			
+		if len(query) != 0:
+			dependentes = dbh.dependentes.find({'$and' : query})
+		else:
+			dependentes = dbh.dependentes.find()
+			
 		if dependentes.count() == 0:
 			print "Nenhum dado econtrado. Verifique os parametros de busca."
 		else:
@@ -439,6 +462,54 @@ class Model:
 			docsDocumentosDict.append(l)
 
 		return docsDocumentosDict
+		
+		
+	def empregadosAtivos (self,cnpj_orgao):
+		dbh = self.conectaMongo()
+		if (not(self.validaCampo(str(cnpj_orgao)))):
+			orgao = dbh.orgaos.find_one({'cnpj_orgao': cnpj_orgao.strip()})
+			if orgao != None:
+				reducer = Code("""
+								function(curr,result){
+									result.qt_empregados_ativos += 1
+								}
+							""")
+				estatistica = dbh.empregados.group(
+													key = {"id_orgao":1},
+													condition = {"dt_desligamento" : "", "id_orgao": orgao.get("_id")},
+													reduce = reducer,
+													initial = {'qt_empregados_ativos':0}
+
+												)
+			else:
+				return 'O cnpj informado nao foi encontrado.'
+			
+			
+		else:
+			reducer = Code("""
+							function(curr,result){
+								result.qt_empregados_ativos += 1
+							}
+						""")
+			estatistica = dbh.empregados.group(
+												key = {"id_orgao":1},
+												condition = {"dt_desligamento" : ''},
+												reduce = reducer,
+												initial = {'qt_empregados_ativos':0}
+
+											)
+			
+			
+		if len(estatistica) == 0:
+			print "Nenhum dado econtrado. Verifique os parametros de busca."
+		else:
+			estatisticaDict=[]
+			for row in estatistica:
+				l = dict()
+				for collumn in row:
+					l[collumn]=row[collumn]
+				estatisticaDict.append(l)
+			return estatisticaDict
 				
 								
 	def upload_file(self,file, name):
