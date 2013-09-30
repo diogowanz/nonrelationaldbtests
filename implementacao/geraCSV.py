@@ -233,7 +233,8 @@ def main():
 	db.drop_collection('empregados')
 	db.drop_collection('dependentes')
 	db.drop_collection('orgaos')
-	sql = "delete from tb006_documento; "
+	sql = "delete from tb007_documento_dependente; "
+	sql += "delete from tb006_documento_empregado; "
 	sql += "delete from tb005_empregado_dependente; "
 	sql += "delete from tb004_empregado; "
 	sql += "delete from tb002_orgao; "
@@ -249,7 +250,8 @@ def main():
 	db.drop_collection('empregados')
 	db.drop_collection('dependentes')
 	db.drop_collection('orgaos')
-	sql = "delete from tb006_documento; "
+	sql = "delete from tb007_documento_dependente; "
+	sql += "delete from tb006_documento_empregado; "
 	sql += "delete from tb005_empregado_dependente; "
 	sql += "delete from tb004_empregado; "
 	sql += "delete from tb002_orgao; "

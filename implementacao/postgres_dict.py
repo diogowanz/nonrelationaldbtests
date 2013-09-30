@@ -150,7 +150,7 @@ class Model:
 						os.makedirs(config.get("path", "filePath")+str(resultEmpregado["id_orgao"])+'/'+str(resultEmpregado["id_empregado"]))
 					no_doc = config.get("path", "filePath")+str(resultEmpregado["id_orgao"])+'/'+str(resultEmpregado["id_empregado"])+'/'+no_doc
 					self.upload_file(file,no_doc)
-					sql = "insert into tb006_documento (no_documento,id_tipo_documento,id_empregado,dh_upload) values ('"+no_doc+"',"+tp_documento+","+str(resultEmpregado['id_empregado'])+",'"+str(datetime.datetime.now())+"')"
+					sql = "insert into tb006_documento_empregado (no_documento,id_tipo_documento,id_empregado,dh_upload) values ('"+no_doc+"',"+tp_documento+","+str(resultEmpregado['id_empregado'])+",'"+str(datetime.datetime.now())+"')"
 					cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 					cursor.execute(sql)
 					conn.commit()
@@ -212,7 +212,7 @@ class Model:
 							os.makedirs(config.get("path", "filePath")+str(resultEmpregado["id_orgao"])+'/'+str(resultEmpregado["id_empregado"])+'/'+str(resultDependente["id_empregado_dependente"]))
 						no_doc = config.get("path", "filePath")+str(resultEmpregado["id_orgao"])+'/'+str(resultEmpregado["id_empregado"])+'/'+str(resultDependente["id_empregado_dependente"])+'/'+no_doc
 						self.upload_file(file,no_doc)
-						sql = "insert into tb006_documento (id_tipo_documento,id_empregado,id_empregado_dependente,no_documento,dh_upload) values("+str(tp_documento)+","+str(resultEmpregado["id_empregado"])+","+str(resultDependente["id_empregado_dependente"])+",'"+no_doc+"','"+str(datetime.datetime.now())+"')"
+						sql = "insert into tb007_documento_dependente (id_tipo_documento,id_empregado_dependente,no_documento,dh_upload) values("+str(tp_documento)+","+str(resultDependente["id_empregado_dependente"])+",'"+no_doc+"','"+str(datetime.datetime.now())+"')"
 						cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 						cursor.execute(sql)
 						conn.commit()
@@ -342,8 +342,8 @@ class Model:
 			return 'Favor informar a matricula do empregado.'
 		else:
 			sql = "select no_documento from tb004_empregado "
-			sql+=	"join tb006_documento on tb006_documento.id_empregado = tb004_empregado.id_empregado and id_empregado_dependente is null "
-			sql+=	"join tb001_tipo_documento on tb001_tipo_documento.id_tipo_documento = tb006_documento.id_tipo_documento "
+			sql+=	"join tb006_documento_empregado on tb006_documento_empregado.id_empregado = tb004_empregado.id_empregado "
+			sql+=	"join tb001_tipo_documento on tb001_tipo_documento.id_tipo_documento = tb006_documento_empregado.id_tipo_documento "
 			sql+= "where 1=1 and nu_matricula = '"+nu_matricula+"'"
 			
 			filtro = ''
@@ -375,8 +375,8 @@ class Model:
 			return 'Favor informar um dos campos a seguir: RG, CPF, Certidao.'
 		else:
 			sql = "select no_documento from tb005_empregado_dependente "
-			sql+=	"join tb006_documento on tb006_documento.id_empregado_dependente = tb005_empregado_dependente.id_empregado_dependente /*and tb006_documento.id_empregado is null*/ "
-			sql+=	"join tb001_tipo_documento on tb001_tipo_documento.id_tipo_documento = tb006_documento.id_tipo_documento "
+			sql+=	"join tb007_documento_dependente on tb007_documento_dependente.id_empregado_dependente = tb005_empregado_dependente.id_empregado_dependente "
+			sql+=	"join tb001_tipo_documento on tb001_tipo_documento.id_tipo_documento = tb007_documento_dependente.id_tipo_documento "
 			sql+= "where 1=1 "
 			
 			filtro = ''

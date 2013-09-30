@@ -1,6 +1,8 @@
 BEGIN;
 
-drop table if exists tb006_documento;
+drop table if exists tb007_documento_dependente;
+drop sequence if exists sq007_pk;
+drop table if exists tb006_documento_empregado;
 drop sequence if exists sq006_pk;
 drop table if exists tb005_empregado_dependente;
 drop sequence if exists sq005_pk;
@@ -86,19 +88,32 @@ CREATE TABLE tb005_empregado_dependente
 
 CREATE SEQUENCE sq006_pk;
 
-CREATE TABLE tb006_documento
+CREATE TABLE tb006_documento_empregado
 (
   id_documento integer NOT NULL DEFAULT nextval('sq006_pk'::regclass),
   id_tipo_documento integer NOT NULL,
   id_empregado integer NOT NULL,
-  id_empregado_dependente integer,
   no_documento character varying(250) NOT NULL,
   dh_upload timestamp without time zone NOT NULL,
   CONSTRAINT pk_tb006 PRIMARY KEY (id_documento),
   CONSTRAINT fk_tb006_tb001 FOREIGN KEY (id_tipo_documento)
       REFERENCES tb001_tipo_documento (id_tipo_documento),
   CONSTRAINT fk_tb006_tb004 FOREIGN KEY (id_empregado)
-      REFERENCES tb004_empregado (id_empregado),
+      REFERENCES tb004_empregado (id_empregado)
+);
+
+CREATE SEQUENCE sq007_pk;
+
+CREATE TABLE tb007_documento_dependente
+(
+  id_documento integer NOT NULL DEFAULT nextval('sq007_pk'::regclass),
+  id_tipo_documento integer NOT NULL,
+  id_empregado_dependente integer,
+  no_documento character varying(250) NOT NULL,
+  dh_upload timestamp without time zone NOT NULL,
+  CONSTRAINT pk_tb006 PRIMARY KEY (id_documento),
+  CONSTRAINT fk_tb006_tb001 FOREIGN KEY (id_tipo_documento)
+      REFERENCES tb001_tipo_documento (id_tipo_documento),
   CONSTRAINT fk_tb006_tb005 FOREIGN KEY (id_empregado_dependente)
       REFERENCES tb005_empregado_dependente (id_empregado_dependente)
 );
