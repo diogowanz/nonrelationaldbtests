@@ -10,6 +10,7 @@ from pymongo import Connection
 from bson import ObjectId
 from bson import Code
 from pymongo.errors import ConnectionFailure
+from threading import Lock
 
 class Model:
 		
@@ -164,6 +165,7 @@ class Model:
 					return "O responsavel informado nao foi encontrado."
 		
 	def insereDocEmpregado(self,matricula,tp_documento, no_doc,file):
+			
 		if self.validaCampo(str(matricula))  or self.validaCampo(str(tp_documento)) or self.validaCampo(str(no_doc)):
 			return "Favor informar todos os campos."
 		else:
@@ -174,7 +176,7 @@ class Model:
 			empregado = dbh.empregados.find_one(query)
 			
 			if empregado == None:
-				print "O Empregado informado nao foi encontrado!"
+				return "O Empregado informado nao foi encontrado!"
 			else:
 				tp_documento = ObjectId(tp_documento)
 				tipo_documento = dbh.tp_documentos.find_one({"_id":tp_documento})
@@ -183,22 +185,35 @@ class Model:
 				else:
 					config = ConfigParser.ConfigParser()
 					config.read("./config.conf")
-					if not os.path.exists(config.get("path", "filePath")+str(empregado.get("id_orgao"))):
-						os.makedirs(config.get("path", "filePath")+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id")))
-					elif not os.path.exists(config.get("path", "filePath")+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id"))):
-						os.makedirs(config.get("path", "filePath")+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id")))
-					no_doc = config.get("path", "filePath")+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id"))+'/'+no_doc
-					self.upload_file(file,no_doc)
-					new_doc = {
-								"tp_documento" : tp_documento,
-								"no_documento" : no_doc.strip(),
-								"dh_updload" : datetime.datetime.now()
-							}
-					if empregado.get('Documentos') == None or empregado.get('Documentos') == '':
-						dbh.empregados.update({"nu_matricula":matricula},{"$set":{"Documentos":[new_doc]}},safe=True)
+					lock = Lock()
+					lock.acquire()
+					try:
+						if not os.path.exists(config.get("path", "filePath")+str(empregado.get("id_orgao"))):
+							os.makedirs(config.get("path", "filePath")+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id")))
+						elif not os.path.exists(config.get("path", "filePath")+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id"))):
+							os.makedirs(config.get("path", "filePath")+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id")))
+						lock.release()
+					except OSError as ex:
+						
+						print "Erro na criacao dos diretorios: ", ex
+						lock.release()
+						
 					else:
-						dbh.empregados.update({"nu_matricula":matricula},{"$push":{"Documentos":new_doc}}, safe=True)
-					return "Documento inserido!"
+						
+						no_doc = config.get("path", "filePath")+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id"))+'/'+no_doc
+						self.upload_file(file,no_doc)
+						new_doc = {
+									"tp_documento" : tp_documento,
+									"no_documento" : no_doc.strip(),
+									"dh_updload" : datetime.datetime.now()
+								}
+						if empregado.get('Documentos') == None or empregado.get('Documentos') == '':
+							dbh.empregados.update({"nu_matricula":matricula},{"$set":{"Documentos":[new_doc]}})
+						else:
+							dbh.empregados.update({"nu_matricula":matricula},{"$push":{"Documentos":new_doc}})
+						return "Documento inserido!"
+						
+						
 		
 	def insereDocDependente(self,empreg_matricula,rg_dependente,cpf_dependente,certidao_dependente,tp_documento, no_doc,file):
 		if self.validaCampo(str(empreg_matricula)) or self.validaCampo(str(tp_documento)) or self.validaCampo(str(no_doc)):
@@ -240,25 +255,35 @@ class Model:
 				else:
 					config = ConfigParser.ConfigParser()
 					config.read("config.conf")
-					if not os.path.exists(config.get("path", "filePath")+str(empregado.get("id_orgao"))):
-						os.makedirs(config.get("path", "filePath")+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id"))+'/'+str(dependente.get("_id")))
-					elif not os.path.exists(config.get("path", "filePath")+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id"))):
-						os.makedirs(config.get("path", "filePath")+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id"))+'/'+str(dependente.get("_id")))
-					elif not os.path.exists(config.get("path", "filePath")+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id"))+'/'+str(dependente.get("_id"))):
-						os.makedirs(config.get("path", "filePath")+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id"))+'/'+str(dependente.get("_id")))
-					no_doc = config.get("path", "filePath")+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id"))+'/'+str(dependente.get("_id"))+'/'+no_doc
-					self.upload_file(file,no_doc)
-					new_doc = {
-								"tp_documento" : tp_documento,
-								"no_documento" : no_doc.strip(),
-								"dh_updload" : datetime.datetime.now()
-							}
-					if dependente.get('Documentos') == None or dependente.get('Documentos') == '':
-						dbh.dependentes.update({"_id":dependente.get('_id')},{"$set":{"Documentos":[new_doc]}},safe=True)
-						return "Documento inserido!"
+					lock = Lock()
+					lock.acquire()
+					try:
+						if not os.path.exists(config.get("path", "filePath")+str(empregado.get("id_orgao"))):
+							os.makedirs(config.get("path", "filePath")+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id"))+'/'+str(dependente.get("_id")))
+						elif not os.path.exists(config.get("path", "filePath")+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id"))):
+							os.makedirs(config.get("path", "filePath")+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id"))+'/'+str(dependente.get("_id")))
+						elif not os.path.exists(config.get("path", "filePath")+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id"))+'/'+str(dependente.get("_id"))):
+							os.makedirs(config.get("path", "filePath")+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id"))+'/'+str(dependente.get("_id")))
+						lock.release()
+					except OSError as ex:
+						
+						print "Erro na criacao dos diretorios: ", ex
+						lock.release()
+						
 					else:
-						dbh.dependentes.update({"_id":dependente.get('_id')},{"$push":{"Documentos":new_doc}}, safe=True)
-						return "Documento inserido!"
+						no_doc = config.get("path", "filePath")+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id"))+'/'+str(dependente.get("_id"))+'/'+no_doc
+						self.upload_file(file,no_doc)
+						new_doc = {
+									"tp_documento" : tp_documento,
+									"no_documento" : no_doc.strip(),
+									"dh_updload" : datetime.datetime.now()
+								}
+						if dependente.get('Documentos') == None or dependente.get('Documentos') == '':
+							dbh.dependentes.update({"_id":dependente.get('_id')},{"$set":{"Documentos":[new_doc]}},safe=True)
+							return "Documento inserido!"
+						else:
+							dbh.dependentes.update({"_id":dependente.get('_id')},{"$push":{"Documentos":new_doc}}, safe=True)
+							return "Documento inserido!"
 					
 	def listaOrgaos(self,cnpj='',nome='',endereco='',cidade='',uf=''):
 		dbh = self.conectaMongo()

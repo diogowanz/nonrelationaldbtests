@@ -35,10 +35,10 @@ def main():
 #	print server.insereDocEmpregado('M000005','Comprovante de Residencia','comprv_residencia.txt',data.encode('base64'))
 #	file.close()
 
-#	file=open('/home/wanzeller/python/teste.txt', 'rb')
-#	data=file.read()
-#	print server.insereDocDependente('M000005','1234234',None,None,'Certidao Nascimento','certidao_nascimento.txt',data.encode('base64'))
-#	file.close()
+	file=open('/home/wanzeller/python/bkp_lista_orgaos.txt', 'rb')
+	data=file.read()
+	print server.insereDocDependente('M808130','2649051','34347984793',None,'5216ae1f6e955269534b077f','certidao_nascimento.txt',data.encode('base64'))
+	file.close()
 
 
 

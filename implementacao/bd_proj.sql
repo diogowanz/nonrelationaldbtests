@@ -111,10 +111,10 @@ CREATE TABLE tb007_documento_dependente
   id_empregado_dependente integer,
   no_documento character varying(250) NOT NULL,
   dh_upload timestamp without time zone NOT NULL,
-  CONSTRAINT pk_tb006 PRIMARY KEY (id_documento),
-  CONSTRAINT fk_tb006_tb001 FOREIGN KEY (id_tipo_documento)
+  CONSTRAINT pk_tb007 PRIMARY KEY (id_documento),
+  CONSTRAINT fk_tb007_tb001 FOREIGN KEY (id_tipo_documento)
       REFERENCES tb001_tipo_documento (id_tipo_documento),
-  CONSTRAINT fk_tb006_tb005 FOREIGN KEY (id_empregado_dependente)
+  CONSTRAINT fk_tb007_tb005 FOREIGN KEY (id_empregado_dependente)
       REFERENCES tb005_empregado_dependente (id_empregado_dependente)
 );
 

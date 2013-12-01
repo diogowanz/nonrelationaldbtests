@@ -3,6 +3,7 @@ import psycopg2.extras
 import ConfigParser
 import datetime
 import os
+from threading import Lock
 
 class Model:
 
@@ -144,17 +145,27 @@ class Model:
 					resultEmpregado = resultEmpregado.fetchone()
 					config = ConfigParser.ConfigParser()
 					config.read("config.conf")
-					if not os.path.exists(config.get("path", "filePath")+str(resultEmpregado["id_orgao"])):
-						os.makedirs(config.get("path", "filePath")+str(resultEmpregado["id_orgao"])+'/'+str(resultEmpregado["id_empregado"]))
-					elif not os.path.exists(config.get("path", "filePath")+str(resultEmpregado["id_orgao"])+'/'+str(resultEmpregado["id_empregado"])):
-						os.makedirs(config.get("path", "filePath")+str(resultEmpregado["id_orgao"])+'/'+str(resultEmpregado["id_empregado"]))
-					no_doc = config.get("path", "filePath")+str(resultEmpregado["id_orgao"])+'/'+str(resultEmpregado["id_empregado"])+'/'+no_doc
-					self.upload_file(file,no_doc)
-					sql = "insert into tb006_documento_empregado (no_documento,id_tipo_documento,id_empregado,dh_upload) values ('"+no_doc+"',"+tp_documento+","+str(resultEmpregado['id_empregado'])+",'"+str(datetime.datetime.now())+"')"
-					cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-					cursor.execute(sql)
-					conn.commit()
-					return "Documento inserido!"
+					lock = Lock()
+					lock.acquire()
+					try:
+						if not os.path.exists(config.get("path", "filePath")+str(resultEmpregado["id_orgao"])):
+							os.makedirs(config.get("path", "filePath")+str(resultEmpregado["id_orgao"])+'/'+str(resultEmpregado["id_empregado"]))
+						elif not os.path.exists(config.get("path", "filePath")+str(resultEmpregado["id_orgao"])+'/'+str(resultEmpregado["id_empregado"])):
+							os.makedirs(config.get("path", "filePath")+str(resultEmpregado["id_orgao"])+'/'+str(resultEmpregado["id_empregado"]))
+						lock.release()
+						
+					except OSError as ex:
+						print "Erro na criacao dos diretorios: ", ex
+						lock.release()
+						
+					else:
+						no_doc = config.get("path", "filePath")+str(resultEmpregado["id_orgao"])+'/'+str(resultEmpregado["id_empregado"])+'/'+no_doc
+						self.upload_file(file,no_doc)
+						sql = "insert into tb006_documento_empregado (no_documento,id_tipo_documento,id_empregado,dh_upload) values ('"+no_doc+"',"+tp_documento+","+str(resultEmpregado['id_empregado'])+",'"+str(datetime.datetime.now())+"')"
+						cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+						cursor.execute(sql)
+						conn.commit()
+						return "Documento inserido!"
 				else:
 					return "Tipo de documento invalido!"
 			else:
@@ -204,19 +215,29 @@ class Model:
 						resultDependente = resultDependente.fetchone()
 						config = ConfigParser.ConfigParser()
 						config.read("config.conf")
-						if not os.path.exists(config.get("path", "filePath")+str(resultEmpregado["id_orgao"])):
-							os.makedirs(config.get("path", "filePath")+str(resultEmpregado["id_orgao"])+'/'+str(resultEmpregado["id_empregado"])+'/'+str(resultDependente["id_empregado_dependente"]))
-						elif not os.path.exists(config.get("path", "filePath")+str(resultEmpregado["id_orgao"])+'/'+str(resultEmpregado["id_empregado"])):
-							os.makedirs(config.get("path", "filePath")+str(resultEmpregado["id_orgao"])+'/'+str(resultEmpregado["id_empregado"])+'/'+str(resultDependente["id_empregado_dependente"]))
-						elif not os.path.exists(config.get("path", "filePath")+str(resultEmpregado["id_orgao"])+'/'+str(resultEmpregado["id_empregado"])+'/'+str(resultDependente["id_empregado_dependente"])):
-							os.makedirs(config.get("path", "filePath")+str(resultEmpregado["id_orgao"])+'/'+str(resultEmpregado["id_empregado"])+'/'+str(resultDependente["id_empregado_dependente"]))
-						no_doc = config.get("path", "filePath")+str(resultEmpregado["id_orgao"])+'/'+str(resultEmpregado["id_empregado"])+'/'+str(resultDependente["id_empregado_dependente"])+'/'+no_doc
-						self.upload_file(file,no_doc)
-						sql = "insert into tb007_documento_dependente (id_tipo_documento,id_empregado_dependente,no_documento,dh_upload) values("+str(tp_documento)+","+str(resultDependente["id_empregado_dependente"])+",'"+no_doc+"','"+str(datetime.datetime.now())+"')"
-						cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-						cursor.execute(sql)
-						conn.commit()
-						return "Documento inserido!"
+						lock = Lock()
+						lock.acquire()
+						try:
+							if not os.path.exists(config.get("path", "filePath")+str(resultEmpregado["id_orgao"])):
+								os.makedirs(config.get("path", "filePath")+str(resultEmpregado["id_orgao"])+'/'+str(resultEmpregado["id_empregado"])+'/'+str(resultDependente["id_empregado_dependente"]))
+							elif not os.path.exists(config.get("path", "filePath")+str(resultEmpregado["id_orgao"])+'/'+str(resultEmpregado["id_empregado"])):
+								os.makedirs(config.get("path", "filePath")+str(resultEmpregado["id_orgao"])+'/'+str(resultEmpregado["id_empregado"])+'/'+str(resultDependente["id_empregado_dependente"]))
+							elif not os.path.exists(config.get("path", "filePath")+str(resultEmpregado["id_orgao"])+'/'+str(resultEmpregado["id_empregado"])+'/'+str(resultDependente["id_empregado_dependente"])):
+								os.makedirs(config.get("path", "filePath")+str(resultEmpregado["id_orgao"])+'/'+str(resultEmpregado["id_empregado"])+'/'+str(resultDependente["id_empregado_dependente"]))
+							lock.release()
+						
+						except OSError as ex:
+							print "Erro na criacao dos diretorios: ", ex
+							lock.release()
+
+						else:
+							no_doc = config.get("path", "filePath")+str(resultEmpregado["id_orgao"])+'/'+str(resultEmpregado["id_empregado"])+'/'+str(resultDependente["id_empregado_dependente"])+'/'+no_doc
+							self.upload_file(file,no_doc)
+							sql = "insert into tb007_documento_dependente (id_tipo_documento,id_empregado_dependente,no_documento,dh_upload) values("+str(tp_documento)+","+str(resultDependente["id_empregado_dependente"])+",'"+no_doc+"','"+str(datetime.datetime.now())+"')"
+							cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+							cursor.execute(sql)
+							conn.commit()
+							return "Documento inserido!"
 					else:
 						return "Tipo de documento invalido!"
 				else:
