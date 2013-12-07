@@ -1,0 +1,11 @@
+timeStamp,elapsed,label,threadName,success,Latency
+1386174204154,224,insere orgao,python webservice - Mongo 1-6,true,222
+1386174204154,223,insere orgao,python webservice - Mongo 1-1,true,222
+1386174204154,254,insere orgao,python webservice - Mongo 1-5,true,254
+1386174204154,268,insere orgao,python webservice - Mongo 1-3,true,268
+1386174204154,269,insere orgao,python webservice - Mongo 1-4,true,269
+1386174204155,280,insere orgao,python webservice - Mongo 1-8,true,280
+1386174204154,292,insere orgao,python webservice - Mongo 1-10,true,292
+1386174204155,303,insere orgao,python webservice - Mongo 1-7,true,303
+1386174204154,315,insere orgao,python webservice - Mongo 1-9,true,315
+1386174204154,319,insere orgao,python webservice - Mongo 1-2,true,318

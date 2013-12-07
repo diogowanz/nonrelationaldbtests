@@ -1,3 +1,0 @@
-10 threads
-tempo de inicialização: 3 seg
-Duração: 10 seg

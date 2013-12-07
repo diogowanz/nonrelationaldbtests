@@ -1,0 +1,3 @@
+sampler_label,aggregate_report_count,average,aggregate_report_min,aggregate_report_max,aggregate_report_stddev,aggregate_report_error%,aggregate_report_rate,aggregate_report_bandwidth,average_bytes
+Lista Orgãos,2454,2495,125,2661,281.06902568649184,0.0,39.300470836936675,23.44979265758624,611.0
+TOTAL,2454,2495,125,2661,281.06902568649184,0.0,39.300470836936675,23.44979265758624,611.0

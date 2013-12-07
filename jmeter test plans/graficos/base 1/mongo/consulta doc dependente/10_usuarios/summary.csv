@@ -1,0 +1,3 @@
+sampler_label,aggregate_report_count,average,aggregate_report_min,aggregate_report_max,aggregate_report_stddev,aggregate_report_error%,aggregate_report_rate,aggregate_report_bandwidth,average_bytes
+Consulta Doc Dependente,829,727,206,1100,78.4141761283846,0.0,13.671971633544981,23161.040930104315,1734710.0
+TOTAL,829,727,206,1100,78.4141761283846,0.0,13.671971633544981,23161.040930104315,1734710.0
