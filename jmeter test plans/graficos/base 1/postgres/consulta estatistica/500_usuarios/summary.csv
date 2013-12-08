@@ -1,0 +1,3 @@
+sampler_label,aggregate_report_count,average,aggregate_report_min,aggregate_report_max,aggregate_report_stddev,aggregate_report_error%,aggregate_report_rate,aggregate_report_bandwidth,average_bytes
+Empregados Ativos,2929,11268,199,21197,2988.179064484753,0.0,40.37271361424692,47.587759113668,1207.0
+TOTAL,2929,11268,199,21197,2988.179064484753,0.0,40.37271361424692,47.587759113668,1207.0

@@ -1,0 +1,3 @@
+sampler_label,aggregate_report_count,average,aggregate_report_min,aggregate_report_max,aggregate_report_stddev,aggregate_report_error%,aggregate_report_rate,aggregate_report_bandwidth,average_bytes
+Lista Empregados,2635,2319,204,11237,433.4118970051525,0.0,42.29534510433387,30.978035965088285,750.0
+TOTAL,2635,2319,204,11237,433.4118970051525,0.0,42.29534510433387,30.978035965088285,750.0

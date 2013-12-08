@@ -29,7 +29,7 @@ class Model:
 			cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 			cursor.execute(sql)
 			conn.commit()
-			if cursor.arraysize != 0 :
+			if cursor.rowcount != 0 :
 				return "Orgao de cnpj '"+cnpj+"' ja existe."
 			else:
 				values = "("+str(cnpj)+",'"+nome.strip().upper()+"','"+endereco.strip().upper()+"','"+cidade.strip().upper()+"','"+uf.strip().upper()+"')"
@@ -50,16 +50,16 @@ class Model:
 			cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 			cursor.execute(sql)
 			conn.commit()
-			if cursor.arraysize == 0 :
+			if cursor.rowcount == 0 :
 				return "O orgao informando nao e valido."
 			else:
 				
-				sql = "select * from tb004_empregado where nu_matricula ='"+nu_matricula.strip().upper()+"' or nu_rg="+str(nu_rg)+" or nu_cpf="+str(nu_cpf)
+				sql = "select * from tb004_empregado where nu_matricula ='"+nu_matricula.strip().upper()+"' or nu_rg="+str(rg)+" or nu_cpf="+str(cpf)
 				cursorEmpregado = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 				cursorEmpregado.execute(sql)
 				conn.commit()
 				
-				if cursorEmpregado.arraysize != 0 :
+				if cursorEmpregado.rowcount != 0 :
 					return "O empregado informado ja existe"
 				else:
 					orgao = cursor.fetchone()
@@ -95,7 +95,7 @@ class Model:
 				cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 				cursor.execute(sql)
 				conn.commit()
-				if cursor.arraysize != 0:
+				if cursor.rowcount != 0:
 					resultado = cursor.fetchone()
 					id_tipo_vinculo = resultado['id_tipo_vinculo']
 					filtro = ''
@@ -152,12 +152,12 @@ class Model:
 			cursor.execute(sql)
 			conn.commit()
 			resultEmpregado = cursor
-			if resultEmpregado.arraysize != 0:
+			if resultEmpregado.rowcount != 0:
 				sql = "select id_tipo_documento from tb001_tipo_documento where id_tipo_documento = " + tp_documento
 				cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 				cursor.execute(sql)
 				resultado = cursor #verificar
-				if resultado.arraysize != 0:
+				if resultado.rowcount != 0:
 					resultEmpregado = resultEmpregado.fetchone()
 					config = ConfigParser.ConfigParser()
 					config.read("config.conf")
@@ -207,7 +207,7 @@ class Model:
 			cursor1.execute(sql)
 			conn.commit()
 			resultEmpregado = cursor1
-			if resultEmpregado.arraysize != 0:
+			if resultEmpregado.rowcount != 0:
 				filtro = ''
 				if self.validaCampo(str(rg_dependente)):
 					pass
@@ -226,13 +226,13 @@ class Model:
 				cursor2.execute(sql)
 				conn.commit()
 				resultDependente = cursor2
-				if resultDependente.arraysize != 0:
+				if resultDependente.rowcount != 0:
 					sql = "select id_tipo_documento from tb001_tipo_documento where id_tipo_documento = "+str(tp_documento)
 					cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 					cursor.execute(sql)
 					conn.commit()
 					resultado = cursor
-					if resultado.arraysize != 0:
+					if resultado.rowcount != 0:
 						resultEmpregado = resultEmpregado.fetchone()
 						resultDependente = resultDependente.fetchone()
 						config = ConfigParser.ConfigParser()
@@ -291,7 +291,7 @@ class Model:
 		resultado = cursor.execute(sql)
 		conn.commit()
 
-		if cursor.arraysize == 0:
+		if cursor.rowcount == 0:
 			print "Nenhum dado econtrado. Verifique os parametros de busca."
 		else:
 			orgaosDict=[]
@@ -336,7 +336,7 @@ class Model:
 		cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 		cursor.execute(sql)
 		conn.commit()
-		if cursor.arraysize == 0:
+		if cursor.rowcount == 0:
 			return "Nenhum dado econtrado. Verifique os parametros de busca."
 		else:
 			empregadosDict=[]
@@ -379,7 +379,7 @@ class Model:
 		cursor.execute(sql)
 		conn.commit()
 		
-		if cursor.arraysize == 0:
+		if cursor.rowcount == 0:
 			return "Nenhum dado econtrado. Verifique os parametros de busca."
 		else:
 			dependentesDict=[]
@@ -474,7 +474,7 @@ class Model:
 		resultado = cursor.execute(sql)
 		conn.commit()
 
-		if cursor.arraysize == 0:
+		if cursor.rowcount == 0:
 			print "Nenhum dado econtrado. Verifique os parametros de busca."
 		else:
 			vinculosDict=[]
@@ -497,7 +497,7 @@ class Model:
 		resultado = cursor.execute(sql)
 		conn.commit()
 
-		if cursor.arraysize == 0:
+		if cursor.rowcount == 0:
 			print "Nenhum dado econtrado. Verifique os parametros de busca."
 		else:
 			tipoDocumentosDict=[]
@@ -510,13 +510,13 @@ class Model:
 			
 	def empregadosAtivos (self,cnpj_orgao):
 		conn = self.abreConexao()
-		if (self.validaCampo(str(cnpj_orgao))):
+		if (not self.validaCampo(str(cnpj_orgao))):
 			
-			sql="select * from tb002_orgao where nu_cnpj="+cnpj_orgao
+			sql="select * from tb002_orgao where nu_cnpj="+str(cnpj_orgao)
 			cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 			resultado = cursor.execute(sql)
 			conn.commit
-			if cursor.arraysize == 0:
+			if cursor.rowcount == 0:
 				return 'O cnpj informado nao foi encontrado.'
 			else:			
 				sql="select"
@@ -524,7 +524,7 @@ class Model:
 				sql+="	count(id_empregado) as empregados_ativos "
 				sql+="from tb002_orgao "
 				sql+="	join tb004_empregado on tb004_empregado.id_orgao = tb002_orgao.id_orgao "
-				sql+="	where dt_desligamento is null "
+				sql+="	where dt_desligamento is null and nu_cnpj="+str(cnpj_orgao)
 				sql+="	group by tb002_orgao.id_orgao, no_orgao "
 				sql+="order by id_orgao "
 				cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
@@ -536,14 +536,17 @@ class Model:
 			sql+="	count(id_empregado) as empregados_ativos "
 			sql+="from tb002_orgao "
 			sql+="	join tb004_empregado on tb004_empregado.id_orgao = tb002_orgao.id_orgao "
-			sql+="	where dt_desligamento is null and nu_cnpj="+cnpj_orgao
+			sql+="	where dt_desligamento is null "
 			sql+="	group by tb002_orgao.id_orgao, no_orgao "
 			sql+="order by id_orgao "
 			cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 			resultado = cursor.execute(sql)
 			conn.commit()
 			
-		if cursor.arraysize == 0:
+			
+
+			
+		if cursor.rowcount == 0:
 			return "Nenhum dado econtrado. Verifique os parametros de busca."
 		else:
 			estatisticaDict=[]

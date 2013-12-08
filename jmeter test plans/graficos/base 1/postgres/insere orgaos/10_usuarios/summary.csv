@@ -1,0 +1,3 @@
+sampler_label,aggregate_report_count,average,aggregate_report_min,aggregate_report_max,aggregate_report_stddev,aggregate_report_error%,aggregate_report_rate,aggregate_report_bandwidth,average_bytes
+insere orgao,10,243,202,285,24.747727168368353,0.0,33.557046979865774,13.50146812080537,412.0
+TOTAL,10,243,202,285,24.747727168368353,0.0,33.557046979865774,13.50146812080537,412.0

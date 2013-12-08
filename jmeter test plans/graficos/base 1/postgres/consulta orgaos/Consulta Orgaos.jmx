@@ -9,7 +9,7 @@
         <collectionProp name="Arguments.arguments">
           <elementProp name="pathcsv" elementType="Argument">
             <stringProp name="Argument.name">pathcsv</stringProp>
-            <stringProp name="Argument.value">cargaMongo</stringProp>
+            <stringProp name="Argument.value">cargaPostgres</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
         </collectionProp>
@@ -17,7 +17,7 @@
       <stringProp name="TestPlan.user_define_classpath"></stringProp>
     </TestPlan>
     <hashTree>
-      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="python webservice - Mongo" enabled="true">
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="python webservice - Postgres" enabled="true">
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
           <boolProp name="LoopController.continue_forever">false</boolProp>
@@ -155,7 +155,7 @@
                 <bytes>true</bytes>
               </value>
             </objProp>
-            <stringProp name="filename">/home/eu/jmeter test plans/graficos/base 1/mongo/consulta orgaos/resultados_consulta_orgaos.csv</stringProp>
+            <stringProp name="filename">/home/eu/jmeter test plans/graficos/base 1/postgres/consulta orgaos/resultados_consulta_orgaos.csv</stringProp>
           </ResultCollector>
           <hashTree/>
           <ResultCollector guiclass="SummaryReport" testclass="ResultCollector" testname="Summary Report" enabled="true">

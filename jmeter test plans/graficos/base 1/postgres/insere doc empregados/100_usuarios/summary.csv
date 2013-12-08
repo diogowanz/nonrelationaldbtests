@@ -1,0 +1,3 @@
+sampler_label,aggregate_report_count,average,aggregate_report_min,aggregate_report_max,aggregate_report_stddev,aggregate_report_error%,aggregate_report_rate,aggregate_report_bandwidth,average_bytes
+insere doc empregados,4995,18431,743,22454,1702.4832554579657,0.002002002002002002,4.534313725490197,1.854741824391794,418.86286286286287
+TOTAL,4995,18431,743,22454,1702.4832554579657,0.002002002002002002,4.534313725490197,1.854741824391794,418.86286286286287
