@@ -557,8 +557,37 @@ class Model:
 					l[collumn]=row[collumn]
 				estatisticaDict.append(l)
 			return estatisticaDict
+			
+	def desligaEmpregado(self,nu_matricula,dt_desligamento):
+		if self.validaCampo(nu_matricula) and self.validaCampo(dt_desligamento):
+			return 'Favor informar a matricula do empregado e a data de desligamento.'
+		else:
+			dbh = self.conectaMongo()
+			empregado = dbh.empregados.find_one({'nu_matricula': nu_matricula.strip().upper()})
+			if empregado == None:
+				return 'O empregado nao foi encontrado.'
+			else:
+				if datetime.datetime.strptime(dt_desligamento,'%d-%m-%Y').date() < datetime.datetime.strptime(str(empregado.get('dt_contratacao')),'%Y-%m-%d').date():
+					return 'Data de desligamento invalida. Informe no formato d-m-yyyy.'
+				else:
+					dbh.empregados.update({'nu_matricula': empregado.get('nu_matricula')},{'$set':{"dt_desligamento":datetime.datetime.strftime(datetime.datetime.strptime(dt_desligamento,'%d-%m-%Y').date(),'%Y-%m-%d')}})
+					return 'Empregado desligado com sucesso.'
+					
+	def removeDependente(self,nu_cpf):
+		if self.validaCampo(nu_cpf):
+			return 'Favor informar o CPF do dependente'
+		else:
+			dbh = self.conectaMongo()
+			dependente = dbh.dependentes.find_one({'nu_cpf': nu_cpf})
+			if dependente == None:
+				return 'O dependente nao foi encontrado.'
+			else:
+				documentos = dependente.get('Documentos')
+				for row in documentos:
+					os.remove(row['no_documento'])
+				dbh.dependentes.remove({'nu_cpf': nu_cpf})
+				return 'Dependente removido com sucesso.'
 				
-								
 	def upload_file(self,file, name):
 		out = open(name, 'wb')
 		out.write(str(file.decode('base64')))

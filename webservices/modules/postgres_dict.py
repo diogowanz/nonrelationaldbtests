@@ -3,11 +3,12 @@ import psycopg2.extras
 import ConfigParser
 import datetime
 import os
+from threading import Lock
 
 class Model:
 
 	def abreConexao(self):
-		conn = psycopg2.connect(host='localhost', database="rhdb001", user="postgres", password="123456")
+		conn = psycopg2.connect(host='localhost', database="rhdb001", user="postgres", password="31061210")
 		return conn
 		
 	def fechaConexao(self):
@@ -24,14 +25,21 @@ class Model:
 			return "Favor informar todos os campos."
 		else:
 			conn = self.abreConexao()
-			values = "("+str(cnpj)+",'"+nome.strip().upper()+"','"+endereco.strip().upper()+"','"+cidade.strip().upper()+"','"+uf.strip().upper()+"')"
-			sql = "insert into tb002_orgao (nu_cnpj,no_orgao,no_endereco,no_cidade,no_uf) values "+values
+			sql = "select * from tb002_orgao where nu_cnpj ="+cnpj
 			cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-			resultado = cursor.execute(sql)
+			cursor.execute(sql)
 			conn.commit()
-			#cursor.close()
-			#return resultado
-			return "Orgao inserido com sucesso."
+			if cursor.rowcount != 0 :
+				return "Orgao de cnpj '"+cnpj+"' ja existe."
+			else:
+				values = "("+str(cnpj)+",'"+nome.strip().upper()+"','"+endereco.strip().upper()+"','"+cidade.strip().upper()+"','"+uf.strip().upper()+"')"
+				sql = "insert into tb002_orgao (nu_cnpj,no_orgao,no_endereco,no_cidade,no_uf) values "+values
+				cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+				resultado = cursor.execute(sql)
+				conn.commit()
+				#cursor.close()
+				#return resultado
+				return "Orgao inserido com sucesso."
 
 	def insereEmpregado(self,nome,dt_contratacao,dt_desligamento,dt_nascimento,nu_matricula,rg,cpf,cnpj_orgao,documentos):
 		if self.validaCampo(str(nome))  or self.validaCampo(str(dt_contratacao)) or self.validaCampo(str(dt_nascimento)) or self.validaCampo(str(nu_matricula)) or self.validaCampo(str(rg)) or self.validaCampo(str(cpf)) or self.validaCampo(str(cnpj_orgao)):
@@ -42,24 +50,33 @@ class Model:
 			cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 			cursor.execute(sql)
 			conn.commit()
-			if cursor.arraysize == 0 :
+			if cursor.rowcount == 0 :
 				return "O orgao informando nao e valido."
 			else:
-				orgao = cursor.fetchone()
-				values = "('"+nome.strip().upper()+"','"+dt_contratacao+"','"+dt_nascimento+"','"+nu_matricula.strip().upper()+"',"+str(rg)+","+str(cpf)+","+str(orgao['id_orgao'])
-				if self.validaCampo(dt_desligamento):
-					values += ",NULL)"
-				else:
-					values += ",'"+dt_desligamento+"')"
-				if documentos == None:
-					documentos = 'Null'
-				sql = "insert into tb004_empregado (no_empregado, dt_contratacao,dt_nascimento,nu_matricula,nu_rg,nu_cpf,id_orgao,dt_desligamento) values "+values
-				cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-				resultado = cursor.execute(sql)
+				
+				sql = "select * from tb004_empregado where nu_matricula ='"+nu_matricula.strip().upper()+"' or nu_rg="+str(rg)+" or nu_cpf="+str(cpf)
+				cursorEmpregado = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+				cursorEmpregado.execute(sql)
 				conn.commit()
-				#cursor.close()
-				#return resultado
-				return "empregado inserido com sucesso!"
+				
+				if cursorEmpregado.rowcount != 0 :
+					return "O empregado informado ja existe"
+				else:
+					orgao = cursor.fetchone()
+					values = "('"+nome.strip().upper()+"','"+dt_contratacao+"','"+dt_nascimento+"','"+nu_matricula.strip().upper()+"',"+str(rg)+","+str(cpf)+","+str(orgao['id_orgao'])
+					if self.validaCampo(dt_desligamento):
+						values += ",NULL)"
+					else:
+						values += ",'"+dt_desligamento+"')"
+					if documentos == None:
+						documentos = 'Null'
+					sql = "insert into tb004_empregado (no_empregado, dt_contratacao,dt_nascimento,nu_matricula,nu_rg,nu_cpf,id_orgao,dt_desligamento) values "+values
+					cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+					resultado = cursor.execute(sql)
+					conn.commit()
+					#cursor.close()
+					#return resultado
+					return "empregado inserido com sucesso!"
 		
 	def insereDependente(self,nome,rg,cpf,certidao,dt_nascimento,tp_vinculo,documentos,nu_matricula_responsavel):
 		if self.validaCampo(str(nome))  or self.validaCampo(str(dt_nascimento)) or self.validaCampo(str(tp_vinculo)) or self.validaCampo(str(nu_matricula_responsavel)):
@@ -78,7 +95,7 @@ class Model:
 				cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 				cursor.execute(sql)
 				conn.commit()
-				if cursor.arraysize != 0:
+				if cursor.rowcount != 0:
 					resultado = cursor.fetchone()
 					id_tipo_vinculo = resultado['id_tipo_vinculo']
 					filtro = ''
@@ -123,7 +140,7 @@ class Model:
 				else:
 					return "Tipo de vinculo informado invalido!"
 			else:
-				return "Empregado invalido"
+				return "O responsavel informado nao foi encontrado."
 		
 	def insereDocEmpregado(self,matricula,tp_documento, no_doc,file):
 		if self.validaCampo(str(matricula))  or self.validaCampo(str(tp_documento)) or self.validaCampo(str(no_doc)):
@@ -135,30 +152,46 @@ class Model:
 			cursor.execute(sql)
 			conn.commit()
 			resultEmpregado = cursor
-			if resultEmpregado.arraysize != 0:
+			if resultEmpregado.rowcount != 0:
 				sql = "select id_tipo_documento from tb001_tipo_documento where id_tipo_documento = " + tp_documento
 				cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 				cursor.execute(sql)
 				resultado = cursor #verificar
-				if resultado.arraysize != 0:
+				if resultado.rowcount != 0:
 					resultEmpregado = resultEmpregado.fetchone()
 					config = ConfigParser.ConfigParser()
 					config.read("config.conf")
-					if not os.path.exists(config.get("path", "filePath")+str(resultEmpregado["id_orgao"])):
-						os.makedirs(config.get("path", "filePath")+str(resultEmpregado["id_orgao"])+'/'+str(resultEmpregado["id_empregado"]))
-					elif not os.path.exists(config.get("path", "filePath")+str(resultEmpregado["id_orgao"])+'/'+str(resultEmpregado["id_empregado"])):
-						os.makedirs(config.get("path", "filePath")+str(resultEmpregado["id_orgao"])+'/'+str(resultEmpregado["id_empregado"]))
-					no_doc = config.get("path", "filePath")+str(resultEmpregado["id_orgao"])+'/'+str(resultEmpregado["id_empregado"])+'/'+no_doc
-					self.upload_file(file,no_doc)
-					sql = "insert into tb006_documento (no_documento,id_tipo_documento,id_empregado,dh_upload) values ('"+no_doc+"',"+tp_documento+","+str(resultEmpregado['id_empregado'])+",'"+str(datetime.datetime.now())+"')"
-					cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-					cursor.execute(sql)
-					conn.commit()
-					return "Documento inserido!"
+					lock = Lock()
+					lock.acquire()
+					try:
+						if not os.path.exists(config.get("path", "filePath")+str(resultEmpregado["id_orgao"])):
+							os.makedirs(config.get("path", "filePath")+str(resultEmpregado["id_orgao"])+'/'+str(resultEmpregado["id_empregado"]))
+						elif not os.path.exists(config.get("path", "filePath")+str(resultEmpregado["id_orgao"])+'/'+str(resultEmpregado["id_empregado"])):
+							os.makedirs(config.get("path", "filePath")+str(resultEmpregado["id_orgao"])+'/'+str(resultEmpregado["id_empregado"]))
+						l = True
+						while l == True:
+							if os.path.exists(config.get("path", "filePath")+str(resultEmpregado["id_orgao"])+'/'+str(resultEmpregado["id_empregado"])):
+								l = False
+								lock.release()
+							else:
+								l = True
+						
+					except OSError as ex:
+						return "Erro na criacao dos diretorios: ", ex
+						lock.release()
+						
+					else:
+						no_doc = config.get("path", "filePath")+str(resultEmpregado["id_orgao"])+'/'+str(resultEmpregado["id_empregado"])+'/'+no_doc
+						self.upload_file(file,no_doc)
+						sql = "insert into tb006_documento_empregado (no_documento,id_tipo_documento,id_empregado,dh_upload) values ('"+no_doc+"',"+tp_documento+","+str(resultEmpregado['id_empregado'])+",'"+str(datetime.datetime.now())+"')"
+						cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+						cursor.execute(sql)
+						conn.commit()
+						return "Documento inserido!"
 				else:
-					return "Tipo de documento invalido!"
+					return "O tipo de documento informado nao existe"
 			else:
-				return "Matricula invalida!"
+				return "O Empregado informado nao foi encontrado!"
 				
 	def insereDocDependente(self,empreg_matricula, rg_dependente,cpf_dependente,certidao_dependente,tp_documento, no_doc,file):
 		#Ver caminho onde sera salvo o arquivo
@@ -174,7 +207,7 @@ class Model:
 			cursor1.execute(sql)
 			conn.commit()
 			resultEmpregado = cursor1
-			if resultEmpregado.arraysize != 0:
+			if resultEmpregado.rowcount != 0:
 				filtro = ''
 				if self.validaCampo(str(rg_dependente)):
 					pass
@@ -193,36 +226,52 @@ class Model:
 				cursor2.execute(sql)
 				conn.commit()
 				resultDependente = cursor2
-				if resultDependente.arraysize != 0:
+				if resultDependente.rowcount != 0:
 					sql = "select id_tipo_documento from tb001_tipo_documento where id_tipo_documento = "+str(tp_documento)
 					cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 					cursor.execute(sql)
 					conn.commit()
 					resultado = cursor
-					if resultado.arraysize != 0:
+					if resultado.rowcount != 0:
 						resultEmpregado = resultEmpregado.fetchone()
 						resultDependente = resultDependente.fetchone()
 						config = ConfigParser.ConfigParser()
 						config.read("config.conf")
-						if not os.path.exists(config.get("path", "filePath")+str(resultEmpregado["id_orgao"])):
-							os.makedirs(config.get("path", "filePath")+str(resultEmpregado["id_orgao"])+'/'+str(resultEmpregado["id_empregado"])+'/'+str(resultDependente["id_empregado_dependente"]))
-						elif not os.path.exists(config.get("path", "filePath")+str(resultEmpregado["id_orgao"])+'/'+str(resultEmpregado["id_empregado"])):
-							os.makedirs(config.get("path", "filePath")+str(resultEmpregado["id_orgao"])+'/'+str(resultEmpregado["id_empregado"])+'/'+str(resultDependente["id_empregado_dependente"]))
-						elif not os.path.exists(config.get("path", "filePath")+str(resultEmpregado["id_orgao"])+'/'+str(resultEmpregado["id_empregado"])+'/'+str(resultDependente["id_empregado_dependente"])):
-							os.makedirs(config.get("path", "filePath")+str(resultEmpregado["id_orgao"])+'/'+str(resultEmpregado["id_empregado"])+'/'+str(resultDependente["id_empregado_dependente"]))
-						no_doc = config.get("path", "filePath")+str(resultEmpregado["id_orgao"])+'/'+str(resultEmpregado["id_empregado"])+'/'+str(resultDependente["id_empregado_dependente"])+'/'+no_doc
-						self.upload_file(file,no_doc)
-						sql = "insert into tb006_documento (id_tipo_documento,id_empregado,id_empregado_dependente,no_documento,dh_upload) values("+str(tp_documento)+","+str(resultEmpregado["id_empregado"])+","+str(resultDependente["id_empregado_dependente"])+",'"+no_doc+"','"+str(datetime.datetime.now())+"')"
-						cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-						cursor.execute(sql)
-						conn.commit()
-						return "Documento inserido!"
+						lock = Lock()
+						lock.acquire()
+						try:
+							if not os.path.exists(config.get("path", "filePath")+str(resultEmpregado["id_orgao"])):
+								os.makedirs(config.get("path", "filePath")+str(resultEmpregado["id_orgao"])+'/'+str(resultEmpregado["id_empregado"])+'/'+str(resultDependente["id_empregado_dependente"]))
+							elif not os.path.exists(config.get("path", "filePath")+str(resultEmpregado["id_orgao"])+'/'+str(resultEmpregado["id_empregado"])):
+								os.makedirs(config.get("path", "filePath")+str(resultEmpregado["id_orgao"])+'/'+str(resultEmpregado["id_empregado"])+'/'+str(resultDependente["id_empregado_dependente"]))
+							elif not os.path.exists(config.get("path", "filePath")+str(resultEmpregado["id_orgao"])+'/'+str(resultEmpregado["id_empregado"])+'/'+str(resultDependente["id_empregado_dependente"])):
+								os.makedirs(config.get("path", "filePath")+str(resultEmpregado["id_orgao"])+'/'+str(resultEmpregado["id_empregado"])+'/'+str(resultDependente["id_empregado_dependente"]))
+							l = True
+							while l == True:
+								if os.path.exists(config.get("path", "filePath")+str(resultEmpregado["id_orgao"])+'/'+str(resultEmpregado["id_empregado"])+'/'+str(resultDependente["id_empregado_dependente"])):
+									l = False
+									lock.release()
+								else:
+									l = True
+						
+						except OSError as ex:
+							return "Erro na criacao dos diretorios: ", ex
+							lock.release()
+
+						else:
+							no_doc = config.get("path", "filePath")+str(resultEmpregado["id_orgao"])+'/'+str(resultEmpregado["id_empregado"])+'/'+str(resultDependente["id_empregado_dependente"])+'/'+no_doc
+							self.upload_file(file,no_doc)
+							sql = "insert into tb007_documento_dependente (id_tipo_documento,id_empregado_dependente,no_documento,dh_upload) values("+str(tp_documento)+","+str(resultDependente["id_empregado_dependente"])+",'"+no_doc+"','"+str(datetime.datetime.now())+"')"
+							cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+							cursor.execute(sql)
+							conn.commit()
+							return "Documento inserido!"
 					else:
 						return "Tipo de documento invalido!"
 				else:
-					return "Dependente nao encontrado!"
+					return "O dependente informado nao foi encontrado!"
 			else:
-				return "Empregado nao encontrado!"
+				return "O responsavel informado nao foi encontrado!"
 					
 	def listaOrgaos(self,cnpj="",nome='',endereco='',cidade='',uf=''):
 		conn = self.abreConexao()
@@ -242,7 +291,7 @@ class Model:
 		resultado = cursor.execute(sql)
 		conn.commit()
 
-		if cursor.arraysize == 0:
+		if cursor.rowcount == 0:
 			print "Nenhum dado econtrado. Verifique os parametros de busca."
 		else:
 			orgaosDict=[]
@@ -287,7 +336,7 @@ class Model:
 		cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 		cursor.execute(sql)
 		conn.commit()
-		if cursor.arraysize == 0:
+		if cursor.rowcount == 0:
 			return "Nenhum dado econtrado. Verifique os parametros de busca."
 		else:
 			empregadosDict=[]
@@ -329,21 +378,25 @@ class Model:
 		cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 		cursor.execute(sql)
 		conn.commit()
-		dependentesDict=[]
-		for row in cursor:
-			l = dict()
-			for collumn in row:
-				l[collumn]=row[collumn]
-			dependentesDict.append(l)
-		return dependentesDict
+		
+		if cursor.rowcount == 0:
+			return "Nenhum dado econtrado. Verifique os parametros de busca."
+		else:
+			dependentesDict=[]
+			for row in cursor:
+				l = dict()
+				for collumn in row:
+					l[collumn]=row[collumn]
+				dependentesDict.append(l)
+			return dependentesDict
 		
 	def retornaDocEmpregado (self,nu_matricula,no_documento,tp_documento):
 		if self.validaCampo(nu_matricula):
 			return 'Favor informar a matricula do empregado.'
 		else:
 			sql = "select no_documento from tb004_empregado "
-			sql+=	"join tb006_documento on tb006_documento.id_empregado = tb004_empregado.id_empregado and id_empregado_dependente is null "
-			sql+=	"join tb001_tipo_documento on tb001_tipo_documento.id_tipo_documento = tb006_documento.id_tipo_documento "
+			sql+=	"join tb006_documento_empregado on tb006_documento_empregado.id_empregado = tb004_empregado.id_empregado "
+			sql+=	"join tb001_tipo_documento on tb001_tipo_documento.id_tipo_documento = tb006_documento_empregado.id_tipo_documento "
 			sql+= "where 1=1 and nu_matricula = '"+nu_matricula+"'"
 			
 			filtro = ''
@@ -375,8 +428,8 @@ class Model:
 			return 'Favor informar um dos campos a seguir: RG, CPF, Certidao.'
 		else:
 			sql = "select no_documento from tb005_empregado_dependente "
-			sql+=	"join tb006_documento on tb006_documento.id_empregado_dependente = tb005_empregado_dependente.id_empregado_dependente /*and tb006_documento.id_empregado is null*/ "
-			sql+=	"join tb001_tipo_documento on tb001_tipo_documento.id_tipo_documento = tb006_documento.id_tipo_documento "
+			sql+=	"join tb007_documento_dependente on tb007_documento_dependente.id_empregado_dependente = tb005_empregado_dependente.id_empregado_dependente "
+			sql+=	"join tb001_tipo_documento on tb001_tipo_documento.id_tipo_documento = tb007_documento_dependente.id_tipo_documento "
 			sql+= "where 1=1 "
 			
 			filtro = ''
@@ -421,7 +474,7 @@ class Model:
 		resultado = cursor.execute(sql)
 		conn.commit()
 
-		if cursor.arraysize == 0:
+		if cursor.rowcount == 0:
 			print "Nenhum dado econtrado. Verifique os parametros de busca."
 		else:
 			vinculosDict=[]
@@ -444,7 +497,7 @@ class Model:
 		resultado = cursor.execute(sql)
 		conn.commit()
 
-		if cursor.arraysize == 0:
+		if cursor.rowcount == 0:
 			print "Nenhum dado econtrado. Verifique os parametros de busca."
 		else:
 			tipoDocumentosDict=[]
@@ -457,7 +510,27 @@ class Model:
 			
 	def empregadosAtivos (self,cnpj_orgao):
 		conn = self.abreConexao()
-		if (self.validaCampo(str(cnpj_orgao))):
+		if (not self.validaCampo(str(cnpj_orgao))):
+			
+			sql="select * from tb002_orgao where nu_cnpj="+str(cnpj_orgao)
+			cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+			resultado = cursor.execute(sql)
+			conn.commit
+			if cursor.rowcount == 0:
+				return 'O cnpj informado nao foi encontrado.'
+			else:			
+				sql="select"
+				sql+="	tb002_orgao.id_orgao, "
+				sql+="	count(id_empregado) as empregados_ativos "
+				sql+="from tb002_orgao "
+				sql+="	join tb004_empregado on tb004_empregado.id_orgao = tb002_orgao.id_orgao "
+				sql+="	where dt_desligamento is null and nu_cnpj="+str(cnpj_orgao)
+				sql+="	group by tb002_orgao.id_orgao, no_orgao "
+				sql+="order by id_orgao "
+				cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+				resultado = cursor.execute(sql)
+				conn.commit()
+		else:
 			sql="select"
 			sql+="	tb002_orgao.id_orgao, "
 			sql+="	count(id_empregado) as empregados_ativos "
@@ -469,21 +542,12 @@ class Model:
 			cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 			resultado = cursor.execute(sql)
 			conn.commit()
-		else:
-			sql="select"
-			sql+="	tb002_orgao.id_orgao, "
-			sql+="	count(id_empregado) as empregados_ativos "
-			sql+="from tb002_orgao "
-			sql+="	join tb004_empregado on tb004_empregado.id_orgao = tb002_orgao.id_orgao "
-			sql+="	where dt_desligamento is null and nu_cnpj="+cnpj_orgao
-			sql+="	group by tb002_orgao.id_orgao, no_orgao "
-			sql+="order by id_orgao "
-			cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-			resultado = cursor.execute(sql)
-			conn.commit()
 			
-		if cursor.arraysize == 0:
-			print "Nenhum dado econtrado. Verifique os parametros de busca."
+			
+
+			
+		if cursor.rowcount == 0:
+			return "Nenhum dado econtrado. Verifique os parametros de busca."
 		else:
 			estatisticaDict=[]
 			for row in cursor:
@@ -492,6 +556,53 @@ class Model:
 					l[collumn]=row[collumn]
 				estatisticaDict.append(l)
 			return estatisticaDict
+			
+			
+	def desligaEmpregado(self,nu_matricula,dt_desligamento):
+		if self.validaCampo(nu_matricula) and self.validaCampo(dt_desligamento):
+			return 'Favor informar a matricula do empregado e a data de desligamento.'
+		else:
+			conn = self.abreConexao()
+			sql="select * from tb004_empregado where nu_matricula = '"+nu_matricula+"'"
+			cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+			resultado = cursor.execute(sql)
+			conn.commit()
+			if cursor.rowcount == 0:
+				return 'O empregado nao foi encontrado.'
+			else:
+				empregado = cursor.fetchone()
+				if datetime.datetime.strptime(dt_desligamento,'%d-%m-%Y').date() < datetime.datetime.strptime(str(empregado['dt_contratacao']),'%Y-%m-%d').date():
+					return 'Data de desligamento invalida. Informe no formato d-m-yyyy.'
+				else:
+					sql="update tb004_empregado set dt_desligamento ='"+datetime.datetime.strftime(datetime.datetime.strptime(dt_desligamento,'%d-%m-%Y').date(),'%Y-%m-%d')+"' where nu_matricula ='"+nu_matricula+"'"
+					cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+					resultado = cursor.execute(sql)
+					conn.commit()
+					return 'Empregado desligado com sucesso.'
+					
+	def removeDependente(self,nu_cpf):
+		if self.validaCampo(nu_cpf):
+			return 'Favor informar o CPF do dependente'
+		else:
+			conn = self.abreConexao()
+			sql= "select * from tb005_empregado_dependente "
+			sql+="join tb007_documento_dependente on tb007_documento_dependente.id_empregado_dependente = tb005_empregado_dependente.id_empregado_dependente "
+			sql+="where nu_cpf = "+nu_cpf
+			cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+			resultado = cursor.execute(sql)
+			conn.commit()
+			if cursor.rowcount == 0:
+				return 'O dependente nao foi encontrado.'
+			else:
+				sql=""
+				for row in cursor:
+					sql+="delete from tb007_documento_dependente where id_empregado_dependente = "+str(row['id_empregado_dependente'])+";"
+					os.remove(row['no_documento'])
+				sql+="delete from tb005_empregado_dependente where nu_cpf = "+nu_cpf+";"
+				cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+				cursor.execute(sql)
+				conn.commit()
+				return 'Dependente removido com sucesso.'
 			
 		
 					

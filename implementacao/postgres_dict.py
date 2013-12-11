@@ -557,6 +557,53 @@ class Model:
 				estatisticaDict.append(l)
 			return estatisticaDict
 			
+			
+	def desligaEmpregado(self,nu_matricula,dt_desligamento):
+		if self.validaCampo(nu_matricula) and self.validaCampo(dt_desligamento):
+			return 'Favor informar a matricula do empregado e a data de desligamento.'
+		else:
+			conn = self.abreConexao()
+			sql="select * from tb004_empregado where nu_matricula = '"+nu_matricula+"'"
+			cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+			resultado = cursor.execute(sql)
+			conn.commit()
+			if cursor.rowcount == 0:
+				return 'O empregado nao foi encontrado.'
+			else:
+				empregado = cursor.fetchone()
+				if datetime.datetime.strptime(dt_desligamento,'%d-%m-%Y').date() < datetime.datetime.strptime(str(empregado['dt_contratacao']),'%Y-%m-%d').date():
+					return 'Data de desligamento invalida. Informe no formato d-m-yyyy.'
+				else:
+					sql="update tb004_empregado set dt_desligamento ='"+datetime.datetime.strftime(datetime.datetime.strptime(dt_desligamento,'%d-%m-%Y').date(),'%Y-%m-%d')+"' where nu_matricula ='"+nu_matricula+"'"
+					cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+					resultado = cursor.execute(sql)
+					conn.commit()
+					return 'Empregado desligado com sucesso.'
+					
+	def removeDependente(self,nu_cpf):
+		if self.validaCampo(nu_cpf):
+			return 'Favor informar o CPF do dependente'
+		else:
+			conn = self.abreConexao()
+			sql= "select * from tb005_empregado_dependente "
+			sql+="join tb007_documento_dependente on tb007_documento_dependente.id_empregado_dependente = tb005_empregado_dependente.id_empregado_dependente "
+			sql+="where nu_cpf = "+nu_cpf
+			cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+			resultado = cursor.execute(sql)
+			conn.commit()
+			if cursor.rowcount == 0:
+				return 'O dependente nao foi encontrado.'
+			else:
+				sql=""
+				for row in cursor:
+					sql+="delete from tb007_documento_dependente where id_empregado_dependente = "+str(row['id_empregado_dependente'])+";"
+					os.remove(row['no_documento'])
+				sql+="delete from tb005_empregado_dependente where nu_cpf = "+nu_cpf+";"
+				cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+				cursor.execute(sql)
+				conn.commit()
+				return 'Dependente removido com sucesso.'
+			
 		
 					
 	def upload_file(self,file, name):

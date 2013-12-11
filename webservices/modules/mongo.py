@@ -10,6 +10,7 @@ from pymongo import Connection
 from bson import ObjectId
 from bson import Code
 from pymongo.errors import ConnectionFailure
+from threading import Lock
 
 class Model:
 		
@@ -164,6 +165,7 @@ class Model:
 					return "O responsavel informado nao foi encontrado."
 		
 	def insereDocEmpregado(self,matricula,tp_documento, no_doc,file):
+			
 		if self.validaCampo(str(matricula))  or self.validaCampo(str(tp_documento)) or self.validaCampo(str(no_doc)):
 			return "Favor informar todos os campos."
 		else:
@@ -174,7 +176,7 @@ class Model:
 			empregado = dbh.empregados.find_one(query)
 			
 			if empregado == None:
-				print "O Empregado informado nao foi encontrado!"
+				return "O Empregado informado nao foi encontrado!"
 			else:
 				tp_documento = ObjectId(tp_documento)
 				tipo_documento = dbh.tp_documentos.find_one({"_id":tp_documento})
@@ -183,22 +185,42 @@ class Model:
 				else:
 					config = ConfigParser.ConfigParser()
 					config.read("./config.conf")
-					if not os.path.exists(config.get("path", "filePath")+str(empregado.get("id_orgao"))):
-						os.makedirs(config.get("path", "filePath")+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id")))
-					elif not os.path.exists(config.get("path", "filePath")+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id"))):
-						os.makedirs(config.get("path", "filePath")+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id")))
-					no_doc = config.get("path", "filePath")+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id"))+'/'+no_doc
-					self.upload_file(file,no_doc)
-					new_doc = {
-								"tp_documento" : tp_documento,
-								"no_documento" : no_doc.strip(),
-								"dh_updload" : datetime.datetime.now()
-							}
-					if empregado.get('Documentos') == None or empregado.get('Documentos') == '':
-						dbh.empregados.update({"nu_matricula":matricula},{"$set":{"Documentos":[new_doc]}},safe=True)
+					lock = Lock()
+					lock.acquire()
+					try:
+						if not os.path.exists(config.get("path", "filePath")+str(empregado.get("id_orgao"))):
+							os.makedirs(config.get("path", "filePath")+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id")))
+						elif not os.path.exists(config.get("path", "filePath")+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id"))):
+							os.makedirs(config.get("path", "filePath")+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id")))
+							
+						l = True
+						while l == True:
+							if os.path.exists(config.get("path", "filePath")+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id"))):
+								l = False
+								lock.release()
+							else:
+								l = True
+					except OSError as ex:
+						
+						return "Erro na criacao dos diretorios: ", ex
+						lock.release()
+						
 					else:
-						dbh.empregados.update({"nu_matricula":matricula},{"$push":{"Documentos":new_doc}}, safe=True)
-					return "Documento inserido!"
+						
+						no_doc = config.get("path", "filePath")+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id"))+'/'+no_doc
+						self.upload_file(file,no_doc)
+						new_doc = {
+									"tp_documento" : tp_documento,
+									"no_documento" : no_doc.strip(),
+									"dh_updload" : datetime.datetime.now()
+								}
+						if empregado.get('Documentos') == None or empregado.get('Documentos') == '':
+							dbh.empregados.update({"nu_matricula":matricula},{"$set":{"Documentos":[new_doc]}})
+						else:
+							dbh.empregados.update({"nu_matricula":matricula},{"$push":{"Documentos":new_doc}})
+						return "Documento inserido!"
+						
+						
 		
 	def insereDocDependente(self,empreg_matricula,rg_dependente,cpf_dependente,certidao_dependente,tp_documento, no_doc,file):
 		if self.validaCampo(str(empreg_matricula)) or self.validaCampo(str(tp_documento)) or self.validaCampo(str(no_doc)):
@@ -229,7 +251,7 @@ class Model:
 				dependente = dbh.dependentes.find_one(query)
 			
 			if empregado == None:
-				print "O Empregado informado nao foi encontrado!"
+				return "O responsavel informado nao foi encontrado!"
 			elif dependente == None:
 				return "O dependente informado nao foi encontrado!"
 			else:
@@ -240,25 +262,41 @@ class Model:
 				else:
 					config = ConfigParser.ConfigParser()
 					config.read("config.conf")
-					if not os.path.exists(config.get("path", "filePath")+str(empregado.get("id_orgao"))):
-						os.makedirs(config.get("path", "filePath")+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id"))+'/'+str(dependente.get("_id")))
-					elif not os.path.exists(config.get("path", "filePath")+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id"))):
-						os.makedirs(config.get("path", "filePath")+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id"))+'/'+str(dependente.get("_id")))
-					elif not os.path.exists(config.get("path", "filePath")+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id"))+'/'+str(dependente.get("_id"))):
-						os.makedirs(config.get("path", "filePath")+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id"))+'/'+str(dependente.get("_id")))
-					no_doc = config.get("path", "filePath")+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id"))+'/'+str(dependente.get("_id"))+'/'+no_doc
-					self.upload_file(file,no_doc)
-					new_doc = {
-								"tp_documento" : tp_documento,
-								"no_documento" : no_doc.strip(),
-								"dh_updload" : datetime.datetime.now()
-							}
-					if dependente.get('Documentos') == None or dependente.get('Documentos') == '':
-						dbh.dependentes.update({"_id":dependente.get('_id')},{"$set":{"Documentos":[new_doc]}},safe=True)
-						return "Documento inserido!"
+					lock = Lock()
+					lock.acquire()
+					try:
+						if not os.path.exists(config.get("path", "filePath")+str(empregado.get("id_orgao"))):
+							os.makedirs(config.get("path", "filePath")+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id"))+'/'+str(dependente.get("_id")))
+						elif not os.path.exists(config.get("path", "filePath")+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id"))):
+							os.makedirs(config.get("path", "filePath")+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id"))+'/'+str(dependente.get("_id")))
+						elif not os.path.exists(config.get("path", "filePath")+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id"))+'/'+str(dependente.get("_id"))):
+							os.makedirs(config.get("path", "filePath")+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id"))+'/'+str(dependente.get("_id")))
+						l = True
+						while l == True:
+							if os.path.exists(config.get("path", "filePath")+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id"))+'/'+str(dependente.get("_id"))):
+								l = False
+								lock.release()
+							else:
+								l = True
+					except OSError as ex:
+						
+						return "Erro na criacao dos diretorios: ", ex
+						lock.release()
+						
 					else:
-						dbh.dependentes.update({"_id":dependente.get('_id')},{"$push":{"Documentos":new_doc}}, safe=True)
-						return "Documento inserido!"
+						no_doc = config.get("path", "filePath")+str(empregado.get("id_orgao"))+'/'+str(empregado.get("_id"))+'/'+str(dependente.get("_id"))+'/'+no_doc
+						self.upload_file(file,no_doc)
+						new_doc = {
+									"tp_documento" : tp_documento,
+									"no_documento" : no_doc.strip(),
+									"dh_updload" : datetime.datetime.now()
+								}
+						if dependente.get('Documentos') == None or dependente.get('Documentos') == '':
+							dbh.dependentes.update({"_id":dependente.get('_id')},{"$set":{"Documentos":[new_doc]}},safe=True)
+							return "Documento inserido!"
+						else:
+							dbh.dependentes.update({"_id":dependente.get('_id')},{"$push":{"Documentos":new_doc}}, safe=True)
+							return "Documento inserido!"
 					
 	def listaOrgaos(self,cnpj='',nome='',endereco='',cidade='',uf=''):
 		dbh = self.conectaMongo()
@@ -359,7 +397,7 @@ class Model:
 			dependentes = dbh.dependentes.find()
 			
 		if dependentes.count() == 0:
-			print "Nenhum dado econtrado. Verifique os parametros de busca."
+			return "Nenhum dado econtrado. Verifique os parametros de busca."
 		else:
 			dependenteDict=[]
 			for row in dependentes:
@@ -405,14 +443,15 @@ class Model:
 			if not(self.validaCampo(tp_documento)):
 				query['Documentos.tp_documento'] = {"$regex" : '(^|\w)'+tp_documento+'*'}
 			if not(self.validaCampo(nu_rg)):
-				query['Documentos.nu_rg'] = {"$regex" : '(^|\w)'+nu_rg+'*'}
+				query['nu_rg'] = {"$regex" : '(^|\w)'+nu_rg+'*'}
 			if not(self.validaCampo(nu_cpf)):
-				query['Documentos.nu_cpf'] = {"$regex" : '(^|\w)'+nu_cpf+'*'}
+				query['nu_cpf'] = {"$regex" : '(^|\w)'+nu_cpf+'*'}
 			if not(self.validaCampo(nu_certidao)):
-				query['Documentos.nu_certidao'] = {"$regex" : '(^|\w)'+nu_certidao+'*'}
-
-			documentos_dependente = dbh.dependente.find(query)
-
+				query['nu_certidao'] = {"$regex" : '(^|\w)'+nu_certidao+'*'}
+			
+			documentos_dependente = dbh.dependentes.find_one(query)
+			documentos_dependente = documentos_dependente.get('Documentos')
+			
 			docsDependenteDict=[]
 			for row in documentos_dependente:
 				l = dict()
@@ -435,14 +474,18 @@ class Model:
 			query['no_tipo_vinculo'] = {"$regex" : '(^|\w)'+no_tipo_vinculo.strip().upper()+'*'}
 		
 		vinculos = dbh.vinculos.find(query)
-		docsVinculosDict=[]
-		for row in vinculos:
-			l = dict()
-			for column in row:
-				l[str(column.replace("_id",'id_tipo_vinculo'))] = str(row[column])
-			docsVinculosDict.append(l)
+		
+		if vinculos.count() == 0:
+			return "Nenhum dado econtrado. Verifique os parametros de busca."
+		else:
+			docsVinculosDict=[]
+			for row in vinculos:
+				l = dict()
+				for column in row:
+					l[str(column.replace("_id",'id_tipo_vinculo'))] = str(row[column])
+				docsVinculosDict.append(l)
 
-		return docsVinculosDict
+			return docsVinculosDict
 		
 	def listaTipoDocumentos (self,nu_tipo_documento,no_tipo_documento):
 		dbh = self.conectaMongo()
@@ -454,14 +497,18 @@ class Model:
 			query['no_tipo_documento'] = {"$regex" : '(^|\w)'+no_tipo_documento.strip().upper()+'*'}
 		
 		TipoDocumentos = dbh.tp_documentos.find(query)
-		docsDocumentosDict=[]
-		for row in TipoDocumentos:
-			l = dict()
-			for column in row:
-				l[str(column.replace("_id",'id_tipo_documento'))] = str(row[column])
-			docsDocumentosDict.append(l)
+		
+		if TipoDocumentos.count() == 0:
+			return "Nenhum dado econtrado. Verifique os parametros de busca."
+		else:
+			docsDocumentosDict=[]
+			for row in TipoDocumentos:
+				l = dict()
+				for column in row:
+					l[str(column.replace("_id",'id_tipo_documento'))] = str(row[column])
+				docsDocumentosDict.append(l)
 
-		return docsDocumentosDict
+			return docsDocumentosDict
 		
 		
 	def empregadosAtivos (self,cnpj_orgao):
@@ -510,8 +557,37 @@ class Model:
 					l[collumn]=row[collumn]
 				estatisticaDict.append(l)
 			return estatisticaDict
+			
+	def desligaEmpregado(self,nu_matricula,dt_desligamento):
+		if self.validaCampo(nu_matricula) and self.validaCampo(dt_desligamento):
+			return 'Favor informar a matricula do empregado e a data de desligamento.'
+		else:
+			dbh = self.conectaMongo()
+			empregado = dbh.empregados.find_one({'nu_matricula': nu_matricula.strip().upper()})
+			if empregado == None:
+				return 'O empregado nao foi encontrado.'
+			else:
+				if datetime.datetime.strptime(dt_desligamento,'%d-%m-%Y').date() < datetime.datetime.strptime(str(empregado.get('dt_contratacao')),'%Y-%m-%d').date():
+					return 'Data de desligamento invalida. Informe no formato d-m-yyyy.'
+				else:
+					dbh.empregados.update({'nu_matricula': empregado.get('nu_matricula')},{'$set':{"dt_desligamento":datetime.datetime.strftime(datetime.datetime.strptime(dt_desligamento,'%d-%m-%Y').date(),'%Y-%m-%d')}})
+					return 'Empregado desligado com sucesso.'
+					
+	def removeDependente(self,nu_cpf):
+		if self.validaCampo(nu_cpf):
+			return 'Favor informar o CPF do dependente'
+		else:
+			dbh = self.conectaMongo()
+			dependente = dbh.dependentes.find_one({'nu_cpf': nu_cpf})
+			if dependente == None:
+				return 'O dependente nao foi encontrado.'
+			else:
+				documentos = dependente.get('Documentos')
+				for row in documentos:
+					os.remove(row['no_documento'])
+				dbh.dependentes.remove({'nu_cpf': nu_cpf})
+				return 'Dependente removido com sucesso.'
 				
-								
 	def upload_file(self,file, name):
 		out = open(name, 'wb')
 		out.write(str(file.decode('base64')))

@@ -3,8 +3,8 @@
 def index(): return dict(message="hello from sample.py")
 
 #import mongo
-model = local_import('mongo')
-#model = local_import('postgres_dict')
+#model = local_import('mongo')
+model = local_import('postgres_dict')
 
 
 from gluon.tools import Service
@@ -145,6 +145,18 @@ def empregadosAtivos (cnpj_orgao):
 		y.append(x)
 	empregadosAtivos = y
 	return empregadosAtivos
+	
+@service.xmlrpc
+@service.soap('desligaEmpregado',returns={'s':str},args={'nu_matricula':str, 'dt_desligamento':str})
+def desligaEmpregado(nu_matricula,dt_desligamento):
+    s = Model.desligaEmpregado(nu_matricula,dt_desligamento)
+    return s
+    
+@service.xmlrpc
+@service.soap('removeDependente',returns={'s':str},args={'nu_cpf':str})
+def removeDependente(nu_cpf):
+    s = Model.removeDependente(nu_cpf)
+    return s
 
 def call():
     return service()
