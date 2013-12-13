@@ -1,11 +1,11 @@
-timeStamp,elapsed,label,threadName,success
-1386529587491,165,insere orgao,python webservice - Postgres 1-3,true
-1386529587496,187,insere orgao,python webservice - Postgres 1-27,true
-1386529587495,208,insere orgao,python webservice - Postgres 1-33,true
-1386529587496,231,insere orgao,python webservice - Postgres 1-29,true
-1386529587496,240,insere orgao,python webservice - Postgres 1-28,true
-1386529587496,241,insere orgao,python webservice - Postgres 1-32,true
-1386529587495,250,insere orgao,python webservice - Postgres 1-36,true
-1386529587495,260,insere orgao,python webservice - Postgres 1-35,true
-1386529587496,268,insere orgao,python webservice - Postgres 1-30,true
-1386529587496,287,insere orgao,python webservice - Postgres 1-24,true
+timeStamp;elapsed;label;threadName;success
+1386529587491;165;insere orgao;python webservice - Postgres 1-3;true
+1386529587496;187;insere orgao;python webservice - Postgres 1-27;true
+1386529587495;208;insere orgao;python webservice - Postgres 1-33;true
+1386529587496;231;insere orgao;python webservice - Postgres 1-29;true
+1386529587496;240;insere orgao;python webservice - Postgres 1-28;true
+1386529587496;241;insere orgao;python webservice - Postgres 1-32;true
+1386529587495;250;insere orgao;python webservice - Postgres 1-36;true
+1386529587495;260;insere orgao;python webservice - Postgres 1-35;true
+1386529587496;268;insere orgao;python webservice - Postgres 1-30;true
+1386529587496;287;insere orgao;python webservice - Postgres 1-24;true

@@ -1,11 +1,11 @@
-timeStamp,elapsed,label,threadName,success,Latency
-1386324496891,159,insere orgao,python webservice - Mongo 1-96,true
-1386324496890,171,insere orgao,python webservice - Mongo 1-7,true
-1386324496889,168,insere orgao,python webservice - Mongo 1-32,true
-1386324496889,166,insere orgao,python webservice - Mongo 1-2,true
-1386324496888,199,insere orgao,python webservice - Mongo 1-31,true
-1386324496889,201,insere orgao,python webservice - Mongo 1-30,true
-1386324496889,229,insere orgao,python webservice - Mongo 1-99,true
-1386324496888,243,insere orgao,python webservice - Mongo 1-43,true
-1386324496889,244,insere orgao,python webservice - Mongo 1-50,true
-1386324496888,249,insere orgao,python webservice - Mongo 1-97,true
+timeStamp;elapsed;label;threadName;success;Latency
+1386324496891;159;insere orgao;python webservice - Mongo 1-96;true
+1386324496890;171;insere orgao;python webservice - Mongo 1-7;true
+1386324496889;168;insere orgao;python webservice - Mongo 1-32;true
+1386324496889;166;insere orgao;python webservice - Mongo 1-2;true
+1386324496888;199;insere orgao;python webservice - Mongo 1-31;true
+1386324496889;201;insere orgao;python webservice - Mongo 1-30;true
+1386324496889;229;insere orgao;python webservice - Mongo 1-99;true
+1386324496888;243;insere orgao;python webservice - Mongo 1-43;true
+1386324496889;244;insere orgao;python webservice - Mongo 1-50;true
+1386324496888;249;insere orgao;python webservice - Mongo 1-97;true
