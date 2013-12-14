@@ -1,0 +1,3 @@
+sampler_label,aggregate_report_count,average,aggregate_report_min,aggregate_report_max,aggregate_report_stddev,aggregate_report_error%,aggregate_report_rate,aggregate_report_bandwidth,average_bytes
+remove dependente,250,216,117,346,44.90033407448093,0.0,45.48762736535662,17.635339906295485,397.0
+TOTAL,250,216,117,346,44.90033407448093,0.0,45.48762736535662,17.635339906295485,397.0

@@ -14,14 +14,14 @@ import mongo
 
 Model = mongo.Model()
 
-path_docs = '/home/wanzeller/documentos_carga'
+path_docs = '/home/eu/documentos_carga'
 orgaos = 10
-empregados_por_orgao = 10
+empregados_por_orgao = 100
 dependente_por_empregado = 2
 documento_por_empregado = 5
 documento_por_dependente = 2
-path_csv_p = '/home/wanzeller/jmeter test plans/cargaPostgres'
-path_csv = '/home/wanzeller/jmeter test plans/cargaMongo'
+path_csv_p = '/home/eu/jmeter test plans/cargaPostgres'
+path_csv = '/home/eu/jmeter test plans/cargaMongo'
 
 def copyanything (src, dst):
 	try:
@@ -110,7 +110,7 @@ def carregaDependentes():
 				n=0
 				while n < dependente_por_empregado:
 					vinculos = Model.listaVinculos('','')
-					conn = psycopg2.connect(host='localhost', database="rhdb001", user="postgres", password="123456")
+					conn = psycopg2.connect(host='localhost', database="rhdb001", user="postgres", password="31061210")
 					sql="select * from tb003_tipo_vinculo where no_tipo_vinculo = '"+vinculos[n]["no_tipo_vinculo"]+"'"
 					cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 					cursor.execute(sql)
@@ -146,7 +146,7 @@ def carregaDocEmpregado():
 					file=open(path_docs+'/'+docs[l], 'rb')
 					data=file.read()
 					tipo_documentos = Model.listaTipoDocumentos('','')
-					conn = psycopg2.connect(host='localhost', database="rhdb001", user="postgres", password="123456")
+					conn = psycopg2.connect(host='localhost', database="rhdb001", user="postgres", password="31061210")
 					sql="select * from tb001_tipo_documento where no_tipo_documento = '"+tipo_documentos[n]['no_tipo_documento']+"'"
 					cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 					cursor.execute(sql)
@@ -179,7 +179,7 @@ def carregaDocDependente():
 						file=open(path_docs+'/'+docs[l], 'rb')
 						data=file.read()
 						tipo_documentos = Model.listaTipoDocumentos('','')
-						conn = psycopg2.connect(host='localhost', database="rhdb001", user="postgres", password="123456")
+						conn = psycopg2.connect(host='localhost', database="rhdb001", user="postgres", password="31061210")
 						sql="select * from tb001_tipo_documento where no_tipo_documento = '"+tipo_documentos[n]['no_tipo_documento']+"'"
 						cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 						cursor.execute(sql)
@@ -191,44 +191,33 @@ def carregaDocDependente():
 						file.close()
 						n+=1
 					
-def consultaOrgaos():
-	db = Model.conectaMongo()
-	orgaos = db.orgaos.find(limit=100)
-	with open (path_csv + '/consultaOrgaos.csv', 'wb') as csvfile:
+def geraListaDesligamento():
+	conn = psycopg2.connect(host='localhost', database="rhdb001", user="postgres", password="31061210")
+	sql = "select nu_matricula, now()::date as dt_desligamento from tb004_empregado where dt_desligamento is null limit 250; "
+	cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+	cursor.execute(sql)
+	conn.commit()
+	with open (path_csv + '/lista_desligamento.csv', 'wb') as csvfile:
 		spamwriter = csv.writer(csvfile,delimiter=';', quoting=csv.QUOTE_MINIMAL)
-		for orgao in orgaos:
-			param_orgaos = ['nu_cnpj','nome','no_endereco','no_cidade','no_uf']
-			seq = [1,1,1,2,3,4,5]
-			num_param = choice(seq)
-			n=0
-			nu_cnpj = ''
-			nome=''
-			no_endereco=''
-			no_cidade = ''
-			no_uf = ''
-			while n < num_param:
-				w=randint(0,(4-n))
-				param = param_orgaos[w]
-				if param == 'nu_cnpj':
-					nu_cnpj = orgao['nu_cnpj']
-					if num_param == 1 and choice([0,0,1]):
-						nu_cnpj = str(nu_cnpj)
-						nu_cnpj = nu_cnpj[0:randint(0,randint(5,len(nu_cnpj)))]
-				if param == 'nome':
-					nome = orgao['no_orgao']
-				if param == 'no_endereco':
-					no_endereco = orgao['no_endereco']
-				if param == 'no_cidade':
-					no_cidade = orgao['no_cidade']
-				if param == 'no_uf':
-					no_uf = orgao['no_uf']
-				param_orgaos.remove(param)
-				n+=1
-			spamwriter.writerow([nu_cnpj,nome,no_endereco,no_cidade,no_uf])
-	copyanything(path_csv + '/consultaOrgaos.csv',path_csv_p + '/consultaOrgaos.csv')
+		for row in cursor:
+			spamwriter.writerow([row['nu_matricula'], row['dt_desligamento']])
+	copyanything(path_csv + '/lista_desligamento.csv',path_csv_p + '/lista_desligamento.csv')
+	
+
+def geraListaRemoveDependente():
+	conn = psycopg2.connect(host='localhost', database="rhdb001", user="postgres", password="31061210")
+	sql = "select nu_cpf from tb005_empregado_dependente limit 250; "
+	cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+	cursor.execute(sql)
+	conn.commit()
+	with open (path_csv + '/remove_dependente.csv', 'wb') as csvfile:
+		spamwriter = csv.writer(csvfile,delimiter=';', quoting=csv.QUOTE_MINIMAL)
+		for row in cursor:
+			spamwriter.writerow([row['nu_cpf']])
+	copyanything(path_csv + '/remove_dependente.csv',path_csv_p + '/remove_dependente.csv')
 					
 def main():
-	conn = psycopg2.connect(host='localhost', database="rhdb001", user="postgres", password="123456")
+	conn = psycopg2.connect(host='localhost', database="rhdb001", user="postgres", password="31061210")
 	db = Model.conectaMongo()
 	db.drop_collection('empregados')
 	db.drop_collection('dependentes')
